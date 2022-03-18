@@ -1,14 +1,23 @@
-## Getting Started
+## AliveScript
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Welcome to the AliveScript Programming Language, where dreams come true in all sort of dialect!
+
+## Getting started
+
+1. Get Intellij Idea
+2. Clone this repo
+3. In File/Project Structure ...
+    1. Link src to /src
+    2. Link resource to src/interpreteur/regle_et_grammaire
+    3. Link dependencies
+    4. Set the sdk to Java17
+4. Execute the main function in src/Main.java
+5. Have fun with the language 🥳🍾
 
 ## Folder Structure
 
 The workspace contains two folders by default, where:
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-## Dependency Management
-
-The `JAVA DEPENDENCIES` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-pack/blob/master/release-notes/v0.9.0.md#work-with-jar-files-directly).
+- `src`: the folder where alivescript code is written
+- `lib`: the folder where you can find the dependencies of alivescript
+- `ServerAS`: the module where you can find the Api for communicating with alivescript
