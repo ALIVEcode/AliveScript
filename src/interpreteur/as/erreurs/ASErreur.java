@@ -72,8 +72,8 @@ public interface ASErreur {
         }
     }
 
-    class StopGetInfo extends Stop {
-        public StopGetInfo(Data data) {
+    class AskForDataResponse extends Stop {
+        public AskForDataResponse(Data data) {
             super(data);
         }
     }

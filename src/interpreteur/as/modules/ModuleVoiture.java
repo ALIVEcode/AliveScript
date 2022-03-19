@@ -19,7 +19,7 @@ public class ModuleVoiture {
         JSONObject dataVoiture = DataVoiture.getDataVoiture();
         if (dataVoiture == null) {
             DataVoiture.requestDataVoiture();
-            throw new ASErreur.StopGetInfo(new Data(Data.Id.GET).addParam("car"));
+            throw new ASErreur.AskForDataResponse(new Data(Data.Id.GET).addParam("car"));
         } else {
             return dataVoiture.get(parametre);
         }

@@ -30,9 +30,14 @@ public class Lire extends Programme {
 
     @Override
     public NullType execute() {
+        System.out.println("Lecture 1");
+
         assert executeurInstance != null;
-        if (executeurInstance.getDataResponse().isEmpty())
-            throw new ASErreur.StopGetInfo(new Data(Data.Id.GET).addParam("read").addParam(message.eval().getValue().toString()));
+        if (executeurInstance.getDataResponse().isEmpty()) {
+            System.out.println("Lecture 2");
+            throw new ASErreur.AskForDataResponse(new Data(Data.Id.GET).addParam("read").addParam(message.eval().getValue().toString()));
+        }
+        System.out.println("Lecture 3");
 
         ASTexte data = new ASTexte(executeurInstance.getDataResponse().pop());
         if (this.fonction == null) {
