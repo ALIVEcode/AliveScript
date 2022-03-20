@@ -204,7 +204,7 @@ public class Executeur {
             Data dataToGet = new Data(Data.Id.GET).addParam(dataName);
             for (var param : additionnalParams)
                 dataToGet.addParam(param);
-            throw new ASErreur.StopGetInfo(dataToGet);
+            throw new AskForDataResponse(dataToGet);
         }
         else
             return this.dataResponse.pop();
@@ -561,7 +561,7 @@ public class Executeur {
             } catch (StopSendData e) {
                 return e.getDataString();
 
-            } catch (StopGetInfo e) {
+            } catch (AskForDataResponse e) {
                 datas.add(e.getData());
                 return datas.toString();
 
