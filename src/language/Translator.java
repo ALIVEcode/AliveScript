@@ -3,6 +3,10 @@ package language;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
+import java.util.IllegalFormatConversionException;
+import java.util.MissingFormatArgumentException;
+
 public final class Translator {
     private static final String json = """
             {
@@ -20,8 +24,8 @@ public final class Translator {
                 "function": {
                     "call": {
                          "nb-parameter": {
-                             "to-small": "Le nombre de param\u00E8tres est trop petit",
-                             "to-big": "Le nombre de param\u00E8tres est trop grand"
+                             "to-small": "Le nombre de param\u00E8tres est trop petit. (Attendu: %d Re\u00E7u: %d)",
+                             "to-big": "Le nombre de param\u00E8tres est trop grand. (Attendu: %d Re\u00E7u: %d)"
                          },
                          "call-type": "Un argument ne match pas le type du param\u00E8tre"
                     },
@@ -42,18 +46,37 @@ public final class Translator {
      * {@code System.err.println(String);}
      *
      * @param path
+     * @param params
      * @return
      */
-    public String t(String path) {
+    public String translate(String path, Object... params) {
         String[] tokens = path.trim().split("\\.");
         JSONObject head = jsonFile;
         try {
             for (int i = 0; i < tokens.length - 1; i++) {
                 head = head.getJSONObject(tokens[i]);
             }
-            return head.getString(tokens[tokens.length - 1]);
+            return formatTranslated(head.getString(tokens[tokens.length - 1]), params);
         } catch (JSONException | NegativeArraySizeException err) {
             return path;
         }
     }
+
+    private String formatTranslated(String toFormat, Object... params) {
+        try {
+            return String.format(toFormat, params);
+        } catch (MissingFormatArgumentException err) {
+            return String.format("Missing information for the ErrorMessage:\nErrorMessage: '%s'\nParameters: %s",
+                    toFormat, Arrays.toString(params));
+        } catch (IllegalFormatConversionException err) {
+            return String.format("Wrong type in the ErrorMessage's parameters:\nErrorMessage: '%s'\nParameters: %s",
+                    toFormat, Arrays.toString(params));
+        }
+    }
+
+    public static void main(String[] args) {
+        var test = new Translator();
+        System.out.println(test.translate(" function.call.nb-parameter.to-big "));
+    }
 }
+

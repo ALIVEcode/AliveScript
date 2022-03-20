@@ -9,30 +9,30 @@ public class TestDefiTranslation {
     public void test() {
         //----------------- Tests -----------------//
         var defi = new Translator();
-        assertEquals("", defi.t(""));
-        assertEquals("error.type.int", defi.t("error.type.int"));
+        assertEquals("", defi.translate(""));
+        assertEquals("error.type.int", defi.translate("error.type.int"));
 
-        assertEquals("L'entier est trop petit", defi.t("error.type.int.to-small"));
+        assertEquals("L'entier est trop petit", defi.translate("error.type.int.to-small"));
 
-        assertEquals("AliveScript", defi.t("alivescript"));
+        assertEquals("AliveScript", defi.translate("alivescript"));
 
-        assertEquals("function.type", defi.t("function.type"));
+        assertEquals("function.type", defi.translate("function.type"));
 
-        assertEquals("function.call.nb-parameter.to-bi", defi.t("function.call.nb-parameter.to-bi"));
+        assertEquals("function.call.nb-parameter.to-bi", defi.translate("function.call.nb-parameter.to-bi"));
 
-        assertEquals("Le nombre de param\u00E8tres est trop grand", defi.t(" function.call.nb-parameter.to-big "));
+        assertEquals("Le nombre de param\u00E8tres est trop grand", defi.translate(" function.call.nb-parameter.to-big "));
 
-        assertEquals("function.call.creation", defi.t("function.call.creation"));
+        assertEquals("function.call.creation", defi.translate("function.call.creation"));
 
-        assertEquals("12345678", defi.t("12345678"));
+        assertEquals("12345678", defi.translate("12345678"));
 
         assertEquals(
                 "Remplacer la section \\u00e0 compl\\u00E9ter de votre bord",
-                defi.t("Remplacer la section \\u00e0 compl\\u00E9ter de votre bord")
+                defi.translate("Remplacer la section \\u00e0 compl\\u00E9ter de votre bord")
         );
-        assertEquals("null", defi.t("null"));
+        assertEquals("null", defi.translate("null"));
 
-        assertEquals("...............", defi.t("..............."));
+        assertEquals("...............", defi.translate("..............."));
     }
 
 
@@ -46,30 +46,30 @@ public class TestDefiTranslation {
          */
 
         var defi = new Translator();
-        assertEquals("", defi.t(""));
-        assertEquals("error.type.int", defi.t("error.type.int"));
+        assertEquals("", defi.translate(""));
+        assertEquals("error.type.int", defi.translate("error.type.int"));
 
-        assertEquals("L'entier est trop petit", defi.t("error.type.int.to-small"));
+        assertEquals("L'entier est trop petit", defi.translate("error.type.int.to-small"));
 
-        assertEquals("AliveScript", defi.t("alivescript"));
+        assertEquals("AliveScript", defi.translate("alivescript"));
 
-        assertEquals("function.type", defi.t("function.type"));
+        assertEquals("function.type", defi.translate("function.type"));
 
-        assertEquals("function.call.nb-parameter.to-bi", defi.t("function.call.nb-parameter.to-bi"));
+        assertEquals("function.call.nb-parameter.to-bi", defi.translate("function.call.nb-parameter.to-bi"));
 
-        assertEquals("Le nombre de param\u00E8tres est trop grand", defi.t("function.call.nb-parameter.to-big"));
+        assertEquals("Le nombre de param\u00E8tres est trop grand", defi.translate("function.call.nb-parameter.to-big"));
 
-        assertEquals("function.call.creation", defi.t("function.call.creation"));
+        assertEquals("function.call.creation", defi.translate("function.call.creation"));
 
-        assertEquals("12345678", defi.t("12345678"));
+        assertEquals("12345678", defi.translate("12345678"));
 
         assertEquals(
                 "Remplacer la section \\u00e0 compl\\u00E9ter de votre bord",
-                defi.t("Remplacer la section \\u00e0 compl\\u00E9ter de votre bord")
+                defi.translate("Remplacer la section \\u00e0 compl\\u00E9ter de votre bord")
         );
-        assertEquals("null", defi.t("null"));
+        assertEquals("null", defi.translate("null"));
 
-        assertEquals("...............", defi.t("..............."));
+        assertEquals("...............", defi.translate("..............."));
     }
 }
 
