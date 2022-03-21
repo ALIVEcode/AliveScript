@@ -32,7 +32,7 @@ public class BouclePour extends Boucle {
         this.scope = ASScope.makeNewCurrentScope();
     }
 
-    public BouclePour setDeclarerVar(boolean estConst, ASType typeVar) {
+    public BouclePour declarerVar(boolean estConst, ASType typeVar) {
         this.typeVar = typeVar == null ? this.typeVar : typeVar;
         if (estConst) {
             scope.declarerVariable(new ASConstante(var.getNom(), null));

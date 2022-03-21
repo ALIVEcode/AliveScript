@@ -3,11 +3,20 @@ import interpreteur.executeur.Executeur;
 public class Main {
 
     static final String[] CODE = """
-            var a = 12
-            afficher "hello world!"
-            afficher a
-            a = "salut"
-            afficher a
+            fonction a()
+                afficher "ça fonctionne a"
+            fin fonction
+            
+            fonction b(p1) -> entier
+                afficher "ça fonctionne b"
+                afficher p1
+            fin fonction
+            
+            a()
+            b(23)
+            a()
+            
+            afficher {1 + 1...10}
             """.split("\n");
 
 

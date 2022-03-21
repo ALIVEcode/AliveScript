@@ -11,12 +11,10 @@ import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.ast.buildingBlocs.expressions.*;
 import interpreteur.ast.buildingBlocs.programmes.*;
-import interpreteur.executeur.Coordonnee;
 import interpreteur.executeur.Executeur;
 import interpreteur.generateurs.ast.AstGenerator;
 import interpreteur.tokens.Token;
 
-import javax.lang.model.type.NullType;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -236,24 +234,23 @@ public class ASAst extends AstGenerator {
         //<-----------------------------------Les setters----------------------------------------->//
         ajouterProgramme("SET NOM_VARIABLE PARENT_OUV NOM_VARIABLE PARENT_FERM~" +
                          "SET NOM_VARIABLE PARENT_OUV NOM_VARIABLE DEUX_POINTS expression PARENT_FERM",
-                (p) -> {
+                (p, variante) -> {
                     ASType type = new ASType("tout");
-                    if (p.size() > 5) {
-                        if (!(p.get(5) instanceof ASType)) {
+                    if (variante == 1) {
+                        if (!(p.get(5) instanceof ASType _type)) {
                             throw new ErreurType("'" + p.get(5) + "' n'est pas un type valide");
                         }
-                        type = (ASType) p.get(5);
+                        type = _type;
                     }
-                    return new CreerSetter(new Var(((Token) p.get(1)).obtenirValeur()), new Var(((Token) p.get(3)).obtenirValeur()), type, executeurInstance);
+                    return new CreerSetter(
+                            new Var(((Token) p.get(1)).obtenirValeur()),
+                            new Var(((Token) p.get(3)).obtenirValeur()),
+                            type,
+                            executeurInstance
+                    );
                 });
 
-        ajouterProgramme("FIN SET",
-                new Ast<FinSet>() {
-                    @Override
-                    public FinSet apply(List<Object> p, Integer idxVariante) {
-                        return new FinSet(executeurInstance);
-                    }
-                });
+        ajouterProgramme("FIN SET", p -> new FinSet(executeurInstance));
 
         //<-----------------------------------Les fonctions----------------------------------------->//
 
@@ -337,181 +334,95 @@ public class ASAst extends AstGenerator {
 
         ajouterProgramme("RETOURNER~" +
                          "RETOURNER expression",
-                new Ast<Retourner>() {
-                    @Override
-                    public Retourner apply(List<Object> p, Integer idxVariante) {
-                        if (p.size() > 1 && p.get(1) instanceof CreerListe.Enumeration enumeration)
-                            p.set(1, enumeration.buildCreerListe());
-                        return new Retourner(p.size() > 1 ? (Expression<?>) p.get(1) : new ValeurConstante(new ASNul()));
-                    }
+                (p, variante) -> {
+                    if (variante == 1 && p.get(1) instanceof CreerListe.Enumeration enumeration)
+                        p.set(1, enumeration.buildCreerListe());
+                    return new Retourner(variante == 1 ? (Expression<?>) p.get(1) : new ValeurConstante(new ASNul()));
                 });
 
 
-        ajouterProgramme("FIN FONCTION", new Ast<FinFonction>() {
-            @Override
-            public FinFonction apply(List<Object> p, Integer idxVariante) {
-                return new FinFonction(executeurInstance);
-            }
-        });
+        ajouterProgramme("FIN FONCTION", p -> new FinFonction(executeurInstance));
 
 
         //<-----------------------------------Les blocs de code------------------------------------->
-        ajouterProgramme("SI expression~" +
-                         "SI expression ALORS",
-                new Ast<Si>() {
-                    @Override
-                    public Si apply(List<Object> p, Integer idxVariante) {
-                        return new Si((Expression<?>) p.get(1), executeurInstance);
-                    }
-                });
+        ajouterProgramme(
+                "SI expression~" +
+                "SI expression ALORS",
+                p -> new Si((Expression<?>) p.get(1), executeurInstance)
+        );
 
-        ajouterProgramme("SINON SI expression~" +
-                         "SINON SI expression ALORS",
-                new Ast<SinonSi>() {
-                    @Override
-                    public SinonSi apply(List<Object> p, Integer idxVariante) {
-                        return new SinonSi((Expression<?>) p.get(2), executeurInstance);
-                    }
-                });
+        ajouterProgramme(
+                "SINON SI expression~" +
+                "SINON SI expression ALORS",
+                p -> new SinonSi((Expression<?>) p.get(2), executeurInstance)
+        );
 
+        ajouterProgramme("SINON", p -> new Sinon(executeurInstance));
 
-        ajouterProgramme("SINON",
-                new Ast<Sinon>() {
-                    @Override
-                    public Sinon apply(List<Object> p, Integer idxVariante) {
-                        return new Sinon(executeurInstance);
-                    }
-                });
+        ajouterProgramme("FIN SI", p -> new FinSi(executeurInstance));
 
-        ajouterProgramme("FIN SI", new Ast<FinSi>() {
-            @Override
-            public FinSi apply(List<Object> p, Integer idxVariante) {
-                return new FinSi(executeurInstance);
-            }
-        });
-
-        ajouterProgramme("FAIRE",
-                new Ast<Programme>() {
-                    @Override
-                    public Programme apply(List<Object> p, Integer idxVariante) {
-                        return new Programme(executeurInstance) {
-                            @Override
-                            public NullType execute() {
-                                assert this.executeurInstance != null;
-                                this.executeurInstance.obtenirCoordRunTime().nouveauBloc("faire");
-                                return null;
-                            }
-
-                            @Override
-                            public Coordonnee prochaineCoord(Coordonnee coord, List<Token> ligne) {
-                                return coord.nouveauBloc("faire");
-                            }
-
-                            @Override
-                            public String toString() {
-                                return "BoucleFaire";
-                            }
-                        };
-                    }
-                });
+        ajouterProgramme("FAIRE", p -> new BoucleFaire(executeurInstance));
 
         ajouterProgramme("TANT_QUE expression",
-                new Ast<BoucleTantQue>() {
-                    @Override
-                    public BoucleTantQue apply(List<Object> p, Integer idxVariante) {
-                        return new BoucleTantQue((Expression<?>) p.get(1), executeurInstance);
-                    }
-                });
+                p -> new BoucleTantQue((Expression<?>) p.get(1), executeurInstance)
+        );
 
-        ajouterProgramme("REPETER expression", new Ast<BoucleRepeter>() {
-            @Override
-            public BoucleRepeter apply(List<Object> p, Integer idxVariante) {
-                return new BoucleRepeter((Expression<?>) p.get(1), executeurInstance);
-            }
-        });
+        ajouterProgramme("REPETER expression",
+                p -> new BoucleRepeter((Expression<?>) p.get(1), executeurInstance));
 
         ajouterProgramme("POUR expression DANS expression~"
                          + "POUR VAR expression DANS expression~"
                          + "POUR CONSTANTE expression DANS expression",
-                new Ast<BouclePour>() {
-                    @Override
-                    public BouclePour apply(List<Object> p, Integer idxVariante) {
-                        // boucle pour sans déclaration
-                        if (p.size() == 4) {
-                            return new BouclePour((Var) p.get(1), (Expression<?>) p.get(3), executeurInstance);
-                        } else {
-                            boolean estConst = ((Token) p.get(1)).obtenirNom().equals("CONSTANTE");
-                            return new BouclePour((Var) p.get(2), (Expression<?>) p.get(4), executeurInstance).setDeclarerVar(estConst, null);
-                        }
+                (p, variante) -> {
+                    // boucle pour sans déclaration
+                    if (variante == 0) {
+                        return new BouclePour((Var) p.get(1), (Expression<?>) p.get(3), executeurInstance);
+                    } else {
+                        boolean estConst = variante == 2;
+                        return new BouclePour(
+                                (Var) p.get(2),
+                                (Expression<?>) p.get(4),
+                                executeurInstance
+                        ).declarerVar(estConst, null);
                     }
                 });
 
-        ajouterProgramme("SORTIR", new Ast<Boucle.Sortir>() {
-            @Override
-            public Boucle.Sortir apply(List<Object> p, Integer idxVariante) {
-                return new Boucle.Sortir(executeurInstance);
-            }
-        });
+        ajouterProgramme("SORTIR", p -> new Boucle.Sortir(executeurInstance));
 
-        ajouterProgramme("CONTINUER", new Ast<Boucle.Continuer>() {
-            @Override
-            public Boucle.Continuer apply(List<Object> p, Integer idxVariante) {
-                return new Boucle.Continuer(executeurInstance);
-            }
-        });
+        ajouterProgramme("CONTINUER", p -> new Boucle.Continuer(executeurInstance));
 
         ajouterProgramme("FIN POUR~"
                          + "FIN TANT_QUE~"
                          + "FIN REPETER",
-                new Ast<FinBoucle>() {
-                    @Override
-                    public FinBoucle apply(List<Object> p, Integer idxVariante) {
-                        return new FinBoucle(((Token) p.get(1)).obtenirValeur(), executeurInstance);
-                    }
-                });
+                p -> new FinBoucle(((Token) p.get(1)).obtenirValeur(), executeurInstance)
+        );
 
-        ajouterProgramme("expression", new Ast<Programme>() {
-            @Override
-            public Programme apply(List<Object> p, Integer idxVariante) {
-                return Programme.evalExpression((Expression<?>) p.get(0), p.get(0).toString());
-            }
-        });
-        //setOrdreProgramme();
+        ajouterProgramme("expression",
+                p -> Programme.evalExpression((Expression<?>) p.get(0), p.get(0).toString())
+        );
     }
 
 
     protected void ajouterExpressions() {
 
-        ajouterExpression("NOM_VARIABLE", new Ast<Var>() {
-            @Override
-            public Var apply(List<Object> p, Integer idxVariante) {
-                return new Var(((Token) p.get(0)).obtenirValeur());
-            }
-        });
+        ajouterExpression("NOM_VARIABLE", p -> new Var(((Token) p.get(0)).obtenirValeur()));
 
         ajouterExpression("{nom_type_de_donnees}",
-                new Ast<ASType>() {
-                    @Override
-                    public ASType apply(List<Object> p, Integer idxVariante) {
-                        return new ASType(((Token) p.get(0)).obtenirValeur());
-                    }
-                });
+                p -> new ASType(((Token) p.get(0)).obtenirValeur())
+        );
 
         ajouterExpression("{type_de_donnees}",
-                new Ast<ValeurConstante>() {
-                    @Override
-                    public ValeurConstante apply(List<Object> p, Integer idxVariante) {
-                        Token valeur = (Token) p.get(0);
-                        String nom = valeur.obtenirNom();
-                        return new ValeurConstante(switch (nom) {
-                            case "ENTIER" -> new ASEntier(valeur);
-                            case "DECIMAL" -> new ASDecimal(valeur);
-                            case "TEXTE" -> new ASTexte(valeur);
-                            case "BOOLEEN" -> new ASBooleen(valeur);
-                            case "NUL" -> new ASNul();
-                            default -> throw new ErreurType("Type de donnee invalide");
-                        });
-                    }
+                p -> {
+                    Token valeur = (Token) p.get(0);
+                    String nom = valeur.obtenirNom();
+                    return new ValeurConstante(switch (nom) {
+                        case "ENTIER" -> new ASEntier(valeur);
+                        case "DECIMAL" -> new ASDecimal(valeur);
+                        case "TEXTE" -> new ASTexte(valeur);
+                        case "BOOLEEN" -> new ASBooleen(valeur);
+                        case "NUL" -> new ASNul();
+                        default -> throw new ErreurType("Type de donnee invalide");
+                    });
                 });
 
         //call fonction
@@ -557,60 +468,46 @@ public class ASAst extends AstGenerator {
         ajouterExpression("PARENT_OUV #expression PARENT_FERM~"
                           + "PARENT_OUV expression PARENT_FERM~"
                           + "PARENT_OUV PARENT_FERM",
-                new Ast<Expression<?>>() {
-                    @Override
-                    public Expression<?> apply(List<Object> p, Integer idxVariante) {
-                        if (p.size() == 2) {
-                            return new Expression.ExpressionVide();
-                        }
-                        return evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
-                    }
+                (p, variante) -> {
+                    if (variante == 2) return new Expression.ExpressionVide();
+                    return evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
                 });
-
-
-        //ajouterExpression("!expression PIPE #expression PIPE",
-        //        new Ast<UnaryOp>(4) {
-        //            @Override
-        //            public UnaryOp apply(List<Object> p) {
-        //                Expression<?> expr = AstGenerator.eval(new ArrayList<>(p.subList(1, p.size() - 1)), null).get(0);
-        //                return new UnaryOp(expr, UnaryOp.Operation.ABSOLUE);
-        //            }
-        //        });
 
         ajouterExpression("BRACES_OUV #expression TROIS_POINTS #expression BRACES_FERM~"
                           + "BRACES_OUV #expression TROIS_POINTS #expression BOND #expression BRACES_FERM~"
                           + "CROCHET_OUV #expression TROIS_POINTS #expression BOND #expression CROCHET_FERM~"
-                          + "CROCHET_OUV #expression TROIS_POINTS #expression CROCHET_FERM",
-                new Ast<Suite>() {
-                    /**
-                     * {1...10} -> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-                     * {"a"..."g"} -> {"a", "b", "c", "d", "e", "f", "g"}
-                     * {"A"..."G"} -> {"A", "B", "C", "D", "E", "F", "G"}
-                     */
-                    @Override
-                    public Suite apply(List<Object> p, Integer idxVariante) {
+                          + "CROCHET_OUV #expression TROIS_POINTS #exrpession CROCHET_FERM",
+                /*
+                 * [1...10] -> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+                 * ["a"..."g"] -> {"a", "b", "c", "d", "e", "f", "g"}
+                 * ["A"..."G"] -> {"A", "B", "C", "D", "E", "F", "G"}
+                 */
+                p -> {
+                    int idxTroisPoints = p.indexOf(p.stream()
+                            .filter(exp -> exp instanceof Token token && token.obtenirNom().equals("TROIS_POINTS"))
+                            .findFirst()
+                            .orElseThrow());
 
-                        int idxTroisPoints = p.indexOf(p.stream().filter(exp -> exp instanceof Token token
-                                                                                && token.obtenirNom().equals("TROIS_POINTS")).findFirst().orElseThrow());
-                        Token bondToken = (Token) p.stream()
-                                .filter(exp -> exp instanceof Token token && token.obtenirNom().equals("BOND"))
-                                .findFirst()
-                                .orElse(null);
+                    Token bondToken = (Token) p.stream()
+                            .filter(exp -> exp instanceof Token token && token.obtenirNom().equals("BOND"))
+                            .findFirst()
+                            .orElse(null);
 
-                        Expression<?> debut = evalOneExpr(new ArrayList<>(p.subList(1, idxTroisPoints)), null);
-                        Expression<?> fin, bond = null;
+                    System.out.println(p);
 
-                        // pas de bond, forme {debut...fin}
-                        if (bondToken == null) {
-                            fin = evalOneExpr(new ArrayList<>(p.subList(idxTroisPoints + 1, p.size() - 1)), null);
-                        } else {
-                            int idxBond = p.indexOf(bondToken);
-                            fin = evalOneExpr(new ArrayList<>(p.subList(idxTroisPoints + 1, idxBond)), null);
-                            bond = evalOneExpr(new ArrayList<>(p.subList(idxBond + 1, p.size() - 1)), null);
-                        }
+                    Expression<?> debut = evalOneExpr(new ArrayList<>(p.subList(1, idxTroisPoints)), null);
+                    Expression<?> fin, bond = null;
 
-                        return new Suite(debut, fin, bond);
+                    // pas de bond, forme {debut...fin}
+                    if (bondToken == null) {
+                        fin = evalOneExpr(new ArrayList<>(p.subList(idxTroisPoints + 1, p.size() - 1)), null);
+                    } else {
+                        int idxBond = p.indexOf(bondToken);
+                        fin = evalOneExpr(new ArrayList<>(p.subList(idxTroisPoints + 1, idxBond)), null);
+                        bond = evalOneExpr(new ArrayList<>(p.subList(idxBond + 1, p.size() - 1)), null);
                     }
+
+                    return new Suite(debut, fin, bond);
                 });
 
 
@@ -618,273 +515,166 @@ public class ASAst extends AstGenerator {
                           + "expression CROCHET_OUV #expression DEUX_POINTS #expression CROCHET_FERM~"
                           + "expression CROCHET_OUV #expression DEUX_POINTS CROCHET_FERM~"
                           + "expression CROCHET_OUV DEUX_POINTS #expression CROCHET_FERM~"
-                          + "expression CROCHET_OUV #expression CROCHET_FERM",
-                new Ast<CreerListe.SousSection>() {
-                    @Override
-                    public CreerListe.SousSection apply(List<Object> p, Integer idxVariante) {
+                          + "expression CROCHET_OUV #expression CROCHET_FERM", p -> {
+            Token deux_pointsToken = (Token) p.stream()
+                    .filter(exp -> exp instanceof Token token && token.obtenirNom().equals("DEUX_POINTS"))
+                    .findFirst()
+                    .orElse(null);
 
-                        Token deux_pointsToken = (Token) p.stream()
-                                .filter(exp -> exp instanceof Token token && token.obtenirNom().equals("DEUX_POINTS"))
-                                .findFirst()
-                                .orElse(null);
+            // pas de deux points, forme val[idxOrKey]
+            if (deux_pointsToken == null) {
+                Expression<?> idx = evalOneExpr(new ArrayList<>(p.subList(2, p.size() - 1)), null);
+                return new CreerListe.SousSection.IndexSection((Expression<?>) p.get(0), idx);
+            }
+            // deux points, forme val[debut:fin] ou val[:fin] ou val[debut:] ou val[:]
+            else {
+                Expression<?> debut = null, fin = null;
+                int idxDeuxPoints = p.indexOf(deux_pointsToken);
+                // si debut dans sous section
+                if (idxDeuxPoints > 2) {
+                    debut = evalOneExpr(new ArrayList<>(p.subList(2, idxDeuxPoints)), null);
+                }
+                // si fin dans sous section
+                if (idxDeuxPoints < p.size() - 2) {
+                    fin = evalOneExpr(new ArrayList<>(p.subList(idxDeuxPoints + 1, p.size() - 1)), null);
+                }
+                return new CreerListe.SousSection.CreerSousSection((Expression<?>) p.get(0), debut, fin);
+            }
+        });
 
-                        // pas de deux points, forme val[idxOrKey]
-                        if (deux_pointsToken == null) {
-                            Expression<?> idx = evalOneExpr(new ArrayList<>(p.subList(2, p.size() - 1)), null);
-                            return new CreerListe.SousSection.IndexSection((Expression<?>) p.get(0), idx);
-                        }
-                        // deux points, forme val[debut:fin] ou val[:fin] ou val[debut:] ou val[:]
-                        else {
-                            Expression<?> debut = null, fin = null;
-                            int idxDeuxPoints = p.indexOf(deux_pointsToken);
-                            // si debut dans sous section
-                            if (idxDeuxPoints > 2) {
-                                debut = evalOneExpr(new ArrayList<>(p.subList(2, idxDeuxPoints)), null);
-                            }
-                            // si fin dans sous section
-                            if (idxDeuxPoints < p.size() - 2) {
-                                fin = evalOneExpr(new ArrayList<>(p.subList(idxDeuxPoints + 1, p.size() - 1)), null);
-                            }
-                            return new CreerListe.SousSection.CreerSousSection((Expression<?>) p.get(0), debut, fin);
-                        }
-                    }
-                });
         ajouterExpression("BRACES_OUV BRACES_FERM~"
                           + "BRACES_OUV #expression BRACES_FERM~"
                           + "CROCHET_OUV CROCHET_FERM~"
                           + "!expression CROCHET_OUV CROCHET_FERM~"
                           + "!expression CROCHET_OUV #expression CROCHET_FERM",
-                new Ast<CreerListe>() {
-                    @Override
-                    public CreerListe apply(List<Object> p, Integer idxVariante) {
-                        if (p.size() < 3) return new CreerListe();
-                        Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
-                        if (contenu instanceof CreerListe.Enumeration enumeration)
-                            return enumeration.buildCreerListe();
-                        return new CreerListe(contenu);
-                    }
+                (p, variante) -> {
+                    if (variante != 1 && variante != 4) return new CreerListe();
+                    Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
+                    if (contenu instanceof CreerListe.Enumeration enumeration)
+                        return enumeration.buildCreerListe();
+                    return new CreerListe(contenu);
                 });
 
         ajouterExpression("expression PLUS PLUS~"
                           + "expression MOINS MOINS",
-                new Ast<Incrementer>() {
-                    @Override
-                    public Incrementer apply(List<Object> p, Integer idxVariante) {
-                        final byte signe;
-                        if (((Token) p.get(1)).obtenirNom().equals("MOINS")) signe = -1;
-                        else signe = 1;
-                        return new Incrementer((Expression<?>) p.get(0), signe);
-                    }
+                p -> {
+                    final byte signe;
+                    if (((Token) p.get(1)).obtenirNom().equals("MOINS")) signe = -1;
+                    else signe = 1;
+                    return new Incrementer((Expression<?>) p.get(0), signe);
                 });
 
 
         ajouterExpression("!expression MOINS expression",
-                new Ast<UnaryOp>() {
-                    @Override
-                    public UnaryOp apply(List<Object> p, Integer idxVariante) {
-                        return new UnaryOp((Expression<?>) p.get(1), UnaryOp.Operation.NEGATION);
-                    }
-                });
+                p -> new UnaryOp((Expression<?>) p.get(1), UnaryOp.Operation.NEGATION));
 
         ajouterExpression("!expression PLUS expression",
-                new Ast<UnaryOp>() {
-                    @Override
-                    public UnaryOp apply(List<Object> p, Integer idxVariante) {
-                        return new UnaryOp((Expression<?>) p.get(1), UnaryOp.Operation.PLUS);
-                    }
-                });
+                p -> new UnaryOp((Expression<?>) p.get(1), UnaryOp.Operation.PLUS));
 
 
-        ajouterExpression("expression MOD expression", new Ast<BinOp>() {
-            @Override
-            public BinOp apply(List<Object> p, Integer idxVariante) {
-                return new BinOp((Expression<?>) p.get(0), BinOp.Operation.MOD, (Expression<?>) p.get(2));
-            }
-        });
+        ajouterExpression("expression MOD expression",
+                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.MOD, (Expression<?>) p.get(2)));
 
 
-        ajouterExpression("expression POW expression", new Ast<BinOp>() {
-            @Override
-            public BinOp apply(List<Object> p, Integer idxVariante) {
-                return new BinOp((Expression<?>) p.get(0), BinOp.Operation.POW, (Expression<?>) p.get(2));
-            }
-        });
+        ajouterExpression("expression POW expression",
+                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.POW, (Expression<?>) p.get(2)));
 
 
-        ajouterExpression("expression MUL expression", new Ast<BinOp>() {
-            @Override
-            public BinOp apply(List<Object> p, Integer idxVariante) {
-                return new BinOp((Expression<?>) p.get(0), BinOp.Operation.MUL, (Expression<?>) p.get(2));
-            }
-        });
+        ajouterExpression("expression MUL expression",
+                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.MUL, (Expression<?>) p.get(2)));
 
 
-        ajouterExpression("expression DIV expression", new Ast<BinOp>() {
-            @Override
-            public BinOp apply(List<Object> p, Integer idxVariante) {
-                return new BinOp((Expression<?>) p.get(0), BinOp.Operation.DIV, (Expression<?>) p.get(2));
-            }
-        });
+        ajouterExpression("expression DIV expression",
+                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.DIV, (Expression<?>) p.get(2)));
 
 
-        ajouterExpression("expression DIV_ENTIERE expression", new Ast<BinOp>() {
-            @Override
-            public BinOp apply(List<Object> p, Integer idxVariante) {
-                return new BinOp((Expression<?>) p.get(0), BinOp.Operation.DIV_ENTIERE, (Expression<?>) p.get(2));
-            }
-        });
+        ajouterExpression("expression DIV_ENTIERE expression",
+                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.DIV_ENTIERE, (Expression<?>) p.get(2)));
 
 
-        ajouterExpression("expression PLUS expression", new Ast<BinOp>() {
-            @Override
-            public BinOp apply(List<Object> p, Integer idxVariante) {
-                return new BinOp((Expression<?>) p.get(0), BinOp.Operation.PLUS, (Expression<?>) p.get(2));
-            }
-        });
+        ajouterExpression("expression PLUS expression",
+                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.PLUS, (Expression<?>) p.get(2)));
 
-        ajouterExpression("expression MOINS expression", new Ast<BinOp>() {
-            @Override
-            public BinOp apply(List<Object> p, Integer idxVariante) {
-                return new BinOp((Expression<?>) p.get(0), BinOp.Operation.MOINS, (Expression<?>) p.get(2));
-            }
-        });
+        ajouterExpression("expression MOINS expression",
+                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.MOINS, (Expression<?>) p.get(2)));
 
         ajouterExpression("expression PIPE expression",
-                new Ast<Expression<?>>() {
-                    @Override
-                    public Expression<?> apply(List<Object> p, Integer idxVariante) {
-                        if (!(p.get(0) instanceof ASType typeG && p.get(2) instanceof ASType typeD)) {
-                            //String nom;
-                            //if (p.get(0) instanceof Var) {
-                            //    nom = ((Var) p.get(0)).getNom();
-                            //} else if (p.get(2) instanceof Var) {
-                            //    nom = ((Var) p.get(2)).getNom();
-                            //} else {
-                            //    nom = p.get(0) instanceof Type ? ((Expression<?>) p.get(2)).eval().toString() : ((Expression<?>) p.get(0)).eval().toString();
-                            //}
-
-                            return new BinOp((Expression<?>) p.get(0), BinOp.Operation.PIPE, (Expression<?>) p.get(2));
-
-                            //throw new ErreurType("Le symbole | doit s\u00E9parer deux types valides " +
-                            //        "('" + nom + "' n'est pas un type valide)");
-                        }
-                        typeG.union(typeD);
-                        return typeG;
+                p -> {
+                    if (!(p.get(0) instanceof ASType typeG && p.get(2) instanceof ASType typeD)) {
+                        return new BinOp((Expression<?>) p.get(0), BinOp.Operation.PIPE, (Expression<?>) p.get(2));
                     }
+                    typeG.union(typeD);
+                    return typeG;
                 });
 
         ajouterExpression("expression DANS expression~" +
-                          "expression PAS DANS expression", new Ast<BinComp>() {
-            @Override
-            public BinComp apply(List<Object> p, Integer idxVariante) {
-                return p.size() == 3 ?
+                          "expression PAS DANS expression",
+                (p, variante) -> variante == 1 ?
                         new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.DANS, (Expression<?>) p.get(2))
                         :
-                        new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.PAS_DANS, (Expression<?>) p.get(3));
-            }
-        });
+                        new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.PAS_DANS, (Expression<?>) p.get(3)));
 
 
-        ajouterExpression("expression {comparaison} expression", new Ast<BinComp>() {
-            @Override
-            public BinComp apply(List<Object> p, Integer idxVariante) {
-                return new BinComp(
+        ajouterExpression("expression {comparaison} expression",
+                p -> new BinComp(
                         (Expression<?>) p.get(0),
                         BinComp.Comparateur.valueOf(((Token) p.get(1)).obtenirNom()),
-                        (Expression<?>) p.get(2));
-            }
-        });
+                        (Expression<?>) p.get(2))
+        );
 
 
         ajouterExpression("expression {porte_logique} expression",
-                new Ast<BoolOp>() {
-                    @Override
-                    public BoolOp apply(List<Object> p, Integer idxVariante) {
-                        return new BoolOp(
-                                (Expression<?>) p.get(0),
-                                BoolOp.Operateur.valueOf(((Token) p.get(1)).obtenirNom()),
-                                (Expression<?>) p.get(2));
-                    }
-                });
+                p -> new BoolOp(
+                        (Expression<?>) p.get(0),
+                        BoolOp.Operateur.valueOf(((Token) p.get(1)).obtenirNom()),
+                        (Expression<?>) p.get(2)));
 
         ajouterExpression("PAS expression",
-                new Ast<BoolOp>() {
-                    @Override
-                    public BoolOp apply(List<Object> p, Integer idxVariante) {
-                        return new BoolOp((Expression<?>) p.get(1), BoolOp.Operateur.PAS, null);
-                    }
-                });
+                p -> new BoolOp((Expression<?>) p.get(1), BoolOp.Operateur.PAS, null));
 
         ajouterExpression("expression SI expression SINON expression",
-                new Ast<Ternary>() {
-                    @Override
-                    public Ternary apply(List<Object> p, Integer idxVariante) {
-                        return new Ternary((Expression<?>) p.get(2), (Expression<?>) p.get(0), (Expression<?>) p.get(4));
-                    }
-                });
+                p -> new Ternary((Expression<?>) p.get(2), (Expression<?>) p.get(0), (Expression<?>) p.get(4)));
 
         ajouterExpression("expression DEUX_POINTS expression",
-                new Ast<Paire>() {
-                    @Override
-                    public Paire apply(List<Object> p, Integer idxVariante) {
-                        return new Paire((Expression<?>) p.get(0), (Expression<?>) p.get(2));
-                    }
-                });
+                p -> new Paire((Expression<?>) p.get(0), (Expression<?>) p.get(2)));
 
         ajouterExpression("expression VIRGULE expression~",
-                new Ast<CreerListe.Enumeration>() {
-                    @Override
-                    public CreerListe.Enumeration apply(List<Object> p, Integer idxVariante) {
-                        if (p.size() == 2) {
-                            if (p.get(0) instanceof CreerListe.Enumeration enumeration)
-                                return enumeration;
-                            else
-                                return new CreerListe.Enumeration((Expression<?>) p.get(0));
-                        }
-
-                        Expression<?> valeur = (Expression<?>) p.get(2);
-                        if (p.get(2) instanceof CreerListe.Enumeration enumeration) {
-                            valeur = enumeration.buildCreerListe();
-                        }
-                        if (p.get(0) instanceof CreerListe.Enumeration enumeration) {
-                            enumeration.add(valeur);
+                p -> {
+                    if (p.size() == 2) {
+                        if (p.get(0) instanceof CreerListe.Enumeration enumeration)
                             return enumeration;
-                        }
-
-                        return new CreerListe.Enumeration((Expression<?>) p.get(0), valeur);
+                        else
+                            return new CreerListe.Enumeration((Expression<?>) p.get(0));
                     }
+
+                    Expression<?> valeur = (Expression<?>) p.get(2);
+                    if (p.get(2) instanceof CreerListe.Enumeration enumeration) {
+                        valeur = enumeration.buildCreerListe();
+                    }
+                    if (p.get(0) instanceof CreerListe.Enumeration enumeration) {
+                        enumeration.add(valeur);
+                        return enumeration;
+                    }
+
+                    return new CreerListe.Enumeration((Expression<?>) p.get(0), valeur);
                 });
 
         ajouterExpression("expression expression",
-                new Ast<Expression<?>>() {
-                    @Override
-                    public Expression<?> apply(List<Object> p, Integer idxVariante) {
-                        Hashtable<String, Ast<?>> astParams = new Hashtable<>();
+                p -> {
+                    Expression<?> contenu;
+                    CreerListe args;
+                    if (p.size() == 2 && !(p.get(1) instanceof Expression.ExpressionVide)) {
+                        contenu = (Expression<?>) p.get(1);
 
-                        //astParams.put("expression DEUX_POINTS expression", new Ast<Argument>(8){
-                        //    @Override
-                        //    public Argument apply(List<Object> p) {
-                        //        assert p.get(0) instanceof Var : "gauche assignement doit être Var (source: appelFonction dans ASAst)";
-                        //
-                        //        return new Argument((Var) p.get(0), (Expression<?>) p.get(2), null);
-                        //    }
-                        //});
-                        Expression<?> contenu;
-                        CreerListe args;
-                        if (p.size() == 2 && !(p.get(1) instanceof Expression.ExpressionVide)) {
-                            contenu = (Expression<?>) p.get(1);
-
-                            args = contenu instanceof CreerListe.Enumeration enumeration ?
-                                    enumeration.buildCreerListe() :
-                                    new CreerListe(contenu);
-                        } else {
-                            args = new CreerListe();
-                        }
-
-                        return new AppelFonc((Expression<?>) p.get(0), args);
+                        args = contenu instanceof CreerListe.Enumeration enumeration ?
+                                enumeration.buildCreerListe() :
+                                new CreerListe(contenu);
+                    } else {
+                        args = new CreerListe();
                     }
+
+                    return new AppelFonc((Expression<?>) p.get(0), args);
                 });
-        //setOrdreExpression();
     }
 }
 

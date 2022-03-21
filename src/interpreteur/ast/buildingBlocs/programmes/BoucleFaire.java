@@ -1,10 +1,15 @@
 package interpreteur.ast.buildingBlocs.programmes;
 
+import interpreteur.ast.buildingBlocs.Programme;
+import interpreteur.executeur.Coordonnee;
 import interpreteur.executeur.Executeur;
+import interpreteur.tokens.Token;
 
-public class BoucleFaire extends Boucle {
-    protected BoucleFaire(String nomBoucle, Executeur executeurInstance) {
-        super(nomBoucle, executeurInstance);
+import java.util.List;
+
+public class BoucleFaire extends Programme {
+    public BoucleFaire(Executeur executeurInstance) {
+        super(executeurInstance);
     }
 
     @Override
@@ -14,8 +19,15 @@ public class BoucleFaire extends Boucle {
         return null;
     }
 
-    @Override
-    public void sortir() {
 
+    @Override
+    public Coordonnee prochaineCoord(Coordonnee coord, List<Token> ligne) {
+        return coord.nouveauBloc("faire");
+    }
+
+
+    @Override
+    public String toString() {
+        return "BoucleFaire";
     }
 }
