@@ -3,9 +3,9 @@ package language;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-import java.util.IllegalFormatConversionException;
-import java.util.MissingFormatArgumentException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 public final class Translator {
     private static final String json = """
@@ -33,6 +33,48 @@ public final class Translator {
                 }
             }
             """;
+    /**
+     *
+     * @param codeISO639_1 Code ISO 639-1 correspondant au langage désiré
+     * @return Un JSON du langage
+     */
+    public JSONObject loadLanguage(String codeISO639_1)
+    {
+        // Endroit où se trouve le fichier JSON correspondant au langage
+        String path = "language/languages/"+ codeISO639_1 +".json";
+        return loadJSON(path);
+
+    }
+
+    /**
+     *
+     * @param path Le chemin du fichier à partir du dossier '{@code src}'
+     * @return Un objet JSON
+     */
+    public JSONObject loadJSON(String path)
+    {
+        StringBuilder fileContent = new StringBuilder();
+        try {
+
+            var file = new File(Objects.requireNonNull(getClass().getClassLoader()
+                    .getResource(path)).getFile());
+
+            Scanner in = new Scanner(file);
+            while(in.hasNextLine())
+                fileContent.append(in.nextLine());
+
+            in.close();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Le fichier n'a pas été trouvé !");
+
+        }
+        return (!fileContent.toString().equals("") ?
+                // Si le fichier a bien été trouvé
+                new JSONObject(fileContent.toString()):
+                // Sinon
+                null);
+    }
 
     /**
      * Json dans cette variable
@@ -51,7 +93,7 @@ public final class Translator {
      */
     public String translate(String path, Object... params) {
         String[] tokens = path.trim().split("\\.");
-        JSONObject head = jsonFile;
+        JSONObject head = loadLanguage("en");
         try {
             for (int i = 0; i < tokens.length - 1; i++) {
                 head = head.getJSONObject(tokens[i]);
@@ -76,7 +118,11 @@ public final class Translator {
 
     public static void main(String[] args) {
         var test = new Translator();
-        System.out.println(test.translate(" function.call.nb-parameter.to-big "));
+        System.out.println(test.loadLanguage("en").toString(4));
+        System.out.println();
+        System.err.println(test.translate("error.type.function.call.nb-parameter.too-small", "test", 4, "q"));
+        System.out.println(String.format("Hello %s", "yo", "blab"));
+
     }
 }
 

@@ -1,0 +1,62 @@
+{
+  "error": {
+    "type": {
+      "unknown-type": "Ce type est inconnu",
+      "number": {
+        "too-big": "L'entier est trop gros",
+        "too-small": "L'entier est trop petit"
+      },
+      "decimal": {
+        "too-big": "error.type.decimal.too-big",
+        "too-small": "error.type.decimal.too-small"
+      },
+      "text": {
+        "too-big": "error.type.text.too-big",
+        "out-of-bound": "error.type.text.out-of-bound"
+      },
+      "list": {
+        "out-of-bound": "error.type.list.out-of-bound",
+        "wrong-key": "error.type.list.wrong-key"
+      },
+      "function": {
+        "call": {
+          "nb-parameter": {
+            "too-small": "Function '%s' is missing arguments. (expected %d, got %d)",
+            "too-big": "error.type.function.call.nb-parameter.too-big"
+          },
+          "call-type": "error.type.function.call.nb-parameter.call-type"
+        }
+      }
+    },
+    "logic": {
+      "comparison": {
+        "cant-be-compared": "error.logic.comparison.cant-be-compared"
+      },
+      "loops": {
+        "infinite-loop" : "..."
+      },
+      "arithmetic": {
+
+        "zero": {
+          "division": "error.logic.arithmetic.zero.division",
+          "modulo": "error.logic.arithmetic.zero.modulo",
+          "power-of-zero": "error.logic.arithmetic.zero.power-of-zero"
+        }
+      },
+      "unknown-reference": {
+        "unknown-var": "error.logic.unknown-reference.unknown-var",
+        "unknown-function": "error.logic.unknown-reference.unknown-function"
+      }
+    },
+    "syntax": {
+      "never-closed": {
+        "text": "error.syntax.never-closed.text",
+        "math": "error.syntax.never-closed.math"
+      }
+    }
+  },
+  "warnings": {
+
+  }
+
+}
