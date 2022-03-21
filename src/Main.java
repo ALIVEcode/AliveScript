@@ -3,8 +3,10 @@ import interpreteur.executeur.Executeur;
 public class Main {
 
     static final String[] CODE = """
-            
-            afficher "hello world!"
+            fonction allo(x, y, z)
+                afficher(x + y + z)
+            fin fonction
+            allo(1, 2, 3)
             """.split("\n");
 
 

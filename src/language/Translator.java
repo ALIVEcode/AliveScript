@@ -34,7 +34,6 @@ public final class Translator {
             }
             """;
     /**
-     *
      * @param codeISO639_1 Code ISO 639-1 correspondant au langage désiré
      * @return Un JSON du langage
      */
@@ -47,12 +46,10 @@ public final class Translator {
     }
 
     /**
-     *
      * @param path Le chemin du fichier à partir du dossier '{@code src}'
      * @return Un objet JSON
      */
-    public JSONObject loadJSON(String path)
-    {
+    public JSONObject loadJSON(String path) {
         StringBuilder fileContent = new StringBuilder();
         try {
 
@@ -60,7 +57,7 @@ public final class Translator {
                     .getResource(path)).getFile());
 
             Scanner in = new Scanner(file);
-            while(in.hasNextLine())
+            while (in.hasNextLine())
                 fileContent.append(in.nextLine());
 
             in.close();
@@ -71,7 +68,7 @@ public final class Translator {
         }
         return (!fileContent.toString().equals("") ?
                 // Si le fichier a bien été trouvé
-                new JSONObject(fileContent.toString()):
+                new JSONObject(fileContent.toString()) :
                 // Sinon
                 null);
     }
@@ -106,12 +103,33 @@ public final class Translator {
 
     private String formatTranslated(String toFormat, Object... params) {
         try {
-            return String.format(toFormat, params);
+            String formattedString = String.format(toFormat, params);
+            int placeholderCounter = 0;
+            for (String car : toFormat.split("")) {
+                if ("%".equals(car)) {
+                    placeholderCounter++;
+                }
+            }
+            if (params.length == placeholderCounter) {
+                return formattedString;
+            } else {
+                return String.format("""
+                                Too many parameters given to the ErrorMessage:
+                                ErrorMessage: '%s'
+                                Parameters: %s""",
+                        toFormat, Arrays.toString(params));
+            }
         } catch (MissingFormatArgumentException err) {
-            return String.format("Missing information for the ErrorMessage:\nErrorMessage: '%s'\nParameters: %s",
+            return String.format("""
+                            Missing information for the ErrorMessage:
+                            ErrorMessage: '%s'
+                            Parameters: %s""",
                     toFormat, Arrays.toString(params));
         } catch (IllegalFormatConversionException err) {
-            return String.format("Wrong type in the ErrorMessage's parameters:\nErrorMessage: '%s'\nParameters: %s",
+            return String.format("""
+                            Wrong type in the ErrorMessage's parameters:
+                            ErrorMessage: '%s'
+                            Parameters: %s""",
                     toFormat, Arrays.toString(params));
         }
     }
@@ -120,9 +138,7 @@ public final class Translator {
         var test = new Translator();
         System.out.println(test.loadLanguage("en").toString(4));
         System.out.println();
-        System.err.println(test.translate("error.type.function.call.nb-parameter.too-small", "test", 4, "q"));
-        System.out.println(String.format("Hello %s", "yo", "blab"));
-
+        System.err.println(test.translate("error.type.function.call.nb-parameter.too-small", "test", 4, "e"));
     }
 }
 
