@@ -1,0 +1,298 @@
+ErreurFermeture
+            throw new ASErreur.ErreurFermeture(blocActuel,
+                "fin " + nomBoucle, "fin " + blocActuel);
+
+            throw new ASErreur.ErreurFermeture(coord.getScope(), "fin fonction");
+
+            throw new ASErreur.ErreurFermeture(coord.getScope(), "fin get");
+
+            throw new ASErreur.ErreurFermeture(coord.getScope(), "fin set");
+
+            throw new ASErreur.ErreurFermeture(blocActuel, "fin si", "fin " + blocActuel);
+
+            throw new ErreurFermeture("main", "");
+
+            throw new ErreurFermeture(scopeActuel);
+
+            throw new ErreurFermeture(coordRunTime.getBlocActuel());
+
+            throw new ErreurFermeture(ASFonctionManager.obtenirStructure());
+
+ErreurContexteAbsent
+
+            throw new ASErreur.ErreurContexteAbsent("Il n'y a pas de contexte");
+
+ErreurSyntaxe
+
+            throw new ErreurSyntaxe("Les noms de modules ne doivent pas \u00EAtre \u00E9crits avec des \" \" ou des ' '");
+
+            throw new ErreurSyntaxe("Une d\u00E9claration de fonction doit commencer par une variable, pas par " + p.get(0));
+
+            throw new ASErreur.ErreurSyntaxe("Syntaxe invalide. Est-ce qu'il manquerait un { au d\u00E9but et un } \u00E0 la fin de la liste?");
+
+            throw new ASErreur.ErreurSyntaxe("Il est impossible d'assigner \u00E0 autre chose qu'une variable");
+
+            throw new ASErreur.ErreurSyntaxe("Il faut \u00EAtre dans une boucle pour pouvoir utiliser le mot clef 'continuer'");
+
+            throw new ASErreur.ErreurSyntaxe("Il faut \u00EAtre dans une boucle pour pouvoir utiliser le mot clef 'sortir'");
+
+            throw new ASErreur.ErreurSyntaxe("Il faut \u00EAtre dans une boucle pour pouvoir utiliser le mot clef 'continuer'");
+
+            throw new ASErreur.ErreurSyntaxe("Il faut \u00EAtre dans une boucle pour pouvoir utiliser le mot clef 'sortir'");
+
+            throw new ASErreur.ErreurSyntaxe("Il est impossible d'assigner \u00E0 autre chose qu'une variable");
+
+            throw new ASErreur.ErreurSyntaxe("Un bloc 'sinon si' doit obligatoirement suivre un bloc 'si' ou un autre bloc 'sinon si'");
+
+
+            throw new ASErreur.ErreurSyntaxe(-parentheses + " parenth\u00E8se" + pluriel + " ouvrante" + pluriel + " '(' manquante" + pluriel);
+
+            throw new ASErreur.ErreurSyntaxe(parentheses + " parenth\u00E8se" + pluriel + " fermante" + pluriel + " ')' manquante" + pluriel);
+
+            throw new ASErreur.ErreurSyntaxe(-braces + " accolade" + pluriel + " ouvrante" + pluriel + " '{' manquante" + pluriel);
+
+            throw new ASErreur.ErreurSyntaxe(braces + " accolade" + pluriel + " fermante" + pluriel + " '}' manquante" + pluriel);
+
+            throw new ASErreur.ErreurSyntaxe(-crochets + " crochet" + pluriel + " ouvrant" + pluriel + " '[' manquant" + pluriel);
+
+            throw new ASErreur.ErreurSyntaxe(crochets + " crochet" + pluriel + " fermant" + pluriel + " ']' manquant" + pluriel);
+
+            throw new ASErreur.ErreurSyntaxe("Erreur ligne 106 dans AstGenerator");
+
+            throw new ASErreur.ErreurSyntaxe("Expression ill\u00E9gale: " + String.join(" ", Arrays.stream(token).map(Token::obtenirValeur).toArray(String[]::new)));
+
+            throw new ASErreur.ErreurSyntaxe("Syntaxe invalide: " + listToken.stream().map(Token::obtenirValeur).collect(Collectors.toList()));
+
+            throw new ASErreur.ErreurSyntaxe("Syntaxe invalide. Est-ce qu'il manque une virgule entre deux \u00E9l\u00E9ments?");
+
+ErreurModule
+
+            throw new ASErreur.ErreurModule("Le module '" + nomModule + "' ne contient pas les fonctions ou les constantes: "
+                + fctEtConstPasDansModule.toString()
+                .replaceAll("\\[|]", ""));
+
+ErreurAppelFonction
+
+            throw new ASErreur.ErreurAppelFonction(this.nom, "Le nombre de param\u00E8tres donn\u00E9s est '" + paramsValeurs.size() +
+                "' alors que la fonction en prend '" + this.parametres.length + "'");
+
+            throw new ASErreur.ErreurAppelFonction(this.nom, "Le nombre de param\u00E8tres donn\u00E9s est '" + paramsValeurs.size() +
+                "' alors que la fonction en prend entre '" + nonDefaultParams + "' et '" + this.parametres.length + "'");
+
+            throw new ASErreur.ErreurAppelFonction("l'argument: " + parametre.getNom() + " pass\u00E9 en param\u00E8tre" +
+                " ne correspond \u00E0 aucun param\u00E8tre d\u00E9fini dans la fonction '" + this.nom + "'");
+
+            throw new ASErreur.ErreurAppelFonction(this.nom, "l'argument: " + param.getNom() + " n'a pas reçu de valeur" +
+                "et ne poss\u00E8de aucune valeur par d\u00E9faut");
+
+            throw new ASErreur.ErreurAppelFonction(this.nom, "l'argument: " + param.getNom() + " n'a pas reçu de valeur" +
+                "et ne poss\u00E8de aucune valeur par d\u00E9faut");
+
+            throw new ASErreur.ErreurAppelFonction(this.nom, "Le nombre de param\u00E8tres donn\u00E9s est '" + paramsValeurs.size() +
+                                                   "' alors que la fonction en prend '" + this.parametres.length + "'");
+
+            throw new ASErreur.ErreurAppelFonction(this.nom, "Le nombre de param\u00E8tres donn\u00E9s est '" + paramsValeurs.size() +
+                                                   "' alors que la fonction en prend entre '" + nonDefaultParams + "' et '" + this.parametres.length + "'");
+
+            throw new ASErreur.ErreurAppelFonction(fonction.nom, "L'argument: " + param.getNom() + " n'a pas reçu de valeur" +
+                                                   "et ne poss\u00E8de aucune valeur par d\u00E9faut.");
+
+            throw new ASErreur.ErreurAppelFonction("Un \u00E9l\u00E9ment de type '" + fonction.obtenirNomType() + "' ne peut pas \u00EAtre appel\u00E9");
+
+ErreurInputOutput
+
+            throw new ErreurInputOutput("Une variable est attendue apr\u00E8s la commande 'lire', mais '" +
+                                        p.get(idxVar).getClass().getSimpleName() + "' a \u00E9t\u00E9 trouv\u00E9.");
+
+            throw new ASErreur.ErreurInputOutput("La fonction valeursColonne() prend en param\u00E8tre le caract\u00E8re \"x\" ou \"y\" seulement.");
+
+            throw new ASErreur.ErreurInputOutput("Un \u00E9l\u00E9ment de type 'fonctionType' est attendue " +
+                                                 "apr\u00E8s le deux points ':' dans la commande 'lire', mais '" +
+                                                  exprEval.obtenirNomType() + "' a \u00E9t\u00E9 trouv\u00E9.");
+
+ErreurAssignement
+
+            throw new ErreurAssignement("Impossible de modifier la valeur d'une constante");
+
+            throw new ErreurAssignement("Impossible de modifier la valeur d'une variable durant sa d\u00E9claration");
+
+            throw new ASErreur.ErreurAssignement("Les constantes ne peuvent pas avoir de setter");
+
+            throw new ASErreur.ErreurAssignement("Les constantes ne peuvent pas avoir de getter");
+
+            throw new ASErreur.ErreurAssignement("Il est impossible de changer la valeur d'une constante");
+
+            throw new ASErreur.ErreurAssignement("La variable '" + nom +
+                                                 "' est de type *" +
+                                                 obtenirNomType() +
+                                                 "*. Elle ne peut pas prendre une valeur de type *" +
+                                                 nouvelleValeur.obtenirNomType() +
+                                                 "*.");
+
+            throw new ASErreur.ErreurAssignement("Cette variable est en lecture seule: elle ne peut pas \u00EAtre modifi\u00E9e");
+
+            throw new ASErreur.ErreurAssignement("La variable '" + nom + "' est utilis\u00E9e avant d'\u00EAtre d\u00E9clar\u00E9e");
+
+            throw new ASErreur.ErreurAssignement("La variable '" + nom + "' est utilis\u00E9e avant d'\u00EAtre d\u00E9clar\u00E9e");
+
+            throw new ASErreur.ErreurAssignement("Il est impossible de mettre plusieurs incr\u00E9mentations en chaine");
+
+            throw new ASErreur.ErreurAssignement("un interval de valeur doit \u00EAtre assign\u00E9 \u00E0 une liste");
+
+            throw new ASErreur.ErreurAssignement("La variable '" + var.getNom() + "' est utilis\u00E9e avant d'\u00EAtre d\u00E9clar\u00E9e");
+
+            throw new ASErreur.ErreurAssignement("La variable '" + var.getNom() + "' a d\u00E9j\u00E0 \u00E9t\u00E9 d\u00E9clar\u00E9e");
+
+ErreurType
+
+            throw new ErreurType("Dans une d\u00E9claration de " +
+                                 (estConst ? "constante" : "variable") +
+                                 ", les deux points doivent \u00EAtre suivi d'un type valide");
+
+            throw new ErreurType("Dans une d\u00E9claration de " +
+                                 (estConst ? "constante" : "variable") +
+                                 ", les deux points doivent \u00EAtre suivi d'un type valide");
+
+            throw new ErreurType("Il est impossible de pr\u00E9ciser le type d'une variable ailleurs que dans sa d\u00E9claration");
+
+            throw new ErreurType("'" + p.get(4) + "' n'est pas un type valide");
+
+            throw new ErreurType("'" + p.get(5) + "' n'est pas un type valide");
+
+            throw new ErreurType("Le symbole ':' doit \u00EAtre suivi d'un type valide ('" + nom + "' n'est pas un type valide)");
+
+            throw new ErreurType("Type de donnee invalide");
+
+            throw new ASErreur.ErreurType("Le param\u00E8tres '" + parametre.getNom() + "' est de type '" + parametre.getType().nom() +
+                                           "', mais l'argument pass\u00E9 est de type '" + ((ASObjet<?>) paramsValeurs.get(i)).obtenirNomType() + "'.");
+
+            throw new ASErreur.ErreurType("Il est impossible d'\u00E9valuer le type '" + this.nom + "'");
+
+            throw new ASErreur.ErreurType("La valeur " + valeur + " ne peut pas \u00EAtre convertie en bool\u00E9en.");
+
+            throw new ASErreur.ErreurType("La valeur " + valeur + " ne peut pas \u00EAtre convertie en nombre d\u00E9cimal.");
+
+            throw new ASErreur.ErreurType("La valeur " + valeur + " ne peut pas \u00EAtre convertie en nombre entier.");
+
+            throw new ASErreur.ErreurType("Le param\u00E8tres '" + parametre.getNom() + "' est de type '" + parametre.getType().nom() +
+                                          "', mais l'argument pass\u00E9 est de type '" + ((ASObjet<?>) paramsValeurs.get(i)).obtenirNomType() + "'.");
+
+            throw new ASErreur.ErreurType("Le type retourner ' " + (asValeur == null ? "vide" : asValeur.obtenirNomType()) + " ' ne correspond pas "
+                                           + "au type de retour pr\u00E9cis\u00E9 dans la d\u00E9claration de la fonction ' " + fonction.typeRetour.nom() + " '.");
+
+            throw new ASErreur.ErreurType("Impossible de convertir " + txt + " en nombre entier ou d\u00E9cimal.");
+
+            throw new ASErreur.ErreurType("Impossible de convertir " + txt + " en nombre entier ou d\u00E9cimal.");
+
+            throw new ASErreur.ErreurType("La fonction ecartType prend une liste de nombre, mais la liste pass\u00E9e en param\u00E8tre n'est pas compos\u00E9e que de nombres.");
+
+            throw new ASErreur.ErreurType("La valeur doit \u00EAtre de type texte lorsque l'on recherche " +
+                                          "l'index d'un \u00E9l\u00E9ment de type texte");
+
+            throw new ASErreur.ErreurType("impossible de convertir '" + valeur + "' en nombre entier de base " + base);
+
+            throw new ASErreur.ErreurType("impossible de convertir '" + this.getParamsValeursDict().get("element").toString() + "' en nombre decimal");
+
+            throw new ASErreur.ErreurType("Impossible de convertir " + nb + " en nombre entier ou d\u00E9cimal.");
+
+            throw new ASErreur.ErreurType("Le parametre '" + var.getNom() + "' est de type '" + type.nom() +
+                                          "', mais la valeur par d\u00E9faut est de type '" + this.valeurParDefaut.obtenirNomType() + "'.");
+
+            throw new ASErreur.ErreurType("L'op\u00E9ration '" + nom + "' n'est pas d\u00E9finie pour " +
+                                          "un \u00E9l\u00E9ment de type '" + g.obtenirNomType() + "' " +
+                                          "et un \u00E9l\u00E9ment de type '" + d.obtenirNomType() + "'.");
+
+            throw new ASErreur.ErreurType("L'op\u00E9ration de coupe n'est pas d\u00E9finie pour " +
+                                          "un \u00E9l\u00E9ment de type '" + evalExpr.obtenirNomType() + "'.");
+
+            throw new ASErreur.ErreurType("L'op\u00E9ration d'index n'est pas d\u00E9finie pour " +
+                        "un \u00E9l\u00E9ment de type '" + evalExpr.obtenirNomType() + "'.");
+
+            throw new ASErreur.ErreurType("La clef d'une paire d'\u00E9l\u00E9ments doit \u00EAtre " +
+                    "un \u00E9l\u00E9ment de type texte");
+
+            throw new ASErreur.ErreurType("impossible de convertir '" + nb + "' en nombre decimal");
+
+            throw new ASErreur.ErreurType("L'assignement d'index ou de sous-section n'est pas d\u00E9finie pour " +
+                        "un \u00E9l\u00E9ment de type '" + valeurVariable.obtenirNomType() + "'.");
+
+            throw new ASErreur.ErreurType("Seuls les valeurs de type 'iterable' ('texte' et 'liste') sont accept\u00E0es dans les boucles pour");
+
+            throw new ASErreur.ErreurType("Le param\u00E8tres 'temps' est de type 'nombre'," +
+                    " mais l'argument pass\u00E9 est de type '" + this.valeur.eval().obtenirNomType() + "'.");
+
+ErreurClefDupliquee
+
+            throw new ASErreur.ErreurClefDupliquee("La clef " + nouvellePaire.clef() + " existe d\u00E9j\u00e0 dans le dictionnaire ou la liste");
+
+            throw new ASErreur.ErreurClefDupliquee("Il y a au moins une clef dupliqu\u00E9e dans le dictionnaire ou la liste");
+
+ErreurIndex
+
+            throw new ASErreur.ErreurIndex("l'index est trop grand");
+
+            throw new ASErreur.ErreurIndex("Une balise de d\u00E9but doit \u00EAtre un nombre entier");
+
+            throw new ASErreur.ErreurIndex("Une balise de fin doit \u00EAtre un nombre entier");
+
+            throw new ASErreur.ErreurIndex("Un index doit \u00EAtre un nombre entier");
+
+            throw new ASErreur.ErreurIndex("Un index doit \u00EAtre un nombre entier");
+
+            throw new ASErreur.ErreurIndex("L'index " + idx + " est hors de port\u00E9 (entre " + -(bound + 1) + " et " + bound + ")");
+
+ErreurVariableInconnue
+
+            throw new ASErreur.ErreurVariableInconnue("Impossible d'utiliser une variable comme valeur par défaut d'une fonction");
+
+            throw new ASErreur.ErreurVariableInconnue("La variable '" + nomVar + "' n'est pas d\u00E9clar\u00E9e dans ce scope.");
+
+            throw new ASErreur.ErreurVariableInconnue("La variable '" + this.nom + "' n'est pas d\u00E9clar\u00E9e dans ce scope.");
+
+            throw new ASErreur.ErreurVariableInconnue("La variable " + var.getNom() + " n'a pas \u00E9t\u00E9 initialis\u00E9e." +
+                    "\nAvez-vous oubli\u00E9 de mettre 'var' devant la d\u00E9claration de la variable?");
+
+            throw new ASErreur.ErreurVariableInconnue("La variable " + var.getNom() + " n'a pas \u00E9t\u00E9 initialis\u00E9e." +
+                        "\nAvez-vous oubli\u00E9 de mettre 'var' devant la d\u00E9claration de la variable?");
+
+ErreurComparaison
+
+            throw new ASErreur.ErreurComparaison("tous les \u00E9l\u00E9ments de la liste doivent être des nombres pour pouvoir obtenir le maximum");
+
+            throw new ASErreur.ErreurComparaison("tous les \u00E9l\u00E9ments de la liste doivent être des nombres pour pouvoir obtenir le minimum");
+
+            throw new ASErreur.ErreurComparaison("Il est impossible de comparer autre chose que des nombres");
+
+            throw new ASErreur.ErreurComparaison("L'op\u00E9rateur 'dans' ne s'applique que sur les \u00E9l\u00E9ments de type 'iterable'");
+
+ErreurFormatage
+
+            throw new ASErreur.ErreurFormatage("Le nombre de {} doit etre egal au nombre de valeur dans la liste");
+
+ErreurSuite
+
+            throw new ASErreur.ErreurSuite("Suite impossible : bond de 0");
+
+            throw new ASErreur.ErreurSuite("Suite impossible : la valeur de " +
+                    "d\u00E9but est plus grande que la valeur de fin et le bond est positif");
+
+            throw new ASErreur.ErreurSuite("Suite impossible : la valeur de " +
+                    "d\u00E9but est plus petite que la valeur de fin et le bond est n\u00E9gatif");
+
+            throw new ASErreur.ErreurSuite("Suite impossible : les suites ne peuvent \u00EAtre form\u00E9es " +
+                        "qu'avec des lettres.");
+
+            throw new ASErreur.ErreurSuite("Suite entre '" + debut.getValue() + "' et '" + fin.getValue() + "' impossible");
+
+ErreurEntierInvalide
+
+            throw new ASErreur.ErreurEntierInvalide("Les nombres entiers doivent avoir une valeur entre "
+                                                    + Integer.MIN_VALUE + " et " + Integer.MAX_VALUE);
+
+ErreurDivisionParZero
+
+            throw new ASErreur.ErreurDivisionParZero("Division par z\u00E9ro impossible");
+
+ErreurModuloZero
+
+            throw new ASErreur.ErreurModuloZero("Modulo par z\u00E9ro impossible");
