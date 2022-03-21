@@ -14,9 +14,14 @@ Welcome to the AliveScript Programming Language, where dreams come true in all s
 4. Execute the main function in src/Main.java
 5. Have fun with the language 🥳🍾
 
+## Now what?
+
+* Go see the [/docs](https://github.com/ALIVEcode/AliveScript/blob/bb82c689f288802a6f7b803d9b80d0c36871f3dd/docs) 
+folder to see all the documentation related to AliveScript!
+
 ## Folder Structure
 
-The workspace contains two folders by default, where:
+The workspace contains three folders by default, where:
 
 - `src`: the folder where alivescript code is written
 - `lib`: the folder where you can find the dependencies of alivescript

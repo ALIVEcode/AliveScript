@@ -3,8 +3,11 @@ import interpreteur.executeur.Executeur;
 public class Main {
 
     static final String[] CODE = """
-            
+            var a = 12
             afficher "hello world!"
+            afficher a
+            a = "salut"
+            afficher a
             """.split("\n");
 
 
