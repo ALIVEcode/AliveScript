@@ -8,10 +8,6 @@ import interpreteur.as.modules.core.ASModule;
 import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
 
-import java.util.Arrays;
-import java.util.stream.DoubleStream;
-import java.util.stream.Stream;
-
 
 /**
  * Module containing all methods related to artificial intelligence.
@@ -414,6 +410,7 @@ public class ModuleAI {
                         double b = ((Number) this.getValeurParam("b").getValue()).doubleValue();
                         double c = ((Number) this.getValeurParam("c").getValue()).doubleValue();
                         double d = ((Number) this.getValeurParam("d").getValue()).doubleValue();
+
                         executeurInstance.addData(new Data(Data.Id.CREER_REGRESSION)
                                 .addParam(a).addParam(b).addParam(c).addParam(d));
                         return new ASNul();
@@ -442,11 +439,26 @@ public class ModuleAI {
                 new ASFonctionModule("evaluer", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(
                                 ASTypeBuiltin.nombre.asType(), "x", null)
-                }, ASTypeBuiltin.nombre.asType()) {
+                }, ASTypeBuiltin.decimal.asType()) {
                     @Override
                     public ASObjet<?> executer() {
+                        //Converting the parameter into an AS object
                         double x = ((Number) this.getValeurParam("x").getValue()).doubleValue();
-                        return ASNombre.cast((Number) executeurInstance.getDataResponseOrAsk("evaluer", x));
+                        //Tell the linter to shut up
+                        assert executeurInstance != null;
+
+                        System.out.println("test1");
+
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            System.out.println("test2");
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.GET_EVALUER).addParam(x));
+                        }
+                        System.out.println("test3");
+
+                        //Get the response
+                        ASDecimal data = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().pop().toString()));
+                        return data;
                     }
                 },
                 /*
@@ -458,6 +470,14 @@ public class ModuleAI {
                     public ASObjet<?> executer() {
                         executeurInstance.addData(new Data(Data.Id.FONCTION_COUT));
                         return new ASNul();
+                    }
+                },
+                new ASFonctionModule("testReseauNeurones", new ASFonctionModule.Parametre[]{
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        executeurInstance.addData(new Data(Data.Id.TEST_RESEAU_NEURONES));
+                        return null;
                     }
                 }
         });
