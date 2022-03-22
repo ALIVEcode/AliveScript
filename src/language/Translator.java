@@ -7,76 +7,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+
 public final class Translator {
-    private static final String json = """
-            {
-                "error": {
-                    "base-error": "Ceci est une erreur standard",
-                    "type": {
-                        "unknown-type": "Ce type est inconnu",
-                        "int": {
-                            "to-big": "L'entier est trop gros",
-                            "to-small": "L'entier est trop petit"
-                        },
-                    },
-                },
-                "alivescript": "AliveScript",
-                "function": {
-                    "call": {
-                         "nb-parameter": {
-                             "to-small": "Le nombre de param\u00E8tres est trop petit. (Attendu: %d Re\u00E7u: %d)",
-                             "to-big": "Le nombre de param\u00E8tres est trop grand. (Attendu: %d Re\u00E7u: %d)"
-                         },
-                         "call-type": "Un argument ne match pas le type du param\u00E8tre"
-                    },
-                    "creation": {}
-                }
-            }
-            """;
-    /**
-     * @param codeISO639_1 Code ISO 639-1 correspondant au langage désiré
-     * @return Un JSON du langage
-     */
-    public JSONObject loadLanguage(String codeISO639_1)
+
+    private Language language;
+
+    public Translator(Language language)
     {
-        // Endroit où se trouve le fichier JSON correspondant au langage
-        String path = "language/languages/"+ codeISO639_1 +".json";
-        return loadJSON(path);
-
+        this.language = language;
     }
 
-    /**
-     * @param path Le chemin du fichier à partir du dossier '{@code src}'
-     * @return Un objet JSON
-     */
-    public JSONObject loadJSON(String path) {
-        StringBuilder fileContent = new StringBuilder();
-        try {
-
-            var file = new File(Objects.requireNonNull(getClass().getClassLoader()
-                    .getResource(path)).getFile());
-
-            Scanner in = new Scanner(file);
-            while (in.hasNextLine())
-                fileContent.append(in.nextLine());
-
-            in.close();
-
-        } catch (FileNotFoundException e) {
-            System.out.println("Le fichier n'a pas été trouvé !");
-
-        }
-        return (!fileContent.toString().equals("") ?
-                // Si le fichier a bien été trouvé
-                new JSONObject(fileContent.toString()) :
-                // Sinon
-                null);
+    public void switchLanguage(Language language)
+    {
+        this.language = language;
     }
 
-    /**
-     * Json dans cette variable
-     */
-    private final JSONObject jsonFile = new JSONObject(json);
 
     /**
      * Remplacer la section \u00e0 compl\u00E9ter de votre bord
@@ -90,7 +35,7 @@ public final class Translator {
      */
     public String translate(String path, Object... params) {
         String[] tokens = path.trim().split("\\.");
-        JSONObject head = loadLanguage("en");
+        JSONObject head = this.language.languageDict();
         try {
             for (int i = 0; i < tokens.length - 1; i++) {
                 head = head.getJSONObject(tokens[i]);
@@ -135,8 +80,10 @@ public final class Translator {
     }
 
     public static void main(String[] args) {
-        var test = new Translator();
-        System.out.println(test.loadLanguage("en").toString(4));
+
+        var test = new Translator(Language.EN);
+
+        System.out.println();
         System.out.println();
         System.err.println(test.translate("error.type.function.call.nb-parameter.too-small", "test", 4, "e"));
     }
