@@ -9,7 +9,7 @@ public class Main {
             
             fonction b(p1) -> entier
                 afficher "ça fonctionne b"
-                afficher p1
+                afficher p1 si p1 < -8 sinon 44
             fin fonction
             
             a()
