@@ -1,12 +1,12 @@
 ErreurFermeture
-            throw new ASErreur.ErreurFermeture(blocActuel,
+!!!            throw new ASErreur.ErreurFermeture(blocActuel,
                 "fin " + nomBoucle, "fin " + blocActuel);
 
-            throw new ASErreur.ErreurFermeture(coord.getScope(), "fin fonction");
+!!!            throw new ASErreur.ErreurFermeture(coord.getScope(), "fin fonction");
 
-            throw new ASErreur.ErreurFermeture(coord.getScope(), "fin get");
+!!!            throw new ASErreur.ErreurFermeture(coord.getScope(), "fin get");
 
-            throw new ASErreur.ErreurFermeture(coord.getScope(), "fin set");
+!!!            throw new ASErreur.ErreurFermeture(coord.getScope(), "fin set");
 
             throw new ASErreur.ErreurFermeture(blocActuel, "fin si", "fin " + blocActuel);
 
@@ -18,7 +18,7 @@ ErreurFermeture
 
             throw new ErreurFermeture(ASFonctionManager.obtenirStructure());
 
-ErreurContexteAbsent
+ErreurContexteAbsent !!!
 
             throw new ASErreur.ErreurContexteAbsent("Il n'y a pas de contexte");
 
@@ -36,14 +36,9 @@ ErreurSyntaxe
 
             throw new ASErreur.ErreurSyntaxe("Il faut \u00EAtre dans une boucle pour pouvoir utiliser le mot clef 'sortir'");
 
-            throw new ASErreur.ErreurSyntaxe("Il faut \u00EAtre dans une boucle pour pouvoir utiliser le mot clef 'continuer'");
-
-            throw new ASErreur.ErreurSyntaxe("Il faut \u00EAtre dans une boucle pour pouvoir utiliser le mot clef 'sortir'");
-
             throw new ASErreur.ErreurSyntaxe("Il est impossible d'assigner \u00E0 autre chose qu'une variable");
 
             throw new ASErreur.ErreurSyntaxe("Un bloc 'sinon si' doit obligatoirement suivre un bloc 'si' ou un autre bloc 'sinon si'");
-
 
             throw new ASErreur.ErreurSyntaxe(-parentheses + " parenth\u00E8se" + pluriel + " ouvrante" + pluriel + " '(' manquante" + pluriel);
 
