@@ -1,15 +1,15 @@
- Ajouter:
+Ajouter:
     commandes:
-        LIRE: '\blire\b'
-        UTILISER: '\butiliser\b'
+        LIRE: '\bread\b'
+        UTILISER: '\buse\b'
         VAR: '\bvar\b'
         CONSTANTE: '\bconst\b'
 
     methode_moteur:
-        AVANCER: '\bavancer\b'
-        RECULER: '\breculer\b'
-        ARRETER: '\barreter\b'
-        TOURNER_DROITE: '\bdroite\b'
+        AVANCER: '\bforward\b'
+        RECULER: '\bbackward\b'
+        ARRETER: '\bstop\b'
+        TOURNER_DROITE: '\bright\b'
         TOURNER_GAUCHE: '\bgauche\b'
 
     arithmetique:
@@ -36,7 +36,7 @@
 
     # fonction
     fonctions:
-        FONCTION: '\bfonction\b'
+        FONCTION: '\bfunction\b'
         STRUCTURE: '\bstructure\b'
         GET: '\bget\b'
         SET: '\bset\b'
@@ -45,50 +45,50 @@
     # structure
 
     blocs:
-        SI: '\bsi\b'
-        SINON: '\bsinon\b'
-        ALORS: '\balors\b'
+        SI: '\bif\b'
+        SINON: '\belse\b'
+        ALORS: '\bthen\b'
 
         # bloc pour
-        POUR: '\bpour\b'
-        REPETER: '\brepeter\b'
+        POUR: '\bfor\b'
+        REPETER: '\brepeat\b'
         TROIS_POINTS: '\.\.\.'
-        BOND: '\bbond\b'
-        DANS: '\bdans\b'
+        BOND: '\bjump\b'
+        DANS: '\bin\b'
 
         # bloc tant que
-        TANT_QUE: '\btant que\b'
-        FAIRE: '\bfaire\b'
+        TANT_QUE: '\bwhile\b'
+        FAIRE: '\bdo\b'
 
     control_flow:
-        SORTIR: '\bsortir\b'
-        CONTINUER: '\bcontinuer\b'
-        RETOURNER: '\bretourner\b'
+        SORTIR: '\bexit\b'
+        CONTINUER: '\bcontinue\b'
+        RETOURNER: '\breturn\b'
 
     # fin
-    FIN: '\bfin\b'
+    FIN: '\bend\b'
 
     type_de_donnees:
         ENTIER: '\d+'
         DECIMAL: '\d+\.\d+|\d+\.(?!\.)|(?<!\.)\.\d+'
         TEXTE: '".*?"|''.*?'''
-        BOOLEEN: '\bvrai\b|\bfaux\b'
+        BOOLEEN: '\btrue\b|\bfalse\b'
         NUL: '\bnul\b'
 
     nom_type_de_donnees:
-        NOM_ENTIER: '\bentier\b'
+        NOM_ENTIER: '\binteger\b'
         NOM_DECIMAL: '\bdecimal\b'
-        NOM_TEXTE: '\btexte\b'
-        NOM_BOOLEEN: '\bbooleen\b'
-        NOM_LISTE: '\bliste\b'
-        NOM_FONCTION: '\bfonctionType\b'
-        NOM_NUL: '\bnulType\b'
-        NOM_NOMBRE: '\bnombre\b'
+        NOM_TEXTE: '\btext\b'
+        NOM_BOOLEEN: '\bboolean\b'
+        NOM_LISTE: '\blist\b'
+        NOM_FONCTION: '\bfunctionType\b'
+        NOM_NUL: '\bnullType\b'
+        NOM_NOMBRE: '\bnumber\b'
         NOM_ITERABLE: '\biterable\b'
-        NOM_TOUT: '\btout\b'
-        NOM_RIEN: '\brien\b'
+        NOM_TOUT: '\ball\b'
+        NOM_RIEN: '\bnone\b'
         NOM_DICT: '\bdict\b'
-        NOM_PAIRE: '\bpaire\b'
+        NOM_PAIRE: '\bpair\b'
 
     comparaison:
         EGAL: "(={2})|(==)"
@@ -99,10 +99,10 @@
         PLUS_PETIT_EGAL: "<="
 
     porte_logique:
-        ET: '\bet\b'
-        OU: '\bou\b'
+        ET: '\band\b'
+        OU: '\bor\b'
 
-    PAS: '\bpas\b'
+    PAS: '\bnot\b'
 
     # separateur
     PARENT_OUV: "[(]"

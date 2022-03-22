@@ -1,0 +1,60 @@
+{
+  "error": {
+    "type": {
+      "unknown-type": "Ce type est inconnu",
+      "number": {
+        "too-big": "L'entier est trop gros",
+        "too-small": "L'entier est trop petit"
+      },
+      "decimal": {
+        "too-big": "Le nombre d\u00E9cimal est trop gros",
+        "too-small": "Le nombre d\u00E9cimal est trop petit"
+      },
+      "text": {
+        "too-big": "La cha\u00E5ne de caract\u00E8re est trop longue",
+        "out-of-bound": "..."
+      },
+      "list": {
+        "out-of-bound": "...",
+        "wrong-key": "..."
+      },
+      "function": {
+        "call": {
+          "nb-parameter": {
+            "too-small": "Le nombre de paramètres est trop petit",
+            "too-big": "Le nombre de paramètres est trop grand"
+          },
+          "call-type": "Un argument ne match pas le type du paramètre"
+        }
+      }
+    },
+    "logic": {
+      "comparison": {
+        "cant-be-compared": ""
+      },
+      "arithmetic": {
+
+        "zero": {
+          "division": "...",
+          "modulo": "...",
+          "power-of-zero": "..."
+        }
+      },
+      "unknown-reference": {
+        "unknown-var": "...",
+        "unknown-function": "..."
+      },
+      "loops": {
+        "infinite-loop" : "..."
+      }
+
+    },
+    "syntax": {
+      "never-closed": {
+        "text": "error.syntax.never-closed.text",
+        "math": "error.syntax.never-closed.math"
+      }
+    }
+  }
+
+}

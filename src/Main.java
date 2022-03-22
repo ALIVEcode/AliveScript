@@ -3,20 +3,10 @@ import interpreteur.executeur.Executeur;
 public class Main {
 
     static final String[] CODE = """
-            fonction a()
-                afficher "ça fonctionne a"
+            fonction allo(x, y, z)
+                afficher(x + y + z)
             fin fonction
-            
-            fonction b(p1) -> entier
-                afficher "ça fonctionne b"
-                afficher p1
-            fin fonction
-            
-            a()
-            b(23)
-            a()
-            
-            afficher {1 + 1...10}
+            allo(1, 2, 3)
             """.split("\n");
 
 
