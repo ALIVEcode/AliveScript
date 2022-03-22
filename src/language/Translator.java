@@ -2,7 +2,6 @@ package language;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.*;
 
 
@@ -10,25 +9,12 @@ public final class Translator {
 
     private Language language;
 
-    public Translator(Language language)
-    {
+    public Translator(Language language) {
         this.language = language;
     }
 
-    public void switchLanguage(Language language)
-    {
-        if(this.language != language)
-            this.language = language;
-    }
-
-    public void switchLanguage()
-    {
-        switch (this.language) {
-            case EN -> this.language = Language.FR;
-            case FR -> this.language = Language.ES;
-            case ES -> this.language = Language.EN;
-        }
-
+    public void switchLanguage(Language language) {
+        this.language = language;
     }
 
 
@@ -85,21 +71,22 @@ public final class Translator {
                             ErrorMessage: '%s'
                             Parameters: %s""",
                     toFormat, Arrays.toString(params));
+        } catch (NullPointerException err) {
+            return String.format("""
+                            ErrorMessage received Null instead of parameters:
+                            ErrorMessage: '%s'
+                            Parameters: %s""",
+                    toFormat, Arrays.toString(params));
         }
     }
 
     public static void main(String[] args) {
 
         var test = new Translator(Language.EN);
-        System.out.println(test.language);
-        test.switchLanguage(Language.FR);
-        System.out.println(test.language);
-        test.switchLanguage();
-        System.out.println(test.language);
 
         System.out.println();
         System.out.println();
-        System.err.println(test.translate("error.type.function.call.nb-parameter.too-small", "test", 4, "e"));
+        System.err.println(test.translate("error.type.function.call.nb-parameter.too-small", "a"));
     }
 }
 
