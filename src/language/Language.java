@@ -9,11 +9,16 @@ import java.util.Scanner;
 
 enum Language {
     EN ("en"),
-    FR ("fr");
-    JSONObject languageDict;
+    FR ("fr"),
+    ES ("es");
 
-    Language(String isocode) {
-        languageDict = loadLanguage(isocode);
+
+
+
+    private final JSONObject languageDict;
+
+    Language(String codeISO639_1) {
+        languageDict = loadLanguage(codeISO639_1);
     }
 
     /**
@@ -46,7 +51,7 @@ enum Language {
             in.close();
 
         } catch (FileNotFoundException e) {
-            System.out.println("Le fichier n'a pas été trouvé !");
+            System.err.println("Le fichier n'a pas été trouvé !");
 
         }
         return (!fileContent.toString().equals("") ?

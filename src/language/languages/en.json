@@ -2,7 +2,7 @@
   "error": {
     "type": {
       "unknown-type": "Ce type est inconnu",
-      "number": {
+      "int": {
         "too-big": "L'entier est trop gros",
         "too-small": "L'entier est trop petit"
       },
@@ -43,9 +43,9 @@
           "power-of-zero": "error.logic.arithmetic.zero.power-of-zero"
         }
       },
-      "unknown-reference": {
-        "unknown-var": "error.logic.unknown-reference.unknown-var",
-        "unknown-function": "error.logic.unknown-reference.unknown-function"
+      "unknown-ref": {
+        "var": "error.logic.unknown-reference.unknown-var",
+        "function": "error.logic.unknown-reference.unknown-function"
       }
     },
     "syntax": {
@@ -53,6 +53,7 @@
         "text": "error.syntax.never-closed.text",
         "math": "error.syntax.never-closed.math"
       }
+
     }
   },
   "warnings": {

@@ -3,8 +3,6 @@ package language;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 
 
@@ -19,7 +17,18 @@ public final class Translator {
 
     public void switchLanguage(Language language)
     {
-        this.language = language;
+        if(this.language != language)
+            this.language = language;
+    }
+
+    public void switchLanguage()
+    {
+        switch (this.language) {
+            case EN -> this.language = Language.FR;
+            case FR -> this.language = Language.ES;
+            case ES -> this.language = Language.EN;
+        }
+
     }
 
 
@@ -82,6 +91,11 @@ public final class Translator {
     public static void main(String[] args) {
 
         var test = new Translator(Language.EN);
+        System.out.println(test.language);
+        test.switchLanguage(Language.FR);
+        System.out.println(test.language);
+        test.switchLanguage();
+        System.out.println(test.language);
 
         System.out.println();
         System.out.println();

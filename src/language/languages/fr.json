@@ -2,7 +2,7 @@
   "error": {
     "type": {
       "unknown-type": "Ce type est inconnu",
-      "number": {
+      "int": {
         "too-big": "L'entier est trop gros",
         "too-small": "L'entier est trop petit"
       },
@@ -40,9 +40,9 @@
           "power-of-zero": "..."
         }
       },
-      "unknown-reference": {
-        "unknown-var": "...",
-        "unknown-function": "..."
+      "unknown-ref": {
+        "var": "...",
+        "function": "..."
       },
       "loops": {
         "infinite-loop" : "..."

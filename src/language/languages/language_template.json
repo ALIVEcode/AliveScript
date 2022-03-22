@@ -1,10 +1,10 @@
 {
   "error": {
     "type": {
-      "unknown-type": "Ce type est inconnu",
-      "number": {
-        "too-big": "L'entier est trop gros",
-        "too-small": "L'entier est trop petit"
+      "unknown-type": "error.type.unknown-type",
+      "int": {
+        "too-big": "error.type.int.too-big",
+        "too-small": "error.type.int.too-small"
       },
       "decimal": {
         "too-big": "error.type.decimal.too-big",
@@ -43,16 +43,17 @@
           "power-of-zero": "error.logic.arithmetic.zero.power-of-zero"
         }
       },
-      "unknown-reference": {
-        "unknown-var": "error.logic.unknown-reference.unknown-var",
-        "unknown-function": "error.logic.unknown-reference.unknown-function"
+      "unknown-ref": {
+        "var": "error.logic.unknown-reference.unknown-var",
+        "function": "error.logic.unknown-reference.unknown-function"
       }
     },
     "syntax": {
       "never-closed": {
         "text": "error.syntax.never-closed.text",
         "math": "error.syntax.never-closed.math"
-      }
+      },
+      "else-if" : "error.syntax.else-if"
     }
   },
   "warnings": {
