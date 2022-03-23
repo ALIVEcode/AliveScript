@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.util.Objects;
 import java.util.Scanner;
 
-enum Language {
+public enum Language {
     EN ("en"),
     FR ("fr"),
     ES ("es");
