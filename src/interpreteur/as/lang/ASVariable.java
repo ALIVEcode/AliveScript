@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ASVariable implements ASObjet<Object> {
-    private final String nom;
+    private String nom;
     private final ASType type;
     private ASObjet<?> valeur;
     private boolean readOnly = false;
@@ -58,6 +58,10 @@ public class ASVariable implements ASObjet<Object> {
 
     public String obtenirNom() {
         return this.nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     public ASType getType() {

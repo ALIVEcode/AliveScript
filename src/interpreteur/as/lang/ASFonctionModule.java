@@ -11,8 +11,8 @@ import java.util.Hashtable;
 public abstract class ASFonctionModule implements ASObjet<Object> {
     private final ASType typeRetour;
     private final Parametre[] parametres; //String[] de forme {nomDuParam�tre, typeDuParam�tre (ou null s'il n'en poss�de pas)}
-    private final String nom;
     private final Coordonnee coordReprise = null;
+    private String nom;
     private Hashtable<String, ASObjet<?>> parametres_appel = new Hashtable<>();  // Object[][] de forme {{nom_param, valeur}, {nom_param2, valeur2}}
     private String scopeName;
 
@@ -65,6 +65,10 @@ public abstract class ASFonctionModule implements ASObjet<Object> {
 
     public String getNom() {
         return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     public ASType getTypeRetour() {

@@ -10,6 +10,7 @@ import interpreteur.as.modules.core.ASModule;
 import interpreteur.as.lang.ASType;
 import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
+import language.Translator;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -154,7 +155,6 @@ public class ModuleBuiltins {
                 },
 
 
-
                 /*
                  * affiche le commentaire entre les symboles
                  * (-:
@@ -191,6 +191,10 @@ public class ModuleBuiltins {
         fonctionsBuiltins.addAll(List.of(BuiltinsListeUtils.fonctions));
         fonctionsBuiltins.addAll(List.of(BuiltinsTexteUtils.fonctions));
         fonctionsBuiltins.addAll(List.of(BuiltinsNombreUtils.fonctions));
+
+        Translator translator = executeurInstance.getTranslator();
+        fonctionsBuiltins.forEach(f -> f.setNom(translator.translate(f.getNom())));
+        Arrays.stream(variables).forEach(v -> v.setNom(translator.translate(v.obtenirNom())));
 
         return new ASModule(fonctionsBuiltins.toArray(ASFonctionModule[]::new), variables);
     }
