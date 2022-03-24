@@ -1,5 +1,6 @@
 package language;
 
+import interpreteur.as.ASLexer;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -12,13 +13,12 @@ public enum Language {
     FR ("fr"),
     ES ("es");
 
-
-
-
     private final JSONObject languageDict;
+    private final String asLexerPath;
 
     Language(String codeISO639_1) {
         languageDict = loadLanguage(codeISO639_1);
+        asLexerPath = "ASGrammaire_" + codeISO639_1 + ".yaml";
     }
 
     /**
@@ -29,6 +29,9 @@ public enum Language {
     {
         // Endroit où se trouve le fichier JSON correspondant au langage
         String path = "language/languages/"+ codeISO639_1 +".json";
+
+
+
         return loadJSON(path);
 
     }
@@ -61,9 +64,17 @@ public enum Language {
                 null);
     }
 
-    public JSONObject languageDict() {
+    public JSONObject getLanguageDict() {
         return languageDict;
     }
+
+    public String getASLexerPath() {
+        return asLexerPath;
+    }
+
+    //public interpreteur.as.ASLexer getASLexer() {
+        //return asLexer;
+   // }
 }
 
 

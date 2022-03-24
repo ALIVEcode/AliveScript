@@ -88,7 +88,7 @@ public class Executeur {
 
     public Executeur(Language language) {
         translator = new Translator(language);
-        lexer = new ASLexer(); // utiliser translator pour passer bon yaml
+        lexer = new ASLexer(language.getASLexerPath()); // utiliser translator pour passer bon yaml
         asModuleManager = new ASModuleManager(this);
         ast = new ASAst(this);
     }

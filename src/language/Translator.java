@@ -13,7 +13,7 @@ public final class Translator {
         this.language = language;
     }
 
-    public void switchLanguage(Language language) {
+    public void setLanguage(Language language) {
         this.language = language;
     }
 
@@ -30,7 +30,7 @@ public final class Translator {
      */
     public String translate(String path, Object... params) {
         String[] tokens = path.trim().split("\\.");
-        JSONObject head = this.language.languageDict();
+        JSONObject head = this.language.getLanguageDict();
         try {
             for (int i = 0; i < tokens.length - 1; i++) {
                 head = head.getJSONObject(tokens[i]);
@@ -84,9 +84,11 @@ public final class Translator {
 
         var test = new Translator(Language.EN);
 
-        System.out.println();
-        System.out.println();
         System.err.println(test.translate("error.type.function.call.nb-parameter.too-small", "a"));
+    }
+
+    public Language getLanguage() {
+        return language;
     }
 }
 
