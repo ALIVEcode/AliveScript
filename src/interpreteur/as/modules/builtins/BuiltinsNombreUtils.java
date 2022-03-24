@@ -15,7 +15,8 @@ import java.util.List;
 public class BuiltinsNombreUtils {
 
     public static ASFonctionModule[] fonctions = new ASFonctionModule[]{
-            new ASFonctionModule("entier", new ASFonctionModule.Parametre[]{
+            // entier
+            new ASFonctionModule("modules.builtins.functions.int", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null),
                     new ASFonctionModule.Parametre(ASTypeBuiltin.entier.asType(), "base", new ASEntier(10))
             }, new ASType("entier")) {
@@ -30,8 +31,8 @@ public class BuiltinsNombreUtils {
                     }
                 }
             },
-
-            new ASFonctionModule("abs", new ASFonctionModule.Parametre[]{
+            // abs
+            new ASFonctionModule("modules.builtins.functions.abs", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(new ASType("nombre"), "x", null)
             }, new ASType("nombre")) {
                 @Override
@@ -39,8 +40,8 @@ public class BuiltinsNombreUtils {
                     return new ASDecimal(Math.abs(((Number) this.getValeurParam("x").getValue()).doubleValue()));
                 }
             },
-
-            new ASFonctionModule("decimal", new ASFonctionModule.Parametre[]{
+            // decimal
+            new ASFonctionModule("modules.builtins.functions.float", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null)
             }, new ASType("decimal")) {
                 @Override
@@ -53,8 +54,8 @@ public class BuiltinsNombreUtils {
                 }
             },
 
-
-            new ASFonctionModule("nombre", new ASFonctionModule.Parametre[]{
+            // nombre
+            new ASFonctionModule("modules.builtins.functions.number", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null)
             }, new ASType("decimal")) {
                 @Override
@@ -69,8 +70,8 @@ public class BuiltinsNombreUtils {
                 }
             },
 
-
-            new ASFonctionModule("bin", new ASFonctionModule.Parametre[]{
+            // bin
+            new ASFonctionModule("modules.builtins.functions.bin", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(new ASType("entier"), "nb", null)
             }, new ASType("texte")) {
                 @Override

@@ -14,7 +14,8 @@ import interpreteur.executeur.Executeur;
 public class ModuleMath {
     static ASModule charger(Executeur executeurInstance) {
         return new ASModule(new ASFonctionModule[]{
-                new ASFonctionModule("rad", new ASFonctionModule.Parametre[]{
+                // rad
+                new ASFonctionModule("modules.math.functions.rad", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(new ASType("nombre"), "x", null)
                 }, new ASType("decimal")) {
                     @Override
@@ -23,8 +24,8 @@ public class ModuleMath {
                         return new ASDecimal(Math.toRadians(angle));
                     }
                 },
-
-                new ASFonctionModule("deg", new ASFonctionModule.Parametre[]{
+                // deg
+                new ASFonctionModule("modules.math.functions.deg", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(new ASType("nombre"), "x", null)
                 }, new ASType("decimal")) {
                     @Override
@@ -33,8 +34,8 @@ public class ModuleMath {
                         return new ASDecimal(Math.toDegrees(angle));
                     }
                 },
-
-                new ASFonctionModule("sin", new ASFonctionModule.Parametre[]{
+                // sin
+                new ASFonctionModule("modules.math.functions.sin", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(new ASType("nombre"), "x", null)
                 }, new ASType("decimal")) {
                     @Override
@@ -43,8 +44,8 @@ public class ModuleMath {
                         return new ASDecimal(Math.sin(Math.toRadians(angle)));
                     }
                 },
-
-                new ASFonctionModule("cos", new ASFonctionModule.Parametre[]{
+                // cos
+                new ASFonctionModule("modules.math.functions.cos", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(new ASType("nombre"), "x", null)
                 }, new ASType("decimal")) {
                     @Override
@@ -53,8 +54,8 @@ public class ModuleMath {
                         return new ASDecimal(Math.cos(Math.toRadians(angle)));
                     }
                 },
-
-                new ASFonctionModule("tan", new ASFonctionModule.Parametre[]{
+                // tan
+                new ASFonctionModule("modules.math.functions.tan", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(new ASType("nombre"), "x", null)
                 }, new ASType("decimal")) {
                     @Override
@@ -63,8 +64,8 @@ public class ModuleMath {
                         return new ASDecimal(Math.tan(Math.toRadians(angle)));
                     }
                 },
-
-                new ASFonctionModule("arrondir", new ASFonctionModule.Parametre[]{
+                // arrondir
+                new ASFonctionModule("modules.math.functions.round", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(new ASType("nombre"), "n", null),
                         new ASFonctionModule.Parametre(new ASType("entier"), "nbSignificatifs", new ASEntier(0)),
                 }, new ASType("nombre")) {
@@ -76,8 +77,10 @@ public class ModuleMath {
                     }
                 },
         }, new ASVariable[]{
-                new ASConstante("PI", new ASDecimal(Math.PI)),
-                new ASConstante("E", new ASDecimal(Math.E))
+                // PI
+                new ASConstante("modules.math.constants.pi", new ASDecimal(Math.PI)),
+                // E
+                new ASConstante("modules.math.constants.e", new ASDecimal(Math.E))
         });
     }
 }

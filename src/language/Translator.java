@@ -44,47 +44,53 @@ public final class Translator {
     private String formatTranslated(String toFormat, Object... params) {
         try {
             String formattedString = String.format(toFormat, params);
-            int placeholderCounter = 0;
-            for (String car : toFormat.split("")) {
-                if ("%".equals(car)) {
-                    placeholderCounter++;
-                }
-            }
+            //FIXME Cannot start or end with format
+            int placeholderCounter = toFormat.split("(?!<%)%" +
+                    "(?:(\\d+)\\$)?" +
+                    "((, )|[-#+ 0,(]|<)?" +
+                    "\\d*" +
+                    "(?:\\.\\d+)?" +
+                    "(?:[bBhHsScCdoxXeEfgGaAtT]|" +
+                    "[tT][HIklMSLNpzZsQBbhAaCYyjmdeRTrDFc])").length - 1;
+            System.out.println(placeholderCounter);
             if (params.length == placeholderCounter) {
                 return formattedString;
             } else {
-                return String.format("""
-                                Too many parameters given to the ErrorMessage:
-                                ErrorMessage: '%s'
+                throw new TranslationFormatException(String.format("""
+                                Too many parameters given to the translation:
+                                Failed translation: "%s"
                                 Parameters: %s""",
-                        toFormat, Arrays.toString(params));
+                        toFormat, Arrays.stream(params)
+                                .map(p -> p instanceof String ? "\"" + p + "\"" : p.toString())
+                                .toList()
+                                .toString()));
             }
         } catch (MissingFormatArgumentException err) {
-            return String.format("""
-                            Missing information for the ErrorMessage:
-                            ErrorMessage: '%s'
+            throw new TranslationFormatException(String.format("""
+                            Missing parameters for the translation:
+                            Failed translation: "%s"
                             Parameters: %s""",
-                    toFormat, Arrays.toString(params));
+                    toFormat, Arrays.stream(params)
+                            .map(p -> p instanceof String ? "\"" + p + "\"" : p.toString())
+                            .toList()
+                            .toString()));
         } catch (IllegalFormatConversionException err) {
-            return String.format("""
-                            Wrong type in the ErrorMessage's parameters:
-                            ErrorMessage: '%s'
+            throw new TranslationFormatException(String.format("""
+                            Wrong type in the parameters during translation:
+                            Failed translation: "%s"
                             Parameters: %s""",
-                    toFormat, Arrays.toString(params));
-        } catch (NullPointerException err) {
-            return String.format("""
-                            ErrorMessage received Null instead of parameters:
-                            ErrorMessage: '%s'
-                            Parameters: %s""",
-                    toFormat, Arrays.toString(params));
+                    toFormat, Arrays.stream(params)
+                            .map(p -> p instanceof String ? "\"" + p + "\"" : p.toString())
+                            .toList()
+                            .toString()));
         }
     }
 
     public static void main(String[] args) {
 
-        var test = new Translator(Language.EN);
-
-        System.err.println(test.translate("error.type.function.call.nb-parameter.too-small", "a"));
+        var test = new Translator(Language.FR);
+        System.out.println();
+        System.err.println(test.translate("error.Index", 1000000));
     }
 
     public Language getLanguage() {

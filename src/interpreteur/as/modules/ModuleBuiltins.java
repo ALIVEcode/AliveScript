@@ -36,16 +36,20 @@ public class ModuleBuiltins {
     //public static List<ASObjet.Fonction> fonctions =
     public static ASVariable[] variables = new ASVariable[]{
             new ASConstante("bob", new ASTexte("(~°3°)~")),
-            new ASConstante("finl", new ASTexte("\n")),
-            new ASVariable("varLocales", new ASListe(), ASTypeBuiltin.liste.asType()).setGetter(getVarsLocales).setReadOnly(),
-            new ASVariable("varGlobales", new ASListe(), ASTypeBuiltin.liste.asType()).setGetter(getVarsGlobales).setReadOnly(),
-            new ASVariable("varListe", new ASListe(), ASTypeBuiltin.liste.asType()).setGetter(getVarListe).setReadOnly(),
+            // finl
+            new ASConstante("modules.builtins.constants.endl", new ASTexte("\n")),
+            // varLocales
+            new ASVariable("modules.builtins.variables.localVar", new ASListe(), ASTypeBuiltin.liste.asType()).setGetter(getVarsLocales).setReadOnly(),
+            // varGlobales
+            new ASVariable("modules.builtins.variables.globalVar", new ASListe(), ASTypeBuiltin.liste.asType()).setGetter(getVarsGlobales).setReadOnly(),
+            // varListe
+            new ASVariable("modules.builtins.variables.listVar", new ASListe(), ASTypeBuiltin.liste.asType()).setGetter(getVarListe).setReadOnly(),
     };
 
     static ASModule charger(Executeur executeurInstance) {
         ASFonctionModule[] fonctions = new ASFonctionModule[]{
-
-                new ASFonctionModule("afficher", new ASFonctionModule.Parametre[]{
+                // afficher
+                new ASFonctionModule("modules.builtins.functions.print", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(new ASType("tout"), "element", new ASTexte(""))
                 }, ASTypeBuiltin.rien.asType()) {
                     @Override
@@ -56,8 +60,8 @@ public class ModuleBuiltins {
                         return new ASNul();
                     }
                 },
-
-                new ASFonctionModule("attendre", new ASFonctionModule.Parametre[]{
+                // attendre
+                new ASFonctionModule("modules.builtins.functions.wait", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(new ASType("nombre"), "duree", new ASEntier(0))
                 }, ASTypeBuiltin.rien.asType()) {
                     @Override
@@ -79,7 +83,8 @@ public class ModuleBuiltins {
                  * 		@return -> si "choix" est de type liste: un element aleatoirement choisi dans la liste
                  * 				-> si "choix" est de type texte: une lettre aleatoirement choisi dans le texte
                  */
-                new ASFonctionModule("aleatoire", new ASFonctionModule.Parametre[]{
+                // aleatoire
+                new ASFonctionModule("modules.builtins.functions.random", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(new ASType("iterable"), "choix", null)
                 }, new ASType("tout")) {
                     @Override
@@ -103,7 +108,8 @@ public class ModuleBuiltins {
                  *
                  * 		@return le nom du type de l'objet passe en parametre dans un "texte"
                  */
-                new ASFonctionModule("typeDe", new ASFonctionModule.Parametre[]{
+                // typeDe
+                new ASFonctionModule("modules.builtins.functions.typeOf", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(new ASType("tout"), "element", null)
                 }, new ASType("texte")) {
                     @Override
@@ -111,8 +117,8 @@ public class ModuleBuiltins {
                         return new ASTexte(this.getParamsValeursDict().get("element").obtenirNomType());
                     }
                 },
-
-                new ASFonctionModule("booleen", new ASFonctionModule.Parametre[]{
+                //booleen
+                new ASFonctionModule("modules.builtins.functions.boolean", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(ASTypeBuiltin.tout.asType(), "element", null)
                 }, ASTypeBuiltin.booleen.asType()) {
                     @Override
@@ -120,8 +126,8 @@ public class ModuleBuiltins {
                         return new ASBooleen(this.getParamsValeursDict().get("element").boolValue());
                     }
                 },
-
-                new ASFonctionModule("auto", new ASFonctionModule.Parametre[]{
+                // auto
+                new ASFonctionModule("modules.builtins.functions.auto", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null)
                 }, ASTypeBuiltin.tout.asType()) {
                     @Override
@@ -135,8 +141,8 @@ public class ModuleBuiltins {
                         return new ASTexte(txt);
                     }
                 },
-
-                new ASFonctionModule("clef", new ASFonctionModule.Parametre[]{
+                // clef
+                new ASFonctionModule("modules.builtins.functions.key", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(ASTypeBuiltin.paire.asType(), "_paire", null)
                 }, ASTypeBuiltin.texte.asType()) {
                     @Override
@@ -144,8 +150,8 @@ public class ModuleBuiltins {
                         return ((ASPaire) getValeurParam("_paire")).clef();
                     }
                 },
-
-                new ASFonctionModule("val", new ASFonctionModule.Parametre[]{
+                // val
+                new ASFonctionModule("modules.builtins.functions.val", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(ASTypeBuiltin.paire.asType(), "_paire", null)
                 }, ASTypeBuiltin.texte.asType()) {
                     @Override
@@ -163,7 +169,8 @@ public class ModuleBuiltins {
                  * dans la fonction passée en paramètre
                  *
                  */
-                new ASFonctionModule("info", new ASFonctionModule.Parametre[]{
+                // info
+                new ASFonctionModule("modules.builtins.functions.info", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(ASTypeBuiltin.tout.asType(), "element", null)
                 }, new ASType("tout")) {
                     @Override
@@ -171,8 +178,8 @@ public class ModuleBuiltins {
                         return this.getParamsValeursDict().get("element");
                     }
                 },
-
-                new ASFonctionModule("getVar", new ASFonctionModule.Parametre[]{
+                // getVar
+                new ASFonctionModule("modules.builtins.functions.getVar", new ASFonctionModule.Parametre[]{
                         new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "nomVariable", null)
                 }, new ASType("tout")) {
                     @Override

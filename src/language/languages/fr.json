@@ -1,60 +1,82 @@
 {
   "error": {
-    "type": {
-      "unknown-type": "Ce type est inconnu",
-      "int": {
-        "too-big": "L'entier est trop gros",
-        "too-small": "L'entier est trop petit"
+    "Closure": "ErreurFermeture",
+    "MissingContext": "ErreurContexteAbsent",
+    "Syntax": "ErreurSyntaxe",
+    "Module": "ErreurModule",
+    "FunctionCall": "ErreurAppelFonction",
+    "InputOutput": "ErreurInputOutput",
+    "Assignment": "ErreurAssignement",
+    "Type": "ErreurType",
+    "DuplicateKey": "ErreurClefDupliquee",
+    "Index": "a%, da",
+    "UnknownVariable": "ErreurVariableInconnue",
+    "Comparison": "ErreurComparaison",
+    "Formating": "ErreurFormatage",
+    "Range": "ErreurSuite",
+    "InvalidInt": "ErreurEntierInvalide",
+    "DivisonByZero": "ErreurDivisionParZero",
+    "ZeroModulo": "ErreurModuloZero"
+  },
+  "modules": {
+    "builtins": {
+      "constants": {
+        "endl": "finl"
       },
-      "decimal": {
-        "too-big": "Le nombre d\u00E9cimal est trop gros",
-        "too-small": "Le nombre d\u00E9cimal est trop petit"
+      "variables": {
+        "localVar": "varLocales",
+        "globalVar": "varGlobales",
+        "listVar": "varListe"
       },
-      "text": {
-        "too-big": "La cha\u00E5ne de caract\u00E8re est trop longue",
-        "out-of-bound": "..."
-      },
-      "list": {
-        "out-of-bound": "...",
-        "wrong-key": "..."
-      },
-      "function": {
-        "call": {
-          "nb-parameter": {
-            "too-small": "Le nombre de paramètres est trop petit",
-            "too-big": "Le nombre de paramètres est trop grand"
-          },
-          "call-type": "Un argument ne match pas le type du paramètre"
-        }
+      "functions": {
+        "print": "afficher",
+        "wait": "attendre",
+        "random": "aleatoire",
+        "typeOf": "typeDe",
+        "boolean": "booleen",
+        "auto": "auto",
+        "key": "clef",
+        "val": "val",
+        "info": "info",
+        "getVar": "getVar",
+        "list": "liste",
+        "reverse": "inv",
+        "map": "map",
+        "filter": "filtrer",
+        "join": "joindre",
+        "sum": "somme",
+        "max": "max",
+        "min": "min",
+        "length": "tailleDe",
+        "index": "indexDe",
+        "int": "entier",
+        "abs": "abs",
+        "float": "decimal",
+        "number": "nombre",
+        "bin": "bin",
+        "string": "texte",
+        "upper": "maj",
+        "lower": "minus",
+        "replace": "remplacer",
+        "replaceReg": "remplacerRe",
+        "match": "match",
+        "isNumeric": "estNumerique",
+        "format": "format"
       }
     },
-    "logic": {
-      "comparison": {
-        "cant-be-compared": ""
+    "math": {
+      "constants": {
+        "pi": "pi",
+        "e": "e"
       },
-      "arithmetic": {
-
-        "zero": {
-          "division": "...",
-          "modulo": "...",
-          "power-of-zero": "..."
-        }
-      },
-      "unknown-ref": {
-        "var": "...",
-        "function": "..."
-      },
-      "loops": {
-        "infinite-loop" : "..."
-      }
-
-    },
-    "syntax": {
-      "never-closed": {
-        "text": "error.syntax.never-closed.text",
-        "math": "error.syntax.never-closed.math"
+      "functions": {
+        "rad": "rad",
+        "deg": "deg",
+        "sin": "sin",
+        "cos": "cos",
+        "tan": "tan",
+        "round": "arrondir"
       }
     }
   }
-
 }

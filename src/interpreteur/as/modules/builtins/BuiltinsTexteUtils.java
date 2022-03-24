@@ -15,8 +15,8 @@ import java.util.Iterator;
 
 public class BuiltinsTexteUtils {
     public static ASFonctionModule[] fonctions = new ASFonctionModule[]{
-
-            new ASFonctionModule("texte", new ASFonctionModule.Parametre[]{
+            // texte
+            new ASFonctionModule("modules.builtins.functions.string", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(ASTypeBuiltin.tout.asType(), "element", null)
             }, ASTypeBuiltin.texte.asType()) {
                 @Override
@@ -24,8 +24,8 @@ public class BuiltinsTexteUtils {
                     return new ASTexte(this.getValeurParam("element").toString());
                 }
             },
-
-            new ASFonctionModule("maj", new ASFonctionModule.Parametre[]{
+            // maj
+            new ASFonctionModule("modules.builtins.functions.upper", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null)
             }, ASTypeBuiltin.texte.asType()) {
                 @Override
@@ -33,8 +33,8 @@ public class BuiltinsTexteUtils {
                     return new ASTexte(this.getParamsValeursDict().get("txt").getValue().toString().toUpperCase());
                 }
             },
-
-            new ASFonctionModule("minus", new ASFonctionModule.Parametre[]{
+            // minus
+            new ASFonctionModule("modules.builtins.functions.lower", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null)
             }, new ASType("texte")) {
                 @Override
@@ -42,8 +42,8 @@ public class BuiltinsTexteUtils {
                     return new ASTexte(this.getParamsValeursDict().get("txt").getValue().toString().toLowerCase());
                 }
             },
-
-            new ASFonctionModule("remplacer", new ASFonctionModule.Parametre[]{
+            // remplacer
+            new ASFonctionModule("modules.builtins.functions.replace", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null),
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "sequence", null),
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "remplacement", null)
@@ -56,8 +56,8 @@ public class BuiltinsTexteUtils {
                     return new ASTexte(txt.replace(pattern, remplacement));
                 }
             },
-
-            new ASFonctionModule("remplacerRe", new ASFonctionModule.Parametre[]{
+            // remplacerRe
+            new ASFonctionModule("modules.builtins.functions.replaceReg", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null),
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "pattern", null),
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "remplacement", null)
@@ -70,8 +70,8 @@ public class BuiltinsTexteUtils {
                     return new ASTexte(txt.replaceAll(pattern, remplacement));
                 }
             },
-
-            new ASFonctionModule("match", new ASFonctionModule.Parametre[]{
+            // match
+            new ASFonctionModule("modules.builtins.functions.match", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null),
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "pattern", null)
             }, ASTypeBuiltin.booleen.asType()) {
@@ -82,8 +82,8 @@ public class BuiltinsTexteUtils {
                     return new ASBooleen(txt.matches(pattern));
                 }
             },
-
-            new ASFonctionModule("estNumerique", new ASFonctionModule.Parametre[]{
+            // estNumerique
+            new ASFonctionModule("modules.builtins.functions.isNumeric", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null)
             }, ASTypeBuiltin.booleen.asType()) {
                 @Override
@@ -111,7 +111,8 @@ public class BuiltinsTexteUtils {
              *
              * 		@return un texte où les {} sont remplacés par les valeurs dans la liste
              */
-            new ASFonctionModule("format", new ASFonctionModule.Parametre[]{
+            // format
+            new ASFonctionModule("modules.builtins.functions.format", new ASFonctionModule.Parametre[]{
                     new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null),
                     new ASFonctionModule.Parametre(ASTypeBuiltin.liste.asType(), "valeurs", null)
             }, ASTypeBuiltin.texte.asType()) {

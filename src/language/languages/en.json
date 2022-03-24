@@ -1,63 +1,82 @@
 {
   "error": {
-    "type": {
-      "unknown-type": "Ce type est inconnu",
-      "int": {
-        "too-big": "L'entier est trop gros",
-        "too-small": "L'entier est trop petit"
-      },
-      "decimal": {
-        "too-big": "error.type.decimal.too-big",
-        "too-small": "error.type.decimal.too-small"
-      },
-      "text": {
-        "too-big": "error.type.text.too-big",
-        "out-of-bound": "error.type.text.out-of-bound"
-      },
-      "list": {
-        "out-of-bound": "error.type.list.out-of-bound",
-        "wrong-key": "error.type.list.wrong-key"
-      },
-      "function": {
-        "call": {
-          "nb-parameter": {
-            "too-small": "Function '%s' is missing arguments. (expected %d, got %d)",
-            "too-big": "error.type.function.call.nb-parameter.too-big"
-          },
-          "call-type": "error.type.function.call.nb-parameter.call-type"
-        }
-      }
-    },
-    "logic": {
-      "comparison": {
-        "cant-be-compared": "error.logic.comparison.cant-be-compared"
-      },
-      "loops": {
-        "infinite-loop" : "..."
-      },
-      "arithmetic": {
-
-        "zero": {
-          "division": "error.logic.arithmetic.zero.division",
-          "modulo": "error.logic.arithmetic.zero.modulo",
-          "power-of-zero": "error.logic.arithmetic.zero.power-of-zero"
-        }
-      },
-      "unknown-ref": {
-        "var": "error.logic.unknown-reference.unknown-var",
-        "function": "error.logic.unknown-reference.unknown-function"
-      }
-    },
-    "syntax": {
-      "never-closed": {
-        "text": "error.syntax.never-closed.text",
-        "math": "error.syntax.never-closed.math"
-      }
-
-    }
+    "Closure": "ClosureError",
+    "MissingContext": "MissingContextError",
+    "Syntax": "SyntaxError",
+    "Module": "ModuleError",
+    "FunctionCall": "FunctionCallError",
+    "InputOutput": "InputOutputError",
+    "Assignment": "AssignmentError",
+    "Type": "TypeError",
+    "DuplicateKey": "DuplicateKeyError",
+    "Index": "IndexError",
+    "UnknownVariable": "UnknownVariableError",
+    "Comparison": "ComparisonError",
+    "Formating": "FormatingError",
+    "Range": "RangeError",
+    "InvalidInt": "InvalidIntError",
+    "DivisonByZero": "DivisionByZeroError",
+    "ZeroModulo": "ZeroModuloError"
   },
-  "warnings": {
-
+  "modules": {
+    "builtins": {
+      "constants": {
+        "endl": "endl"
+      },
+      "variables": {
+        "localVar": "localVar",
+        "globalVar": "globalVar",
+        "listVar": "listVar"
+      },
+      "functions": {
+        "print": "print",
+        "wait": "wait",
+        "random": "random",
+        "typeOf": "typeOf",
+        "boolean": "boolean",
+        "auto": "auto",
+        "key": "key",
+        "val": "val",
+        "info": "info",
+        "getVar": "getVar",
+        "list": "list",
+        "reverse": "reverse",
+        "map": "map",
+        "filter": "filter",
+        "join": "join",
+        "sum": "sum",
+        "max": "max",
+        "min": "min",
+        "length": "length",
+        "index": "index",
+        "int": "int",
+        "abs": "abs",
+        "float": "float",
+        "number": "number",
+        "bin": "bin",
+        "string": "string",
+        "upper": "upper",
+        "lower": "lower",
+        "replace": "replace",
+        "replaceReg": "replaceReg",
+        "match": "match",
+        "isNumeric": "isNumeric",
+        "format": "format"
+      }
+    },
+    "math": {
+      "constants": {
+        "pi": "pi",
+        "e": "e"
+      },
+      "functions": {
+        "rad": "rad",
+        "deg": "deg",
+        "sin": "sin",
+        "cos": "cos",
+        "tan": "tan",
+        "round": "round"
+      }
+    }
   }
-
 }
