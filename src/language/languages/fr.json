@@ -9,7 +9,7 @@
     "Assignment": "ErreurAssignement",
     "Type": "ErreurType",
     "DuplicateKey": "ErreurClefDupliquee",
-    "Index": "a%, da",
+    "Index": "ErreurIndex",
     "UnknownVariable": "ErreurVariableInconnue",
     "Comparison": "ErreurComparaison",
     "Formating": "ErreurFormatage",

@@ -52,7 +52,6 @@ public final class Translator {
                     "(?:\\.\\d+)?" +
                     "(?:[bBhHsScCdoxXeEfgGaAtT]|" +
                     "[tT][HIklMSLNpzZsQBbhAaCYyjmdeRTrDFc])").length - 1;
-            System.out.println(placeholderCounter);
             if (params.length == placeholderCounter) {
                 return formattedString;
             } else {

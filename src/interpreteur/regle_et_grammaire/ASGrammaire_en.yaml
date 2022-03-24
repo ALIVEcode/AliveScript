@@ -53,7 +53,7 @@ Ajouter:
     POUR: '\bfor\b'
     REPETER: '\brepeat\b'
     TROIS_POINTS: '\.\.\.'
-    BOND: '\bjump\b'
+    BOND: '\step\b'
     DANS: '\bin\b'
 
     # bloc tant que
@@ -61,7 +61,7 @@ Ajouter:
     FAIRE: '\bdo\b'
 
   control_flow:
-    SORTIR: '\bexit\b'
+    SORTIR: '\break\b'
     CONTINUER: '\bcontinue\b'
     RETOURNER: '\breturn\b'
 
@@ -76,19 +76,19 @@ Ajouter:
     NUL: '\bnul\b'
 
   nom_type_de_donnees:
-    NOM_ENTIER: '\binteger\b'
+    NOM_ENTIER: '\bentier\b'
     NOM_DECIMAL: '\bdecimal\b'
-    NOM_TEXTE: '\btext\b'
-    NOM_BOOLEEN: '\bboolean\b'
-    NOM_LISTE: '\blist\b'
-    NOM_FONCTION: '\bfunctionType\b'
-    NOM_NUL: '\bnullType\b'
-    NOM_NOMBRE: '\bnumber\b'
+    NOM_TEXTE: '\btexte\b'
+    NOM_BOOLEEN: '\bbooleen\b'
+    NOM_LISTE: '\bliste\b'
+    NOM_FONCTION: '\bfonctionType\b'
+    NOM_NUL: '\bnulType\b'
+    NOM_NOMBRE: '\bnombre\b'
     NOM_ITERABLE: '\biterable\b'
-    NOM_TOUT: '\ball\b'
-    NOM_RIEN: '\bnone\b'
+    NOM_TOUT: '\btout\b'
+    NOM_RIEN: '\brien\b'
     NOM_DICT: '\bdict\b'
-    NOM_PAIRE: '\bpair\b'
+    NOM_PAIRE: '\bpaire\b'
 
   comparaison:
     EGAL: "(={2})|(==)"

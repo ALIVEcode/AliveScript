@@ -4,12 +4,7 @@ import language.Language;
 public class Main {
 
     static final String[] CODE = """
-            
-            function allo(x, y, z)
-                afficher "Salut! " + (x + y + z)
-            end function
-            
-            allo(1, 2, 3)
+           
             """.split("\n");
 
 
