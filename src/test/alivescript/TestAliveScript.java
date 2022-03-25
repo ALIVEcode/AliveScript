@@ -16,22 +16,26 @@ public class TestAliveScript {
         resetExecuteur(DEBUG);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "\"bonjour\" ~~ bonjour",
-            "12 ~~ 12",
-            "-333 ~~ -333",
-            "-98.2 ~~ -98.2",
-            "{1, 2, 3} ~~ [1, 2, 3]",
-            "[4, 5, 6] ~~ [4, 5, 6]"
-    })
-    public void testAfficher(String toPrint) {
-        String expected = toPrint.split("~~")[1].trim();
-        toPrint = toPrint.split("~~")[0];
-        assertCompiles("afficher(" + toPrint + ")");
+    @Test
+    public void testAfficher() {
+        assertCompiles("""
+                afficher "bonjour"
+                afficher 12
+                afficher (-333)
+                afficher (-23.11)
+                afficher {1, 2, 3, 4}
+                afficher vrai
+                afficher ([5, 6, 7])
+                """);
 
         assertExecution()
-                .prints(expected);
+                .prints("bonjour")
+                .prints("12")
+                .prints("-333")
+                .prints("-23.11")
+                .prints("[1, 2, 3, 4]")
+                .prints("vrai")
+                .prints("[5, 6, 7]");
     }
 
     @Test
@@ -63,4 +67,50 @@ public class TestAliveScript {
                 .prints("bonjour")
                 .ends();
     }
+
+
+    @Test
+    public void testAddition() {
+        assertCompiles("""
+                afficher 3 + 12
+                afficher 87 + -2
+                afficher([1, 2, 3] + 2)
+                afficher([1, [1, 2], vrai] + [1, 2, 3])
+                """);
+
+        assertExecution()
+                .prints("15")
+                .prints("85")
+                .prints("[1, 2, 3, 2]")
+                .prints("[1, [1, 2], vrai, [1, 2, 3]]")
+                .ends();
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
