@@ -5,13 +5,6 @@ Ajouter:
     VAR: '\bvar\b'
     CONSTANTE: '\bconst\b'
 
-  methode_moteur:
-    AVANCER: '\bforward\b'
-    RECULER: '\bbackward\b'
-    ARRETER: '\bstop\b'
-    TOURNER_DROITE: '\bright\b'
-    TOURNER_GAUCHE: '\bleft\b'
-
   arithmetique:
     PLUS: '\+'
     POW: '\^'

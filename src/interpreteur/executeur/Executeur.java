@@ -636,7 +636,7 @@ public class Executeur {
 
         ASFonctionManager.reset();
 
-        asModuleManager.utiliserModuleBuitlins();
+        asModuleManager.utiliserModuleBuiltins();
         //for (ASObjet.Fonction fonction : asModuleManager.getModuleBuiltins().getFonctions())
         //    FonctionManager.ajouterFonction(fonction);
         //for (ASObjet.Variable variable : asModuleManager.getModuleBuiltins().getVariables()) {

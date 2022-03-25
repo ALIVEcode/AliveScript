@@ -2,11 +2,8 @@ package interpreteur.as.modules.builtins;
 
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASFonctionModule;
-import interpreteur.as.lang.datatype.ASBooleen;
-import interpreteur.as.lang.datatype.ASListe;
-import interpreteur.as.lang.datatype.ASObjet;
+import interpreteur.as.lang.datatype.*;
 import interpreteur.as.lang.ASTypeBuiltin;
-import interpreteur.as.lang.datatype.ASTexte;
 import interpreteur.as.modules.core.ASModule;
 import interpreteur.as.lang.ASType;
 import interpreteur.executeur.Executeur;
@@ -16,8 +13,8 @@ import java.util.Iterator;
 public class BuiltinsTexteUtils {
     public static ASFonctionModule[] fonctions = new ASFonctionModule[]{
             // texte
-            new ASFonctionModule("modules.builtins.functions.string", new ASFonctionModule.Parametre[]{
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.tout.asType(), "element", null)
+            new ASFonctionModule("modules.builtins.functions.string", new ASParametre[]{
+                    new ASParametre("element", ASTypeBuiltin.tout.asType(), null)
             }, ASTypeBuiltin.texte.asType()) {
                 @Override
                 public ASTexte executer() {
@@ -25,8 +22,8 @@ public class BuiltinsTexteUtils {
                 }
             },
             // maj
-            new ASFonctionModule("modules.builtins.functions.upper", new ASFonctionModule.Parametre[]{
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null)
+            new ASFonctionModule("modules.builtins.functions.upper", new ASParametre[]{
+                    new ASParametre("txt", ASTypeBuiltin.texte.asType(), null)
             }, ASTypeBuiltin.texte.asType()) {
                 @Override
                 public ASTexte executer() {
@@ -34,8 +31,8 @@ public class BuiltinsTexteUtils {
                 }
             },
             // minus
-            new ASFonctionModule("modules.builtins.functions.lower", new ASFonctionModule.Parametre[]{
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null)
+            new ASFonctionModule("modules.builtins.functions.lower", new ASParametre[]{
+                    new ASParametre("txt", ASTypeBuiltin.texte.asType(), null)
             }, new ASType("texte")) {
                 @Override
                 public ASTexte executer() {
@@ -43,10 +40,10 @@ public class BuiltinsTexteUtils {
                 }
             },
             // remplacer
-            new ASFonctionModule("modules.builtins.functions.replace", new ASFonctionModule.Parametre[]{
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null),
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "sequence", null),
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "remplacement", null)
+            new ASFonctionModule("modules.builtins.functions.replace", new ASParametre[]{
+                    new ASParametre("txt", ASTypeBuiltin.texte.asType(), null),
+                    new ASParametre("sequence", ASTypeBuiltin.texte.asType(), null),
+                    new ASParametre("remplacement", ASTypeBuiltin.texte.asType(), null)
             }, ASTypeBuiltin.texte.asType()) {
                 @Override
                 public ASTexte executer() {
@@ -57,10 +54,10 @@ public class BuiltinsTexteUtils {
                 }
             },
             // remplacerRe
-            new ASFonctionModule("modules.builtins.functions.replaceReg", new ASFonctionModule.Parametre[]{
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null),
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "pattern", null),
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "remplacement", null)
+            new ASFonctionModule("modules.builtins.functions.replaceReg", new ASParametre[]{
+                    new ASParametre("txt", ASTypeBuiltin.texte.asType(), null),
+                    new ASParametre("pattern", ASTypeBuiltin.texte.asType(), null),
+                    new ASParametre("remplacement", ASTypeBuiltin.texte.asType(), null)
             }, ASTypeBuiltin.texte.asType()) {
                 @Override
                 public ASTexte executer() {
@@ -71,9 +68,9 @@ public class BuiltinsTexteUtils {
                 }
             },
             // match
-            new ASFonctionModule("modules.builtins.functions.match", new ASFonctionModule.Parametre[]{
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null),
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "pattern", null)
+            new ASFonctionModule("modules.builtins.functions.match", new ASParametre[]{
+                    new ASParametre("txt", ASTypeBuiltin.texte.asType(), null),
+                    new ASParametre("pattern", ASTypeBuiltin.texte.asType(), null)
             }, ASTypeBuiltin.booleen.asType()) {
                 @Override
                 public ASBooleen executer() {
@@ -83,8 +80,8 @@ public class BuiltinsTexteUtils {
                 }
             },
             // estNumerique
-            new ASFonctionModule("modules.builtins.functions.isNumeric", new ASFonctionModule.Parametre[]{
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null)
+            new ASFonctionModule("modules.builtins.functions.isNumeric", new ASParametre[]{
+                    new ASParametre("txt", ASTypeBuiltin.texte.asType(), null)
             }, ASTypeBuiltin.booleen.asType()) {
                 @Override
                 public ASBooleen executer() {
@@ -112,9 +109,9 @@ public class BuiltinsTexteUtils {
              * 		@return un texte où les {} sont remplacés par les valeurs dans la liste
              */
             // format
-            new ASFonctionModule("modules.builtins.functions.format", new ASFonctionModule.Parametre[]{
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null),
-                    new ASFonctionModule.Parametre(ASTypeBuiltin.liste.asType(), "valeurs", null)
+            new ASFonctionModule("modules.builtins.functions.format", new ASParametre[]{
+                    new ASParametre("txt", ASTypeBuiltin.texte.asType(), null),
+                    new ASParametre("valeurs", ASTypeBuiltin.liste.asType(), null)
             }, ASTypeBuiltin.texte.asType()) {
                 @Override
                 public ASObjet<?> executer() {

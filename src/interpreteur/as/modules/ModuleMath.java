@@ -6,6 +6,7 @@ import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASDecimal;
 import interpreteur.as.lang.datatype.ASEntier;
 import interpreteur.as.lang.datatype.ASObjet;
+import interpreteur.as.lang.datatype.ASParametre;
 import interpreteur.as.modules.core.ASModule;
 import interpreteur.as.lang.ASType;
 import interpreteur.executeur.Executeur;
@@ -15,8 +16,8 @@ public class ModuleMath {
     static ASModule charger(Executeur executeurInstance) {
         return new ASModule(new ASFonctionModule[]{
                 // rad
-                new ASFonctionModule("modules.math.functions.rad", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(new ASType("nombre"), "x", null)
+                new ASFonctionModule("modules.math.functions.rad", new ASParametre[]{
+                        new ASParametre("x", new ASType("nombre"), null)
                 }, new ASType("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
@@ -25,8 +26,8 @@ public class ModuleMath {
                     }
                 },
                 // deg
-                new ASFonctionModule("modules.math.functions.deg", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(new ASType("nombre"), "x", null)
+                new ASFonctionModule("modules.math.functions.deg", new ASParametre[]{
+                        new ASParametre("x", new ASType("nombre"), null)
                 }, new ASType("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
@@ -35,8 +36,8 @@ public class ModuleMath {
                     }
                 },
                 // sin
-                new ASFonctionModule("modules.math.functions.sin", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(new ASType("nombre"), "x", null)
+                new ASFonctionModule("modules.math.functions.sin", new ASParametre[]{
+                        new ASParametre("x", new ASType("nombre"), null)
                 }, new ASType("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
@@ -45,8 +46,8 @@ public class ModuleMath {
                     }
                 },
                 // cos
-                new ASFonctionModule("modules.math.functions.cos", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(new ASType("nombre"), "x", null)
+                new ASFonctionModule("modules.math.functions.cos", new ASParametre[]{
+                        new ASParametre("x", new ASType("nombre"), null)
                 }, new ASType("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
@@ -55,8 +56,8 @@ public class ModuleMath {
                     }
                 },
                 // tan
-                new ASFonctionModule("modules.math.functions.tan", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(new ASType("nombre"), "x", null)
+                new ASFonctionModule("modules.math.functions.tan", new ASParametre[]{
+                        new ASParametre("x", new ASType("nombre"), null)
                 }, new ASType("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
@@ -65,9 +66,9 @@ public class ModuleMath {
                     }
                 },
                 // arrondir
-                new ASFonctionModule("modules.math.functions.round", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(new ASType("nombre"), "n", null),
-                        new ASFonctionModule.Parametre(new ASType("entier"), "nbSignificatifs", new ASEntier(0)),
+                new ASFonctionModule("modules.math.functions.round", new ASParametre[]{
+                        new ASParametre("n", new ASType("nombre"), null),
+                        new ASParametre("nbSignificatifs", new ASType("entier"), new ASEntier(0)),
                 }, new ASType("nombre")) {
                     @Override
                     public ASObjet<?> executer() {

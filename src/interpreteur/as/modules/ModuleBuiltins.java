@@ -49,8 +49,8 @@ public class ModuleBuiltins {
     static ASModule charger(Executeur executeurInstance) {
         ASFonctionModule[] fonctions = new ASFonctionModule[]{
                 // afficher
-                new ASFonctionModule("modules.builtins.functions.print", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(new ASType("tout"), "element", new ASTexte(""))
+                new ASFonctionModule("modules.builtins.functions.print", new ASParametre[]{
+                        new ASParametre("element", new ASType("tout"), new ASTexte(""))
                 }, ASTypeBuiltin.rien.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -61,8 +61,8 @@ public class ModuleBuiltins {
                     }
                 },
                 // attendre
-                new ASFonctionModule("modules.builtins.functions.wait", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(new ASType("nombre"), "duree", new ASEntier(0))
+                new ASFonctionModule("modules.builtins.functions.wait", new ASParametre[]{
+                        new ASParametre("duree", new ASType("nombre"), new ASEntier(0))
                 }, ASTypeBuiltin.rien.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -84,8 +84,8 @@ public class ModuleBuiltins {
                  * 				-> si "choix" est de type texte: une lettre aleatoirement choisi dans le texte
                  */
                 // aleatoire
-                new ASFonctionModule("modules.builtins.functions.random", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(new ASType("iterable"), "choix", null)
+                new ASFonctionModule("modules.builtins.functions.random", new ASParametre[]{
+                        new ASParametre("choix", new ASType("iterable"), null)
                 }, new ASType("tout")) {
                     @Override
                     public ASObjet<?> executer() {
@@ -109,8 +109,8 @@ public class ModuleBuiltins {
                  * 		@return le nom du type de l'objet passe en parametre dans un "texte"
                  */
                 // typeDe
-                new ASFonctionModule("modules.builtins.functions.typeOf", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(new ASType("tout"), "element", null)
+                new ASFonctionModule("modules.builtins.functions.typeOf", new ASParametre[]{
+                        new ASParametre("element", new ASType("tout"), null)
                 }, new ASType("texte")) {
                     @Override
                     public ASObjet<?> executer() {
@@ -118,8 +118,8 @@ public class ModuleBuiltins {
                     }
                 },
                 //booleen
-                new ASFonctionModule("modules.builtins.functions.boolean", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(ASTypeBuiltin.tout.asType(), "element", null)
+                new ASFonctionModule("modules.builtins.functions.boolean", new ASParametre[]{
+                        new ASParametre("element", ASTypeBuiltin.tout.asType(), null)
                 }, ASTypeBuiltin.booleen.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -127,8 +127,8 @@ public class ModuleBuiltins {
                     }
                 },
                 // auto
-                new ASFonctionModule("modules.builtins.functions.auto", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "txt", null)
+                new ASFonctionModule("modules.builtins.functions.auto", new ASParametre[]{
+                        new ASParametre("txt", ASTypeBuiltin.texte.asType(), null)
                 }, ASTypeBuiltin.tout.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -142,8 +142,8 @@ public class ModuleBuiltins {
                     }
                 },
                 // clef
-                new ASFonctionModule("modules.builtins.functions.key", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(ASTypeBuiltin.paire.asType(), "_paire", null)
+                new ASFonctionModule("modules.builtins.functions.key", new ASParametre[]{
+                        new ASParametre("_paire", ASTypeBuiltin.paire.asType(), null)
                 }, ASTypeBuiltin.texte.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -151,8 +151,8 @@ public class ModuleBuiltins {
                     }
                 },
                 // val
-                new ASFonctionModule("modules.builtins.functions.val", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(ASTypeBuiltin.paire.asType(), "_paire", null)
+                new ASFonctionModule("modules.builtins.functions.val", new ASParametre[]{
+                        new ASParametre("_paire", ASTypeBuiltin.paire.asType(), null)
                 }, ASTypeBuiltin.texte.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -170,8 +170,8 @@ public class ModuleBuiltins {
                  *
                  */
                 // info
-                new ASFonctionModule("modules.builtins.functions.info", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(ASTypeBuiltin.tout.asType(), "element", null)
+                new ASFonctionModule("modules.builtins.functions.info", new ASParametre[]{
+                        new ASParametre("element", ASTypeBuiltin.tout.asType(), null)
                 }, new ASType("tout")) {
                     @Override
                     public ASObjet<?> executer() {
@@ -179,8 +179,8 @@ public class ModuleBuiltins {
                     }
                 },
                 // getVar
-                new ASFonctionModule("modules.builtins.functions.getVar", new ASFonctionModule.Parametre[]{
-                        new ASFonctionModule.Parametre(ASTypeBuiltin.texte.asType(), "nomVariable", null)
+                new ASFonctionModule("modules.builtins.functions.getVar", new ASParametre[]{
+                        new ASParametre("nomVariable", ASTypeBuiltin.texte.asType(), null)
                 }, new ASType("tout")) {
                     @Override
                     public ASObjet<?> executer() {
@@ -191,7 +191,73 @@ public class ModuleBuiltins {
                         }
                         return var.getValeurApresGetter();
                     }
-                }
+                },
+
+
+                //----------------- Voiture -----------------//
+                // TODO bouger cette section dans ModuleVoiture.java
+
+                new ASFonctionModule("arreter", ASTypeBuiltin.rien.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        executeurInstance.addData(new Data(Data.Id.ARRETER));
+                        return new ASNul();
+                    }
+                },
+
+                new ASFonctionModule("avancer", new ASParametre[]{
+                        new ASParametre("duree", ASTypeBuiltin.nombre.asType(), new ASNul())
+                }, ASTypeBuiltin.rien.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        ASObjet<?> duree = this.getValeurParam("duree");
+                        var value = duree.getValue();
+                        executeurInstance.addData(new Data(Data.Id.AVANCER)
+                                .addParam(value)
+                                .addDodo(value == null ? 0 : ((Number) value).doubleValue())
+                        );
+                        return new ASNul();
+                    }
+                },
+
+                new ASFonctionModule("reculer", new ASParametre[]{
+                        new ASParametre("duree", ASTypeBuiltin.nombre.asType(), new ASNul())
+                }, ASTypeBuiltin.rien.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        ASObjet<?> duree = this.getValeurParam("duree");
+                        var value = duree.getValue();
+                        executeurInstance.addData(new Data(Data.Id.RECULER)
+                                .addParam(value)
+                                .addDodo(value == null ? 0 : ((Number) value).doubleValue())
+                        );
+                        return new ASNul();
+                    }
+                },
+
+                new ASFonctionModule("droite", new ASParametre[]{
+                        new ASParametre("duree", ASTypeBuiltin.nombre.asType(), new ASNul())
+                }, ASTypeBuiltin.rien.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        ASObjet<?> duree = this.getValeurParam("duree");
+                        var value = duree.getValue() instanceof Number num ? -num.doubleValue() : -90;
+                        executeurInstance.addData(new Data(Data.Id.TOURNER).addParam(value));
+                        return new ASNul();
+                    }
+                },
+
+                new ASFonctionModule("gauche", new ASParametre[]{
+                        new ASParametre("duree", ASTypeBuiltin.nombre.asType(), new ASNul())
+                }, ASTypeBuiltin.rien.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        ASObjet<?> duree = this.getValeurParam("duree");
+                        var value = duree.getValue() instanceof Number num ? num.doubleValue() : 90;
+                        executeurInstance.addData(new Data(Data.Id.TOURNER).addParam(value));
+                        return new ASNul();
+                    }
+                },
         };
 
         var fonctionsBuiltins = new ArrayList<>(List.of(fonctions));

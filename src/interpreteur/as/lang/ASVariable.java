@@ -53,7 +53,7 @@ public class ASVariable implements ASObjet<Object> {
 
     @Override
     public interpreteur.as.lang.ASVariable clone() {
-        return new interpreteur.as.lang.ASVariable(nom, this.valeur, this.type).setGetter(this.getter).setSetter(this.setter);
+        return new ASVariable(nom, this.valeur, this.type).setGetter(this.getter).setSetter(this.setter);
     }
 
     public String obtenirNom() {
