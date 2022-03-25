@@ -1,5 +1,6 @@
 package interpreteur.as;
 
+import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASType;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur.ErreurAssignement;
@@ -401,7 +402,17 @@ public class ASAst extends AstGenerator {
         );
 
         ajouterProgramme("expression",
-                p -> Programme.evalExpression((Expression<?>) p.get(0), p.get(0).toString())
+                p -> new Programme() {
+                    @Override
+                    public Object execute() {
+                        try {
+                            new AppelFonc((Expression<?>) p.get(0), new CreerListe()).eval();
+                        } catch (ASErreur.ErreurTypePasAppelable err) {
+                            ((Expression<?>) p.get(0)).eval();
+                        }
+                        return null;
+                    }
+                }
         );
     }
 
