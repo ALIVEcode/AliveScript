@@ -1,0 +1,82 @@
+{
+  "error": {
+    "Closure": "ClosureError",
+    "MissingContext": "MissingContextError",
+    "Syntax": "SyntaxError",
+    "Module": "ModuleError",
+    "FunctionCall": "FunctionCallError",
+    "InputOutput": "InputOutputError",
+    "Assignment": "AssignmentError",
+    "Type": "TypeError",
+    "DuplicateKey": "DuplicateKeyError",
+    "Index": "IndexError",
+    "UnknownVariable": "UnknownVariableError",
+    "Comparison": "ComparisonError",
+    "Formating": "FormatingError",
+    "Range": "RangeError",
+    "InvalidInt": "InvalidIntError",
+    "DivisonByZero": "DivisionByZeroError",
+    "ZeroModulo": "ZeroModuloError"
+  },
+  "modules": {
+    "builtins": {
+      "constants": {
+        "endl": "endl"
+      },
+      "variables": {
+        "localVar": "localVar",
+        "globalVar": "globalVar",
+        "listVar": "listVar"
+      },
+      "functions": {
+        "print": "print",
+        "wait": "wait",
+        "random": "random",
+        "typeOf": "typeOf",
+        "boolean": "boolean",
+        "auto": "auto",
+        "key": "key",
+        "val": "val",
+        "info": "info",
+        "getVar": "getVar",
+        "list": "list",
+        "reverse": "reverse",
+        "map": "map",
+        "filter": "filter",
+        "join": "join",
+        "sum": "sum",
+        "max": "max",
+        "min": "min",
+        "length": "length",
+        "index": "index",
+        "int": "int",
+        "abs": "abs",
+        "float": "float",
+        "number": "number",
+        "bin": "bin",
+        "string": "string",
+        "upper": "upper",
+        "lower": "lower",
+        "replace": "replace",
+        "replaceReg": "replaceReg",
+        "match": "match",
+        "isNumeric": "isNumeric",
+        "format": "format"
+      }
+    },
+    "math": {
+      "constants": {
+        "pi": "pi",
+        "e": "e"
+      },
+      "functions": {
+        "rad": "rad",
+        "deg": "deg",
+        "sin": "sin",
+        "cos": "cos",
+        "tan": "tan",
+        "round": "round"
+      }
+    }
+  }
+}

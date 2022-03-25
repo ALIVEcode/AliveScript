@@ -203,6 +203,8 @@ public class ASAst extends AstGenerator {
                     return new Declarer((Expression<?>) p.get(1), (Expression<?>) p.get(idxValeur), type, estConst);
                 });
 
+
+        /* Deprecated
         ajouterProgramme("{methode_moteur} expression~"
                          + "{methode_moteur}",
                 (p, variante) -> {
@@ -210,6 +212,7 @@ public class ASAst extends AstGenerator {
 
                     return new MethodeMoteur(nom, variante == 0 ? (Expression<?>) p.get(1) : null);
                 });
+        */
 
         ajouterProgramme("STRUCTURE NOM_VARIABLE", p -> new CreerStructure(((Token) p.get(1)).obtenirValeur()));
 

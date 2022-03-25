@@ -1,4 +1,5 @@
 import interpreteur.executeur.Executeur;
+import language.Language;
 
 public class Main {
 
@@ -21,7 +22,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        Executeur executeur = new Executeur();
+        Executeur executeur = new Executeur(Language.EN);
         executeur.debug = true;
         Object a;
         if (!(a = executeur.compiler(CODE, true)).equals("[]")) System.out.println(a);

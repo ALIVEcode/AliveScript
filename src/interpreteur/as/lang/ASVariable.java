@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ASVariable implements ASObjet<Object> {
-    private final String nom;
+    private String nom;
     private final ASType type;
     private ASObjet<?> valeur;
     private boolean readOnly = false;
@@ -53,11 +53,15 @@ public class ASVariable implements ASObjet<Object> {
 
     @Override
     public interpreteur.as.lang.ASVariable clone() {
-        return new interpreteur.as.lang.ASVariable(nom, this.valeur, this.type).setGetter(this.getter).setSetter(this.setter);
+        return new ASVariable(nom, this.valeur, this.type).setGetter(this.getter).setSetter(this.setter);
     }
 
     public String obtenirNom() {
         return this.nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     public ASType getType() {
