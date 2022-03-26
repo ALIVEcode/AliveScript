@@ -31,6 +31,11 @@
       "functions": {
         "print": "modules.builtins.functions.print",
         "wait": "modules.builtins.functions.wait",
+        "forward": "modules.builtins.functions.forward",
+        "backward": "modules.builtins.functions.backward",
+        "left": "modules.builtins.functions.left",
+        "right": "modules.builtins.functions.right",
+        "stop": "modules.builtins.functions.stop",
         "random": "modules.builtins.functions.random",
         "typeOf": "modules.builtins.functions.typeOf",
         "boolean": "modules.builtins.functions.boolean",

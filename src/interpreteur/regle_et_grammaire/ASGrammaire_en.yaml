@@ -3,7 +3,8 @@ Ajouter:
     LIRE: '\bread\b'
     UTILISER: '\buse\b'
     VAR: '\bvar\b'
-    CONSTANTE: '\bconst\b'
+
+  CONSTANTE: '\bconst\b'
 
   arithmetique:
     PLUS: '\+'

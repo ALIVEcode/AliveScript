@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/interpreteur/regle_et_grammaire" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/language/languages" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/bin" />
       <excludeFolder url="file://$MODULE_DIR$/log" />
     </content>

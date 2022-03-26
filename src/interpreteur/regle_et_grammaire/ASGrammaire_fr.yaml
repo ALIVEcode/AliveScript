@@ -3,7 +3,8 @@ Ajouter:
     LIRE: '\blire\b'
     UTILISER: '\butiliser\b'
     VAR: '\bvar\b'
-    CONSTANTE: '\bconst\b'
+
+  CONSTANTE: '\bconst\b'
 
   arithmetique:
     PLUS: '\+'
