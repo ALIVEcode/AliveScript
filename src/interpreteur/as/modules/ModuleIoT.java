@@ -8,23 +8,42 @@ import interpreteur.as.modules.core.ASModule;
 import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
 
+
 public class ModuleIoT {
+
     static ASModule charger(Executeur executeurInstance) {
-        return new ASModule(new ASFonctionModule[] {
+
+        /*
+         * Module Iot:
+         *
+         * enleverEcouteur(ecouteurId: entier) -> rien
+         *
+         * ecouterEvenement(eventId: texte, callback: fonctionType, ecouteurId: entier | nulType = nul) -> entier # ecouteurId
+         * envoyerEvenement(eventId: texte, donnees: dict) -> rien
+         * enleverEcouteursEvenement(eventId: texte) -> rien
+         *
+         *
+         * changerDoc(champs: dict) -> rien
+         * ecouterDoc(champs: liste | texte, callback: fonctionType, ecouteurId: entier | nulType = nul) -> entier # ecouteurId
+         * enleverEcouteursDoc(champs: liste | texte) -> rien
+         */
+
+
+        return new ASModule(new ASFonctionModule[]{
                 new ASFonctionModule("update",
-                        new ASParametre[] {
-                            new ASParametre(
-                                    "projectId", ASTypeBuiltin.texte.asType(),
-                                    null
-                            ),
-                            new ASParametre(
-                                    "id", ASTypeBuiltin.texte.asType(),
-                                    null
-                            ),
-                            new ASParametre(
-                                    "value", ASTypeBuiltin.tout.asType(),
-                                    null
-                            )
+                        new ASParametre[]{
+                                new ASParametre(
+                                        "projectId", ASTypeBuiltin.texte.asType(),
+                                        null
+                                ),
+                                new ASParametre(
+                                        "id", ASTypeBuiltin.texte.asType(),
+                                        null
+                                ),
+                                new ASParametre(
+                                        "value", ASTypeBuiltin.tout.asType(),
+                                        null
+                                )
                         }, ASTypeBuiltin.nombre.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -37,7 +56,7 @@ public class ModuleIoT {
                     }
                 },
                 new ASFonctionModule("get",
-                        new ASParametre[] {
+                        new ASParametre[]{
                                 new ASParametre(
                                         "key", ASTypeBuiltin.texte.asType(),
                                         new ASNul()
@@ -46,30 +65,30 @@ public class ModuleIoT {
                     @Override
                     public ASObjet<?> executer() {
                         ASObjet<?> uncastedKey = (ASObjet<?>) this.getValeurParam("key");
-                        if(uncastedKey instanceof ASNul) {
+                        if (uncastedKey instanceof ASNul) {
                             return new ASTexte(executeurInstance.getContext().toString());
                         }
 
                         ASTexte key = (ASTexte) uncastedKey;
 
                         Object obj = executeurInstance.getContext().get(key.toString());
-                        if(obj == null) {
+                        if (obj == null) {
                             throw new ModuleIoT.KeyNotPresent("Erreur, la clé " + key + " n'est pas présente dans l'objet de réponse.");
                         }
-                        if(obj instanceof String) {
+                        if (obj instanceof String) {
                             return new ASTexte(obj);
                         }
-                        if(obj instanceof Number) {
-                            return ASNombre.cast((Number) obj);
+                        if (obj instanceof Number num) {
+                            return ASNombre.cast(num);
                         }
-                        if(obj instanceof Boolean) {
-                            return new ASBooleen((Boolean) obj);
+                        if (obj instanceof Boolean bool) {
+                            return new ASBooleen(bool);
                         }
                         return new ASNul();
                     }
                 },
                 new ASFonctionModule("getComponentValue",
-                        new ASParametre[] {
+                        new ASParametre[]{
                                 new ASParametre(
                                         "projectId", ASTypeBuiltin.texte.asType(),
                                         null
