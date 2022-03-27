@@ -15,11 +15,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ASLinterApi extends BaseApi {
-    private static ArrayList<Regle> REGLES;
+import static server.utils.QueryUtils.getValueOfQuery;
 
+public class ASLinterApi extends BaseApi {
     private final static Hashtable<Language, JSONObject> LINTER_INFO;
     private final static Hashtable<Language, String> LINTER_INFO_STRINGIFY;
+    private static ArrayList<Regle> REGLES;
     private static Logger logger;
 
     static {
@@ -130,6 +131,7 @@ public class ASLinterApi extends BaseApi {
     public void handle(HttpExchange httpExchange) throws IOException {
         super.handle(httpExchange);
 
+
         String requestParamValue;
 
         requestParamValue = switch (httpExchange.getRequestMethod().toUpperCase()) {
@@ -141,8 +143,9 @@ public class ASLinterApi extends BaseApi {
     }
 
     private String handleGetRequest(HttpExchange httpExchange) {
-        var lang = httpExchange.getRequestURI().getQuery();
-        if (lang == null || !Language.isSupportedLanguage(lang)) {
+        String lang = getValueOfQuery(httpExchange.getRequestURI().getQuery(), "lang");
+        logger.info("Lang is " + lang);
+        if (!Language.isSupportedLanguage(lang)) {
             logger.warning(
                     "Language's codeISO639_1 " +
                     (lang == null ? "unspecified" : "not supported (codeISO639_1: '" + lang + "'). Defaulting to French ('FR')."));
@@ -150,7 +153,7 @@ public class ASLinterApi extends BaseApi {
         }
         logger.info("Collecting linter info...");
         logger.info("[SUCCESS] Linter info collected and sent successfully");
-        return LINTER_INFO_STRINGIFY.get(Language.valueOf(lang));
+        return LINTER_INFO_STRINGIFY.get(Language.valueOf(lang.toUpperCase()));
     }
 }
 

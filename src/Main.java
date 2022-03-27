@@ -5,7 +5,8 @@ public class Main {
 
     static final String[] CODE = """
             var a = 12
-            a
+            afficher a
+            afficher a
             """.split("\n");
 
 

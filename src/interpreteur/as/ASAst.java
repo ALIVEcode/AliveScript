@@ -405,10 +405,15 @@ public class ASAst extends AstGenerator {
                 p -> new Programme() {
                     @Override
                     public Object execute() {
-                        try {
-                            new AppelFonc((Expression<?>) p.get(0), new CreerListe()).eval();
-                        } catch (ASErreur.ErreurTypePasAppelable err) {
+                        // if the expression is not a lonely variable, just eval and return null
+                        if (!(p.get(0) instanceof Var var)) {
                             ((Expression<?>) p.get(0)).eval();
+                            return null;
+                        }
+                        try {
+                            new AppelFonc(var, new CreerListe()).eval();
+                        } catch (ASErreur.ErreurTypePasAppelable err) {
+                            var.eval();
                         }
                         return null;
                     }

@@ -14,8 +14,8 @@ import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.generateurs.lexer.Regle;
 import interpreteur.tokens.Token;
-import interpreteur.utils.ArraysUtils;
-import interpreteur.utils.Range;
+import utils.ArraysUtils;
+import utils.Range;
 
 /**
  * @author Mathis Laroche
