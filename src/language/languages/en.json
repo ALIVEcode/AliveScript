@@ -31,6 +31,11 @@
       "functions": {
         "print": "print",
         "wait": "wait",
+        "forward": "forward",
+        "backward": "backward",
+        "left": "left",
+        "right": "right",
+        "stop": "stop",
         "random": "random",
         "typeOf": "typeOf",
         "boolean": "boolean",
@@ -76,6 +81,53 @@
         "cos": "cos",
         "tan": "tan",
         "round": "round"
+      }
+    },
+    "car": {
+      "variables": {
+        "speed": "speed",
+        "frontDist": "frontDist"
+      },
+      "functions": {
+        "x": "x",
+        "y": "y",
+        "getFrontDist": "getFrontDist",
+        "getLeftDist": "getLeftDist",
+        "getRightDist": "getRightDist",
+        "drive": "drive"
+      }
+    },
+    "test": {
+      "variables": {
+        "itsName": "itsName"
+      },
+      "functions": {
+        "dummy": "dummy"
+      }
+    },
+    "dict": {
+      "functions": {
+        "create": "create"
+      }
+    },
+    "ast": {
+      "functions": {
+        "generateTree": "generateTree"
+      }
+    },
+    "ai": {
+      "functions": {
+        "average": "average",
+        "standardDev": "standardDev",
+        "correlationCoeff": "correlationCoeff",
+        "determinationCoeff": "determinationCoeff",
+        "columnVal": "columnVal",
+        "showScatter": "showScatter",
+        "createRegression": "createRegression",
+        "optimiseRegression": "optimiseRegression",
+        "evaluate": "evaluate",
+        "costFunction": "costFunction",
+        "testNeuralNetwork": "testNeuralNetwork"
       }
     }
   }

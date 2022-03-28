@@ -10,7 +10,8 @@ import interpreteur.executeur.Executeur;
 public class ModuleAst {
     static ASModule charger(Executeur executeurInstance) {
         return new ASModule(new ASFonctionModule[]{
-            new ASFonctionModule("genererArbre", new ASParametre[] {
+            // genererArbre
+            new ASFonctionModule("modules.ast.functions.generateTree", new ASParametre[] {
                     new ASParametre("param", new ASType("texte"), null)
             }, new ASType("texte")) {
                 @Override

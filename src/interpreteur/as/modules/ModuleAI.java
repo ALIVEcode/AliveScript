@@ -236,7 +236,8 @@ public class ModuleAI {
                 /*
                  Calculates the mean of a list of numbers.
                 */
-                new ASFonctionModule("moyenne",
+                // moyenne
+                new ASFonctionModule("modules.ai.functions.average",
                         new ASParametre[]{
                                 new ASParametre(
                                         "lst", ASTypeBuiltin.liste.asType(),
@@ -255,7 +256,8 @@ public class ModuleAI {
                 /*
                   Calculates the standart deviation of a list of numbers.
                 */
-                new ASFonctionModule("ecartType", new ASParametre[]{
+                // ecartType
+                new ASFonctionModule("modules.ai.functions.standardDev", new ASParametre[]{
                         new ASParametre(
                                 "lst", ASTypeBuiltin.liste.asType(),
                                 null
@@ -282,7 +284,8 @@ public class ModuleAI {
 
                   If both lists are not the same length, an error will be generated.
                 */
-                new ASFonctionModule("coefficientCorrelation", new ASParametre[]{
+                // coefficientCorrelation
+                new ASFonctionModule("modules.ai.functions.correlationCoeff", new ASParametre[]{
                         new ASParametre(
                                 "lst1", ASTypeBuiltin.liste.asType(),
                                 null
@@ -315,7 +318,8 @@ public class ModuleAI {
 
                   If both lists are not the same length, an error will be generated.
                 */
-                new ASFonctionModule("coefficientDetermination", new ASParametre[]{
+                // coefficientDetermination
+                new ASFonctionModule("modules.ai.functions.determinationCoeff", new ASParametre[]{
                         new ASParametre(
                                 "lst1", ASTypeBuiltin.liste.asType(),
                                 null
@@ -344,7 +348,8 @@ public class ModuleAI {
                 /*
                   Returns the values of the specified column. (ONLY TAKES THE SAME DATASET FOR NOW, WILL BE CHANGED)
                 */
-                new ASFonctionModule("valeursColonne", new ASParametre[]{
+                // valeursColonne
+                new ASFonctionModule("modules.ai.functions.columnVal", new ASParametre[]{
                         new ASParametre(
                                 "col", ASTypeBuiltin.texte.asType(),
                                 null
@@ -376,7 +381,8 @@ public class ModuleAI {
                 /*
                     Shows the data on the graph as a scatter plot.
                  */
-                new ASFonctionModule("afficherNuage", new ASParametre[]{
+                // afficherNuage
+                new ASFonctionModule("modules.ai.functions.showScatter", new ASParametre[]{
                 }, ASTypeBuiltin.nulType.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -387,7 +393,8 @@ public class ModuleAI {
                 /*
                     Creates a new regression and shows it on the graph,
                  */
-                new ASFonctionModule("creerRegression", new ASParametre[]{
+                // creerRegression
+                new ASFonctionModule("modules.ai.functions.createRegression", new ASParametre[]{
                         new ASParametre(
                                 "a", ASTypeBuiltin.nombre.asType(), null),
                         new ASParametre(
@@ -412,7 +419,8 @@ public class ModuleAI {
                 /*
                     Applies an algorithm to optimize the regression with the data.
                  */
-                new ASFonctionModule("optimiserRegression", new ASParametre[]{
+                // optimiserRegression
+                new ASFonctionModule("modules.ai.functions.optimiseRegression", new ASParametre[]{
                         new ASParametre(
                                 "lr", ASTypeBuiltin.nombre.asType(), null),
                         new ASParametre(
@@ -429,7 +437,8 @@ public class ModuleAI {
                 /*
                     Evaluates the regression on the graph at a specific x value.
                  */
-                new ASFonctionModule("evaluer", new ASParametre[]{
+                // evaluer
+                new ASFonctionModule("modules.ai.functions.evaluate", new ASParametre[]{
                         new ASParametre(
                                 "x", ASTypeBuiltin.nombre.asType(), null)
                 }, ASTypeBuiltin.decimal.asType()) {
@@ -457,7 +466,8 @@ public class ModuleAI {
                 /*
                     Evaluates the cost function for the regression on the screen.
                  */
-                new ASFonctionModule("fonctionCout", new ASParametre[]{
+                // fonctionCout
+                new ASFonctionModule("modules.ai.functions.costFunction", new ASParametre[]{
                 }, ASTypeBuiltin.nulType.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -465,7 +475,8 @@ public class ModuleAI {
                         return new ASNul();
                     }
                 },
-                new ASFonctionModule("testReseauNeurones", new ASParametre[]{
+                // testReseauNeurones
+                new ASFonctionModule("modules.ai.functions.testNeuralNetwork", new ASParametre[]{
                 }, ASTypeBuiltin.nulType.asType()) {
                     @Override
                     public ASObjet<?> executer() {

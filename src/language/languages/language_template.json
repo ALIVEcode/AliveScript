@@ -82,6 +82,53 @@
         "tan": "modules.math.functions.tan",
         "round": "modules.math.functions.round"
       }
+    },
+    "car": {
+      "variables": {
+        "speed": "modules.car.variables.speed",
+        "frontDist": "modules.car.variables.frontDist"
+      },
+      "functions": {
+        "x": "modules.car.functions.x",
+        "y": "modules.car.functions.y",
+        "getFrontDist": "modules.car.functions.getFrontDist",
+        "getLeftDist": "modules.car.functions.getLeftDist",
+        "getRightDist": "modules.car.functions.getRightDist",
+        "drive": "modules.car.functions.drive"
+      }
+    },
+    "test": {
+      "variables": {
+        "itsName": "modules.test.variables.itsName"
+      },
+      "functions": {
+        "dummy": "modules.test.functions.dummy"
+      }
+    },
+    "dict": {
+      "functions": {
+        "create": "modules.dict.functions.create"
+      }
+    },
+    "ast": {
+      "functions": {
+        "generateTree": "modules.ast.functions.generateTree"
+      }
+    },
+    "ai": {
+      "functions": {
+        "average": "modules.ai.functions.average",
+        "standardDev": "modules.ai.functions.standardDev",
+        "correlationCoeff": "modules.ai.functions.correlationCoeff",
+        "determinationCoeff": "modules.ai.functions.determinationCoeff",
+        "columnVal": "modules.ai.functions.columnVal",
+        "showScatter": "modules.ai.functions.showScatter",
+        "createRegression": "modules.ai.functions.createRegression",
+        "optimiseRegression": "modules.ai.functions.optimiseRegression",
+        "evaluate": "modules.ai.functions.evaluate",
+        "costFunction": "modules.ai.functions.costFunction",
+        "testNeuralNetwork": "modules.ai.functions.testNeuralNetwork"
+      }
     }
   }
 }

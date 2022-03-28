@@ -31,6 +31,11 @@
       "functions": {
         "print": "afficher",
         "wait": "attendre",
+        "forward": "avancer",
+        "backward": "reculer",
+        "left": "gauche",
+        "right": "droite",
+        "stop": "arreter",
         "random": "aleatoire",
         "typeOf": "typeDe",
         "boolean": "booleen",
@@ -76,6 +81,53 @@
         "cos": "cos",
         "tan": "tan",
         "round": "arrondir"
+      }
+    },
+    "car": {
+      "variables": {
+        "speed": "vitesse",
+        "frontDist": "distAvant"
+      },
+      "functions": {
+        "x": "x",
+        "y": "y",
+        "getFrontDist": "getDistAvant",
+        "getLeftDist": "getDistGauche",
+        "getRightDist": "getDistDroite",
+        "drive": "rouler"
+      }
+    },
+    "test": {
+      "variables": {
+        "itsName": "sonNom"
+      },
+      "functions": {
+        "dummy": "dummy"
+      }
+    },
+    "dict": {
+      "functions": {
+        "create": "creer"
+      }
+    },
+    "ast": {
+      "functions": {
+        "generateTree": "genererArbre"
+      }
+    },
+    "ai": {
+      "functions": {
+        "average": "moyenne",
+        "standardDev": "ecartType",
+        "correlationCoeff": "coefficientCorrelation",
+        "determinationCoeff": "coefficientDetermination",
+        "columnVal": "valeursColonne",
+        "showScatter": "afficherNuage",
+        "createRegression": "creerRegression",
+        "optimiseRegression": "optimiserRegression",
+        "evaluate": "evaluer",
+        "costFunction": "fonctionCout",
+        "testNeuralNetwork": "testReseauNeurones"
       }
     }
   }

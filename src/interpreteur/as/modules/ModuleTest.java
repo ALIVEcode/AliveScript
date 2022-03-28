@@ -11,7 +11,8 @@ import interpreteur.executeur.Executeur;
 public class ModuleTest {
     public static ASModule charger(Executeur executeurInstance) {
         ASFonctionModule[] fonctions = new ASFonctionModule[]{
-                new ASFonctionModule("dummy", ASTypeBuiltin.tout.asType()) {
+                // dummy
+                new ASFonctionModule("modules.test.functions.dummy", ASTypeBuiltin.tout.asType()) {
                     @Override
                     public ASObjet<?> executer() {
                         //executeurInstance.addData(new Data(Data.Id.AFFICHER).addParam(executeurInstance.getContext()));
@@ -23,7 +24,8 @@ public class ModuleTest {
         };
 
         ASVariable[] variables = new ASVariable[]{
-                new ASVariable("sonNom", new ASTexte("hey!"), ASTypeBuiltin.texte.asType())
+                // sonNom
+                new ASVariable("modules.test.variables.itsName", new ASTexte("hey!"), ASTypeBuiltin.texte.asType())
                         .setGetter(() -> new ASTexte("oh!")).setReadOnly()
         };
 

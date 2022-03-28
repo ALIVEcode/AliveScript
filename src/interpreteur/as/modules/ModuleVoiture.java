@@ -28,41 +28,43 @@ public class ModuleVoiture {
 
     static ASModule charger(Executeur executeurInstance) {
         var fonctions = new ASFonctionModule[]{
-
-                new ASFonctionModule("x", new ASType("decimal")) {
+                // x
+                new ASFonctionModule("modules.car.functions.x", new ASType("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         return new ASDecimal(((Number) getDataVoiture("x")).doubleValue());
                     }
                 },
-
-                new ASFonctionModule("y", new ASType("decimal")) {
+                // y
+                new ASFonctionModule("modules.car.functions.y", new ASType("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         return new ASDecimal(((Number) getDataVoiture("y")).doubleValue());
                     }
                 },
-
-                new ASFonctionModule("getDistAvant", new ASType("decimal")) {
+                // getDistAvant
+                new ASFonctionModule("modules.car.functions.getFrontDist", new ASType("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         return new ASDecimal(((Number) getDataVoiture("dA")).doubleValue());
                     }
                 },
-                new ASFonctionModule("getDistGauche", new ASType("decimal")) {
+                // getDistGauche
+                new ASFonctionModule("modules.car.functions.getLeftDist", new ASType("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         return new ASDecimal(((Number) getDataVoiture("dG")).doubleValue());
                     }
                 },
-                new ASFonctionModule("getDistDroite", new ASType("decimal")) {
+                // getDistDroite
+                new ASFonctionModule("modules.car.functions.getRightDist", new ASType("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         return new ASDecimal(((Number) getDataVoiture("dD")).doubleValue());
                     }
                 },
-
-                new ASFonctionModule("rouler", new ASParametre[]{
+                // rouler
+                new ASFonctionModule("modules.car.functions.wheel", new ASParametre[]{
                         new ASParametre("vitesseGauche", new ASType("entier"), null),
                         new ASParametre("vitesseDroite", new ASType("entier"), null)
                 }, new ASType("nulType")) {
@@ -75,13 +77,15 @@ public class ModuleVoiture {
                 }
         };
         var variables = new ASVariable[]{
-                new ASVariable("vitesse", new ASEntier(10), new ASType("tout"))
+                // vitesse
+                new ASVariable("modules.car.variables.speed", new ASEntier(10), new ASType("tout"))
                         .setGetter(() -> new ASDecimal(((Number) getDataVoiture("speed")).doubleValue()))
                         .setSetter((valeur) -> {
                             throw new ASErreur.StopSetInfo(new Data(Data.Id.SET_CAR_SPEED).addParam(valeur));
                         }
                 ),
-                new ASVariable("distAvant", new ASEntier(10), new ASType("tout"))
+                // distAvant
+                new ASVariable("modules.car.variables.frontDist", new ASEntier(10), new ASType("tout"))
                         .setGetter(() -> new ASDecimal(((Number) getDataVoiture("dA")).doubleValue()))
                         .setReadOnly()
         };

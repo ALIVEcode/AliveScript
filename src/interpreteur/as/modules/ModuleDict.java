@@ -47,8 +47,8 @@ public class ModuleDict {
 
     static ASModule charger(Executeur executeurInstance) {
         return new ASModule(new ASFonctionModule[]{
-
-                new ASFonctionModule("creer", new ASParametre[]{
+                // creer
+                new ASFonctionModule("modules.dict.functions.create", new ASParametre[]{
 
                 }, ASTypeBuiltin.fonctionType.asType()) {
                     @Override
