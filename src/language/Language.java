@@ -1,35 +1,41 @@
 package language;
 
-import interpreteur.as.ASLexer;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 public enum Language {
-    EN ("en"),
-    FR ("fr"),
-    ES ("es");
+    EN("en"),
+    FR("fr"),
+    // ES("es"),
+    ;
 
+    private final String codeISO639_1;
     private final JSONObject languageDict;
     private final String asLexerPath;
 
     Language(String codeISO639_1) {
+        this.codeISO639_1 = codeISO639_1;
         languageDict = loadLanguage(codeISO639_1);
-        asLexerPath = "ASGrammaire_" + codeISO639_1 + ".yaml";
+        asLexerPath = "interpreteur/regle_et_grammaire/ASGrammaire_" + codeISO639_1 + ".yaml";
+    }
+
+    public static boolean isSupportedLanguage(String codeISO639_1) {
+        if (codeISO639_1 == null) return false;
+        return Stream.of(Language.values()).anyMatch(language -> language.codeISO639_1.equalsIgnoreCase(codeISO639_1));
     }
 
     /**
      * @param codeISO639_1 Code ISO 639-1 correspondant au langage désiré
      * @return Un JSON du langage
      */
-    public JSONObject loadLanguage(String codeISO639_1)
-    {
+    public JSONObject loadLanguage(String codeISO639_1) {
         // Endroit où se trouve le fichier JSON correspondant au langage
-        String path = "language/languages/"+ codeISO639_1 +".json";
-
+        String path = "language/languages/" + codeISO639_1 + ".json";
 
 
         return loadJSON(path);
@@ -73,8 +79,8 @@ public enum Language {
     }
 
     //public interpreteur.as.ASLexer getASLexer() {
-        //return asLexer;
-   // }
+    //return asLexer;
+    // }
 }
 
 

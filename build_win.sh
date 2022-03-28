@@ -12,5 +12,9 @@ javac -encoding UTF-8 -sourcepath ./ServerAS/src/ -d ./out/production/ServerAS/ 
 if [ ! -d ./out/production/Interpreteur/interpreteur/regle_et_grammaire ]
 then mkdir ./out/production/Interpreteur/interpreteur/regle_et_grammaire
 fi
-cp ./src/interpreteur/regle_et_grammaire/ASGrammaire.yaml ./out/production/Interpreteur/interpreteur/regle_et_grammaire/
+cp ./src/interpreteur/regle_et_grammaire/* ./out/production/Interpreteur/interpreteur/regle_et_grammaire/
 
+if [ ! -d ./out/production/Interpreteur/language/languages ]
+then mkdir ./out/production/Interpreteur/language/languages
+fi
+cp ./src/language/languages/* ./out/production/Interpreteur/language/languages

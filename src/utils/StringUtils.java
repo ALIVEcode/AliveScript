@@ -1,14 +1,17 @@
-package interpreteur.utils;
+package utils;
 
 public class StringUtils {
-    public int indexOfIgnoreInString(String ligne) {
-        return -1;
+    public static String $(Object... objects) {
+        StringBuilder builder = new StringBuilder();
+        for (var obj : objects) {
+            builder.append(obj);
+        }
+        return builder.toString();
     }
 
     /**
-     *
-     * @param s the string checked
-     * @param open the openning symbol
+     * @param s     the string checked
+     * @param open  the openning symbol
      * @param close the closing symbol
      * @return null if there are no openning symbol or the first openning symbol is before the last closing symbol
      */
@@ -24,11 +27,10 @@ public class StringUtils {
     }
 
     /**
-     *
-     * @param s the string checked
-     * @param open the openning symbol
+     * @param s     the string checked
+     * @param open  the openning symbol
      * @param close the closing symbol
-     * @param from the index from which to start
+     * @param from  the index from which to start
      * @return null if there are no openning symbol or the first openning symbol is before the last closing symbol
      */
     public static Range enclose(String s, final String open, final String close, int from) {
@@ -41,6 +43,10 @@ public class StringUtils {
             cptr += currentChar.equals(open) ? 1 : currentChar.equals(close) ? -1 : 0;
         }
         return new Range(start, idx);
+    }
+
+    public int indexOfIgnoreInString(String ligne) {
+        return -1;
     }
 
 }

@@ -3,7 +3,8 @@ Ajouter:
     LIRE: '\bread\b'
     UTILISER: '\buse\b'
     VAR: '\bvar\b'
-    CONSTANTE: '\bconst\b'
+
+  CONSTANTE: '\bconst\b'
 
   arithmetique:
     PLUS: '\+'
@@ -66,7 +67,7 @@ Ajouter:
     DECIMAL: '\d+\.\d+|\d+\.(?!\.)|(?<!\.)\.\d+'
     TEXTE: '".*?"|''.*?'''
     BOOLEEN: '\btrue\b|\bfalse\b'
-    NUL: '\bnul\b'
+    NUL: '\bnull\b'
 
   nom_type_de_donnees:
     NOM_ENTIER: '\bentier\b'

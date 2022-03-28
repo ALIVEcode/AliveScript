@@ -1,5 +1,6 @@
 package interpreteur.as;
 
+import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASType;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur.ErreurAssignement;
@@ -401,7 +402,22 @@ public class ASAst extends AstGenerator {
         );
 
         ajouterProgramme("expression",
-                p -> Programme.evalExpression((Expression<?>) p.get(0), p.get(0).toString())
+                p -> new Programme() {
+                    @Override
+                    public Object execute() {
+                        // if the expression is not a lonely variable, just eval and return null
+                        if (!(p.get(0) instanceof Var var)) {
+                            ((Expression<?>) p.get(0)).eval();
+                            return null;
+                        }
+                        try {
+                            new AppelFonc(var, new CreerListe()).eval();
+                        } catch (ASErreur.ErreurTypePasAppelable err) {
+                            var.eval();
+                        }
+                        return null;
+                    }
+                }
         );
     }
 
@@ -518,32 +534,34 @@ public class ASAst extends AstGenerator {
                           + "expression CROCHET_OUV #expression DEUX_POINTS #expression CROCHET_FERM~"
                           + "expression CROCHET_OUV #expression DEUX_POINTS CROCHET_FERM~"
                           + "expression CROCHET_OUV DEUX_POINTS #expression CROCHET_FERM~"
-                          + "expression CROCHET_OUV #expression CROCHET_FERM", p -> {
-            Token deux_pointsToken = (Token) p.stream()
-                    .filter(exp -> exp instanceof Token token && token.obtenirNom().equals("DEUX_POINTS"))
-                    .findFirst()
-                    .orElse(null);
+                          + "expression CROCHET_OUV #expression CROCHET_FERM",
+                (p, variante) -> {
+                    boolean hasDeuxPoints = variante < 4;
 
-            // pas de deux points, forme val[idxOrKey]
-            if (deux_pointsToken == null) {
-                Expression<?> idx = evalOneExpr(new ArrayList<>(p.subList(2, p.size() - 1)), null);
-                return new CreerListe.SousSection.IndexSection((Expression<?>) p.get(0), idx);
-            }
-            // deux points, forme val[debut:fin] ou val[:fin] ou val[debut:] ou val[:]
-            else {
-                Expression<?> debut = null, fin = null;
-                int idxDeuxPoints = p.indexOf(deux_pointsToken);
-                // si debut dans sous section
-                if (idxDeuxPoints > 2) {
-                    debut = evalOneExpr(new ArrayList<>(p.subList(2, idxDeuxPoints)), null);
-                }
-                // si fin dans sous section
-                if (idxDeuxPoints < p.size() - 2) {
-                    fin = evalOneExpr(new ArrayList<>(p.subList(idxDeuxPoints + 1, p.size() - 1)), null);
-                }
-                return new CreerListe.SousSection.CreerSousSection((Expression<?>) p.get(0), debut, fin);
-            }
-        });
+                    // pas de deux points, forme val[idxOrKey]
+                    if (!hasDeuxPoints) {
+                        Expression<?> idx = evalOneExpr(new ArrayList<>(p.subList(2, p.size() - 1)), null);
+                        return new CreerListe.SousSection.IndexSection((Expression<?>) p.get(0), idx);
+                    }
+                    // deux points, forme val[debut:fin] ou val[:fin] ou val[debut:] ou val[:]
+                    else {
+                        Expression<?> debut = null, fin = null;
+                        int idxDeuxPoints = p.indexOf(p.stream()
+                                .filter(exp -> exp instanceof Token token && token.obtenirNom().equals("DEUX_POINTS"))
+                                .findFirst()
+                                .orElse(null)
+                        );
+                        // si debut dans sous section
+                        if (idxDeuxPoints > 2) {
+                            debut = evalOneExpr(new ArrayList<>(p.subList(2, idxDeuxPoints)), null);
+                        }
+                        // si fin dans sous section
+                        if (idxDeuxPoints < p.size() - 2) {
+                            fin = evalOneExpr(new ArrayList<>(p.subList(idxDeuxPoints + 1, p.size() - 1)), null);
+                        }
+                        return new CreerListe.SousSection.CreerSousSection((Expression<?>) p.get(0), debut, fin);
+                    }
+                });
 
         ajouterExpression("BRACES_OUV BRACES_FERM~"
                           + "BRACES_OUV #expression BRACES_FERM~"
@@ -560,10 +578,8 @@ public class ASAst extends AstGenerator {
 
         ajouterExpression("expression PLUS PLUS~"
                           + "expression MOINS MOINS",
-                p -> {
-                    final byte signe;
-                    if (((Token) p.get(1)).obtenirNom().equals("MOINS")) signe = -1;
-                    else signe = 1;
+                (p, variante) -> {
+                    final byte signe = (byte) (variante == 1 ? -1 : 1);
                     return new Incrementer((Expression<?>) p.get(0), signe);
                 });
 
