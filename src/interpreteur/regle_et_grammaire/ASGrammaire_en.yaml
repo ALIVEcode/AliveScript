@@ -54,7 +54,7 @@ Ajouter:
     FAIRE: '\bdo\b'
 
   control_flow:
-    SORTIR: '\break\b'
+    SORTIR: '\bbreak\b'
     CONTINUER: '\bcontinue\b'
     RETOURNER: '\breturn\b'
 
