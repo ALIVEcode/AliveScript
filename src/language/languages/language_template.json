@@ -1,22 +1,127 @@
 {
   "error": {
-    "Closure": "error.Closure",
-    "MissingContext": "error.MissingContext",
-    "Syntax": "error.Syntax",
-    "Module": "error.Module",
-    "FunctionCall": "error.FunctionCall",
-    "InputOutput": "error.InputOutput",
-    "Assignment": "error.Assignment",
-    "Type": "error.Type",
-    "DuplicateKey": "error.DuplicateKey",
-    "Index": "error.Index",
-    "UnknownVariable": "error.UnknownVariable",
-    "Comparison": "error.Comparison",
-    "Formating": "error.Formating",
-    "Range": "error.Range",
-    "InvalidInt": "error.InvalidInt",
-    "DivisonByZero": "error.DivisionByZero",
-    "ZeroModulo": "error.ZeroModulo"
+    "module-import": {
+      "string": "Les noms de modules ne doivent pas être écrits avec des \" \" ou des ' '",
+      "non-existent": "Le module 'nomModule' n'existe pas",
+      "unknown-const-or-func": "Le module 'nomModule' ne contient pas les fonctions ou les constantes: "
+    },
+    "read": {
+    },
+    "typing": {
+      "out-of-declaration": "Il est impossible de préciser le type d'une variable hors de sa déclaration",
+      "read": "Un élément de type 'fonctionType' est attendue après le deux points ':' dans la commande 'lire', mais 'exprEval.obtenirNomType()' a été trouvé."
+    },
+    "invalid-type": {
+      "in-declaration": "Dans une déclaration de constante ou variable, les deux points doivent être suivi d'un type valide",
+      "in-getter": "' n'est pas un type valide",
+      "in-setter": "' n'est pas un type valide",
+      "in-param": "Le symbole ':' doit être suivi d'un type valide ('",
+      "general": "Type de donnee invalide"
+    },
+    "assignment": {
+      "reassign-constant": "Impossible de modifier la valeur d'une constante",
+      "constant-setter": "Les constantes ne peuvent pas avoir de setter",
+      "constant-getter": "Les constantes ne peuvent pas avoir de getter",
+      "wrong-type": "La variable 'nom' est de type *obtenirNomType()*. Elle ne peut pas prendre une valeur de type *nouvelleValeur.obtenirNomType()*.",
+      "read-only": "Cette variable est en lecture seule: elle ne peut pas être modifiée",
+      "non-var": "Il est impossible d'assigner à autre chose qu'une variable",
+      "list-like": "un interval de valeur doit être assigné à une liste",
+      "read": "Une variable est attendue après la commande 'lire', mais '"
+
+    },
+    "declaration-variable": {
+      "modify-value": "Impossible de modifier la valeur d'une variable durant sa déclaration",
+      "undeclared": "La variable 'var.getNom()' n'a pas été initialisée. \nAvez-vous oublié de mettre 'var' devant la déclaration de la variable?"
+    },
+    "declaration-fonction": {
+      "param-not-var": "Une déclaration de parametre doit commencer par une variable, pas par ",
+      "return-type": "Le type retourner '(asValeur == null ? 'vide' : asValeur.obtenirNomType())' ne correspond pas au type de retour précisé dans la déclaration de la fonction 'fonction.typeRetour.nom()'",
+      "var-default-param": "Impossible d'utiliser une variable comme valeur par défaut d'une fonction",
+      "default-param-type": "Le parametre 'var.getNom()' est de type 'type.nom()', mais la valeur par défaut est de type 'this.valeurParDefaut.obtenirNomType()'"
+    },
+    "function-call": {
+      "params": "Le nombre de paramètres donnés est paramsValeurs.size() alors que la fonction en prend 'this.parametres.length'",
+      "default-params": "Le nombre de paramètres donnés est 'paramsValeurs.size()' alors que la fonction en prend entre 'nonDefaultParams' et 'this.parametres.length'",
+      "param-type": "Le paramètres 'parametre.getNom()' est de type 'parametre.getType().nom()', mais l'argument passé est de type '((ASObjet<?>) paramsValeurs.get(i)).obtenirNomType()'",
+      "unknown-explicit-param": "l'argument: parametre.getNom() passé en paramètre ne correspond à aucun paramètre défini dans la fonction 'this.nom'",
+      "undefined-param": "l'argument: param.getNom() n'a pas reçu de valeur et ne possède aucune valeur par défaut",
+      "standarddev-param": "La fonction ecartType prend une liste de nombre, mais la liste passée en paramètre n'est pas composée que de nombres.",
+      "columnvalue-param": "La fonction valeursColonne() prend en paramètre le caractère 'x' ou 'y' seulement.",
+      "max-param": "tous les éléments de la liste doivent être des nombres pour pouvoir obtenir le maximum",
+      "min-param": "tous les éléments de la liste doivent être des nombres pour pouvoir obtenir le minimum",
+      "indexof-param": "La valeur doit être de type texte lorsque l'on recherche l'index d'un élément de type texte",
+      "format-param": "Le nombre de {} doit etre egal au nombre de valeur dans la liste",
+      "car-time-param": "Le paramètres 'temps' est de type 'nombre', mais l'argument passé est de type 'this.valeur.eval().obtenirNomType()'"
+    },
+    "unknown-variable": {
+      "evaluation": "Il est impossible d'évaluer le type 'this.nom'",
+      "undeclared": "La variable 'nom' est utilisée avant d'être déclarée",
+      "undeclared-in-scope": "La variable 'nomVar' n'est pas déclarée dans ce scope.",
+      "already-declared": "La variable 'var.getNom()' a déjà été déclarée"
+    },
+    "conversion": {
+      "non-boolean": "La valeur 'valeur' ne peut pas être convertie en booléen.",
+      "non-decimal": "La valeur 'valeur' ne peut pas être convertie en nombre décimal.",
+      "non-int": "La valeur 'valeur' ne peut pas être convertie en nombre entier.",
+      "non-numeric": "Impossible de convertir 'txt' en nombre entier ou décimal.",
+      "int-base": "impossible de convertir 'valeur' en nombre entier de base base"
+    },
+    "int": {
+      "min-max": "Les nombres entiers doivent avoir une valeur entre Integer.MIN_VALUE et Integer.MAX_VALUE"
+    },
+    "index": {
+      "to-big": "l'index est trop grand",
+      "non-int": "Un index doit être un nombre entier",
+      "non-indexed": "L'opération d'index n'est pas définie pour un élément de type 'evalExpr.obtenirNomType()'",
+      "out-of-reach": "L'index 'idx' est hors de porté"
+    },
+    "range": {
+      "range-start": "Une balise de début doit être un nombre entier",
+      "range-end": "Une balise de fin doit être un nombre entier",
+      "zero-step": "Suite impossible : bond de 0",
+      "decreasing-range-increasing-step": "Suite impossible : la valeur de début est plus grande que la valeur de fin et le bond est positif",
+      "increasing-range-decreasing-step": "Suite impossible : la valeur de début est plus petite que la valeur de fin et le bond est négatif",
+      "letter-range": "Suite impossible : les suites ne peuvent être formées qu'avec des lettres.",
+      "impossible-range": "Suite entre 'debut.getValue()' et 'fin.getValue()' impossible"
+    },
+    "dict": {
+      "contains-duplicate-key": "Il y a au moins une clef dupliquée dans le dictionnaire ou la liste",
+      "already-existing-key": "La clef nouvellePaire.clef() existe déjà dans le dictionnaire ou la liste",
+      "non-string-key": "La clef d'une paire d'éléments doit être un élément de type texte"
+    },
+    "non-callable": {
+      "uncallable-type": "Un élément de type 'fonction.obtenirNomType()' ne peut pas être appelé"
+    },
+    "operator": {
+      "non-numeric": "Il est impossible de comparer autre chose que des nombres",
+      "in-keyword": "L'opérateur 'dans' ne s'applique que sur les éléments de type 'iterable'",
+      "general": "L'opération 'nom' n'est pas définie pour un élément de type 'g.obtenirNomType()'et un élément de type 'd.obtenirNomType()'"
+    },
+    "zero-divison": "Division par zéro impossible",
+    "zero-modulo": "Modulo par zéro impossible",
+    "type": {
+      "list-slice": "L'opération de coupe n'est pas définie pour un élément de type 'evalExpr.obtenirNomType()'"
+    },
+    "syntax": {
+      "list": "Syntaxe invalide. Est-ce qu'il manquerait un { au début et un } à la fin de la liste?",
+      "multi-increment": "Il est impossible de mettre plusieurs incrémentations en chaine",
+      "out-of-context-break": "Il faut être dans une boucle pour pouvoir utiliser le mot clef 'sortir'",
+      "out-of-context-continue": "Il faut être dans une boucle pour pouvoir utiliser le mot clef 'continuer'",
+      "out-of-context-elseif": "Un bloc 'sinon si' doit obligatoirement suivre un bloc 'si' ou un autre bloc 'sinon si'",
+      "missing-opening-parenthesis": " '(' manquante",
+      "missing-closing-parenthesis": " ')' manquante",
+      "missing-opening-curly-bracket": " '{' manquante",
+      "missing-closing-curly-bracket": " '}' manquante",
+      "missing-opening-bracket": " '[' manquante",
+      "missing-closing-bracket": " ']' manquante",
+      "illegal-expression": "Expression illégale: ",
+      "missing-comma": "Syntaxe invalide. Est-ce qu'il manque une virgule entre deux éléments?"
+    },
+    "forloop": {
+      "non-iterable": "Seuls les valeurs de type 'iterable' ('texte' et 'liste') sont acceptées dans les boucles pour"
+    },
+    "no-context": "Il n'y a pas de contexte",
+    "ast-generator": "Erreur ligne 106 dans AstGenerator"
   },
   "modules": {
     "builtins": {

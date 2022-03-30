@@ -18,8 +18,8 @@ public interface ASErreur {
     class ErreurAliveScript extends RuntimeException {
         private final String nomErreur;
 
-        public ErreurAliveScript(String message, String nomErreur) {
-            super(message);
+        public ErreurAliveScript(String chemin, String nomErreur, Object... params) {
+            super(chemin);
             this.nomErreur = nomErreur;
         }
 
