@@ -5,8 +5,6 @@
       "non-existent": "Le module 'nomModule' n'existe pas",
       "unknown-const-or-func": "Le module 'nomModule' ne contient pas les fonctions ou les constantes: "
     },
-    "read": {
-    },
     "typing": {
       "out-of-declaration": "Il est impossible de préciser le type d'une variable hors de sa déclaration",
       "read": "Un élément de type 'fonctionType' est attendue après le deux points ':' dans la commande 'lire', mais 'exprEval.obtenirNomType()' a été trouvé."
