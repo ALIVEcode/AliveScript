@@ -17,6 +17,7 @@ public interface ASNombre extends ASObjet<Number> {
     static ASNombre parse(ASObjet<?> nb) {
         String txt = nb.toString();
         if (!ASNombre.estNumerique(txt))
+            // erreur conversion type
             throw new ASErreur.ErreurType("Impossible de convertir " + txt + " en nombre entier ou d\u00E9cimal.");
 
         return txt.contains(".") ? new ASDecimal(Double.parseDouble(txt)) : new ASEntier(Integer.parseInt(txt));
@@ -29,6 +30,7 @@ public interface ASNombre extends ASObjet<Number> {
     static Number asNumber(ASObjet<?> nb) {
         String txt = nb.toString();
         if (!ASNombre.estNumerique(txt))
+            // erreur conversion type
             throw new ASErreur.ErreurType("Impossible de convertir " + txt + " en nombre entier ou d\u00E9cimal.");
 
         return (Number) nb.getValue();
@@ -37,6 +39,7 @@ public interface ASNombre extends ASObjet<Number> {
     static Double asDouble(ASObjet<?> nb) {
         String txt = nb.toString();
         if (!ASNombre.estNumerique(txt))
+            //erreur convertion type
             throw new ASErreur.ErreurType("Impossible de convertir " + txt + " en nombre entier ou d\u00E9cimal.");
 
         return ((Number) nb.getValue()).doubleValue();
@@ -45,6 +48,7 @@ public interface ASNombre extends ASObjet<Number> {
     static Integer asInteger(ASObjet<?> nb) {
         String txt = nb.toString();
         if (!ASNombre.estNumerique(txt))
+            // erreur convertion type
             throw new ASErreur.ErreurType("Impossible de convertir " + txt + " en nombre entier ou d\u00E9cimal.");
 
         return ((Number) nb.getValue()).intValue();

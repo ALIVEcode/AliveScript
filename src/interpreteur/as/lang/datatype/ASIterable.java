@@ -18,6 +18,7 @@ public interface ASIterable<T> extends ASObjet<T> {
 
     default int idxRelatif(List<?> valeur, int idx) {
         if (Math.abs(idx) > valeur.size()) {
+            // erreur index
             throw new ASErreur.ErreurIndex("l'index est trop grand");
         }
         idx = (idx < 0) ? valeur.size() + idx : idx;

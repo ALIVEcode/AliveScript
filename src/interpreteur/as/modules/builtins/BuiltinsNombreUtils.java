@@ -27,6 +27,7 @@ public class BuiltinsNombreUtils {
                     try {
                         return new ASEntier(Integer.parseInt(valeur, base));
                     } catch (NumberFormatException ignored) {
+                        // erreur conversion
                         throw new ASErreur.ErreurType("impossible de convertir '" + valeur + "' en nombre entier de base " + base);
                     }
                 }
@@ -49,6 +50,7 @@ public class BuiltinsNombreUtils {
                     try {
                         return new ASDecimal(Double.parseDouble(this.getParamsValeursDict().get("txt").toString()));
                     } catch (NumberFormatException ignored) {
+                        // erreur conversion
                         throw new ASErreur.ErreurType("impossible de convertir '" + this.getParamsValeursDict().get("element").toString() + "' en nombre decimal");
                     }
                 }
@@ -62,6 +64,7 @@ public class BuiltinsNombreUtils {
                 public ASNombre executer() {
                     String nb = this.getParamsValeursDict().get("txt").toString();
                     if (!ASNombre.estNumerique(nb))
+                        // erreur conversion
                         throw new ASErreur.ErreurType("Impossible de convertir " + nb + " en nombre entier ou d\u00E9cimal.");
 
                     boolean estDecimal = nb.contains(".");

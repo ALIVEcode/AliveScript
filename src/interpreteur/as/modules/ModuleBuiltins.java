@@ -187,6 +187,7 @@ public class ModuleBuiltins {
                         String nomVar = (String) this.getValeurParam("nomVariable").getValue();
                         ASVariable var = ASScope.getCurrentScopeInstance().getVariable(nomVar);
                         if (var == null) {
+                            // erreur variable inconnue
                             throw new ASErreur.ErreurVariableInconnue("La variable '" + nomVar + "' n'est pas d\u00E9clar\u00E9e dans ce scope.");
                         }
                         return var.getValeurApresGetter();

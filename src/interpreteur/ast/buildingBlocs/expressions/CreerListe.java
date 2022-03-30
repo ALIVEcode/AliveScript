@@ -45,6 +45,7 @@ public class CreerListe implements Expression<ASListe> {
             public int getIdx() {
                 Object valueIdx = this.idxOrKey.eval().getValue();
                 if (!(valueIdx instanceof Integer idx)) {
+                    // erreur index
                     throw new ASErreur.ErreurIndex("Un index doit \u00EAtre un nombre entier");
                 }
                 return idx;
@@ -59,16 +60,19 @@ public class CreerListe implements Expression<ASListe> {
                 }
                 if (evalExpr instanceof ASIterable iterable)
                     return indexOfIterable(iterable);
+                // erreur index
                 throw new ASErreur.ErreurType("L'op\u00E9ration d'index n'est pas d\u00E9finie pour " +
                         "un \u00E9l\u00E9ment de type '" + evalExpr.obtenirNomType() + "'.");
             }
 
             private ASObjet<?> indexOfIterable(ASIterable<?> iterable) {
                 if (!(this.idxOrKey.eval().getValue() instanceof Integer idx)) {
+                    // erreur index
                     throw new ASErreur.ErreurIndex("Un index doit \u00EAtre un nombre entier");
                 }
                 if (Math.abs(idx < 0 ? idx + 1 : idx) >= iterable.taille()) {
                     int bound = iterable.taille() - 1;
+                    // erreur index
                     throw new ASErreur.ErreurIndex("L'index " + idx + " est hors de port\u00E9 (entre " + -(bound + 1) + " et " + bound + ")");
                 }
                 return iterable.get(idx);
@@ -96,6 +100,7 @@ public class CreerListe implements Expression<ASListe> {
 
                 Object valueDebut = debut.eval().getValue();
                 if (!(valueDebut instanceof Integer)) {
+                    // erreur index
                     throw new ASErreur.ErreurIndex("Une balise de d\u00E9but doit \u00EAtre un nombre entier");
                 }
                 return (Integer) valueDebut;
@@ -107,6 +112,7 @@ public class CreerListe implements Expression<ASListe> {
                 Object valueFin = fin.eval().getValue();
 
                 if (!(valueFin instanceof Integer)) {
+                    // erreur index
                     throw new ASErreur.ErreurIndex("Une balise de fin doit \u00EAtre un nombre entier");
                 }
                 return (Integer) valueFin;
@@ -118,6 +124,7 @@ public class CreerListe implements Expression<ASListe> {
                 if (evalExpr instanceof ASIterable iterable) {
                     return iterable.sousSection(getDebut(), getFin());
                 }
+                // erreur type
                 throw new ASErreur.ErreurType("L'op\u00E9ration de coupe n'est pas d\u00E9finie pour " +
                         "un \u00E9l\u00E9ment de type '" + evalExpr.obtenirNomType() + "'.");
             }
@@ -162,6 +169,7 @@ public class CreerListe implements Expression<ASListe> {
 
         @Override
         public ASObjet<?> eval() {
+            // erreur syntax
             throw new ASErreur.ErreurSyntaxe("Syntaxe invalide. Est-ce qu'il manquerait un { au d\u00E9but et un } \u00E0 la fin de la liste?");
         }
     }

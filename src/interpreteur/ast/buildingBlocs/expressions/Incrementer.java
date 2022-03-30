@@ -10,6 +10,7 @@ public record Incrementer(Expression<?> expr,
                           byte signe) implements Expression<ASObjet<?>> {
     public Incrementer {
         if (expr instanceof Incrementer) {
+            // erreur syntax
             throw new ASErreur.ErreurAssignement("Il est impossible de mettre plusieurs incr\u00E9mentations en chaine");
         }
     }

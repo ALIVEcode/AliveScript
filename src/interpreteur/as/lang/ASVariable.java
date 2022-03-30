@@ -25,6 +25,7 @@ public class ASVariable implements ASObjet<Object> {
 
     private boolean nouvelleValeurValide(ASObjet<?> nouvelleValeur) {
         if (getType().noMatch(nouvelleValeur.obtenirNomType())) {
+            // erreur assignement
             throw new ASErreur.ErreurAssignement("La variable '" +
                                                  nom +
                                                  "' est de type *" +
@@ -84,6 +85,7 @@ public class ASVariable implements ASObjet<Object> {
 
     public interpreteur.as.lang.ASVariable setReadOnly() {
         this.setter = (valeur) -> {
+            // assignement read only
             throw new ASErreur.ErreurAssignement("Cette variable est en lecture seule: elle ne peut pas \u00EAtre modifi\u00E9e");
         };
         this.readOnly = true;
@@ -122,6 +124,7 @@ public class ASVariable implements ASObjet<Object> {
 
     public ASObjet<?> getValeurApresGetter() {
         if (this.valeur == null) {
+            // erreur variable inconnue
             throw new ASErreur.ErreurAssignement("La variable '" + nom + "' est utilis\u00E9e avant d'\u00EAtre d\u00E9clar\u00E9e");
         }
         if (this.getter != null) {
@@ -133,6 +136,7 @@ public class ASVariable implements ASObjet<Object> {
     @Override
     public Object getValue() {
         if (this.valeur == null) {
+            // erreur variable inconnue
             throw new ASErreur.ErreurAssignement("La variable '" + nom + "' est utilis\u00E9e avant d'\u00EAtre d\u00E9clar\u00E9e");
         }
         if (this.getter != null) {

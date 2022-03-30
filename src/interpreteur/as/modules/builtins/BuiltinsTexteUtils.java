@@ -122,11 +122,13 @@ public class BuiltinsTexteUtils {
                         if (valeurs.hasNext()) {
                             texte = texte.replaceFirst("[{][}]", valeurs.next().toString());
                         } else {
+                            // erreur appel fonction
                             throw new ASErreur.ErreurFormatage("Le nombre de {} doit etre egal au nombre de valeur dans la liste");
                         }
                     }
 
                     if (texte.contains("{}"))
+                        // erreur appel fonctions
                         throw new ASErreur.ErreurFormatage("Le nombre de {} doit etre egal au nombre de valeur dans la liste");
 
                     return new ASTexte(texte);

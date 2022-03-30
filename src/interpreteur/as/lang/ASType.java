@@ -75,6 +75,7 @@ public class ASType implements Expression<ASObjet<?>> {
         if ((var = ASScope.getCurrentScopeInstance().getVariable(this.nom)) != null) {
             return var.getValeurApresGetter();
         }
+        // erreur variable inconnue
         throw new ASErreur.ErreurType("Il est impossible d'\u00E9valuer le type '" + this.nom + "'");
     }
 

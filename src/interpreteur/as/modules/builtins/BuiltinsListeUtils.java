@@ -196,6 +196,7 @@ public class BuiltinsListeUtils {
                     ASListe liste = (ASListe) this.getParamsValeursDict().get("lst");
                     OptionalDouble somme = liste.getValue().stream().mapToDouble(e -> ((Number) e.getValue()).doubleValue()).max();
                     if (somme.isEmpty()) {
+                        // erreur appel fonction
                         throw new ASErreur.ErreurComparaison("tous les \u00E9l\u00E9ments de la liste doivent être des nombres pour pouvoir obtenir le maximum");
                     }
                     return new ASDecimal(somme.getAsDouble());
@@ -210,6 +211,7 @@ public class BuiltinsListeUtils {
                     ASListe liste = (ASListe) this.getParamsValeursDict().get("lst");
                     OptionalDouble somme = liste.getValue().stream().mapToDouble(e -> ((Number) e.getValue()).doubleValue()).min();
                     if (somme.isEmpty()) {
+                        // erreur appel fonction
                         throw new ASErreur.ErreurComparaison("tous les \u00E9l\u00E9ments de la liste doivent être des nombres pour pouvoir obtenir le minimum");
                     }
                     return new ASDecimal(somme.getAsDouble());
@@ -252,6 +254,7 @@ public class BuiltinsListeUtils {
                     } else if (iter instanceof ASListe lst) {
                         idx = lst.getValue().indexOf(val);
                     } else {
+                        // appel fonction
                         throw new ASErreur.ErreurType("La valeur doit \u00EAtre de type texte lorsque l'on recherche " +
                                 "l'index d'un \u00E9l\u00E9ment de type texte");
                     }

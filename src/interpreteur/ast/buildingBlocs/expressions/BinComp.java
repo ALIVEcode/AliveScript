@@ -43,6 +43,7 @@ public record BinComp(Expression<?> gauche,
          */
         PLUS_GRAND((gauche, droite) -> {
             if (!(gauche.getValue() instanceof Number numG && droite.getValue() instanceof Number numD)) {
+                // erreur comparaison
                 throw new ASErreur.ErreurComparaison("Il est impossible de comparer autre chose que des nombres");
             }
             return new ASBooleen(numG.doubleValue() > numD.doubleValue());
@@ -53,6 +54,7 @@ public record BinComp(Expression<?> gauche,
          */
         PLUS_PETIT((gauche, droite) -> {
             if (!(gauche.getValue() instanceof Number numG && droite.getValue() instanceof Number numD)) {
+                // erreur comparaison
                 throw new ASErreur.ErreurComparaison("Il est impossible de comparer autre chose que des nombres");
             }
             return new ASBooleen(numG.doubleValue() < numD.doubleValue());
@@ -63,6 +65,7 @@ public record BinComp(Expression<?> gauche,
          */
         PLUS_GRAND_EGAL((gauche, droite) -> {
             if (!(gauche.getValue() instanceof Number numG && droite.getValue() instanceof Number numD)) {
+                // erreur comparaison
                 throw new ASErreur.ErreurComparaison("Il est impossible de comparer autre chose que des nombres");
             }
             return new ASBooleen(numG.doubleValue() >= numD.doubleValue());
@@ -73,6 +76,7 @@ public record BinComp(Expression<?> gauche,
          */
         PLUS_PETIT_EGAL((gauche, droite) -> {
             if (!(gauche.getValue() instanceof Number numG && droite.getValue() instanceof Number numD)) {
+                // erreur comparaison
                 throw new ASErreur.ErreurComparaison("Il est impossible de comparer autre chose que des nombres");
             }
             return new ASBooleen(numG.doubleValue() <= numD.doubleValue());
@@ -80,6 +84,7 @@ public record BinComp(Expression<?> gauche,
 
         DANS((gauche, droite) -> {
             if (!(droite instanceof ASIterable iterD)) {
+                // erreur type
                 throw new ASErreur.ErreurComparaison("L'op\u00E9rateur 'dans' ne s'applique que sur les \u00E9l\u00E9ments de type 'iterable'");
             }
             return new ASBooleen(iterD.contient(gauche));
@@ -87,6 +92,7 @@ public record BinComp(Expression<?> gauche,
 
         PAS_DANS((gauche, droite) -> {
             if (!(droite instanceof ASIterable iterD)) {
+                // erreur type
                 throw new ASErreur.ErreurComparaison("L'op\u00E9rateur 'dans' ne s'applique que sur les \u00E9l\u00E9ments de type 'iterable'");
             }
             return new ASBooleen(!iterD.contient(gauche));

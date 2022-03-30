@@ -170,6 +170,7 @@ public abstract class ASFonctionModule implements ASObjet<Object> {
             for (ASParametre param : this.parametres) {
                 this.parametres_appel.computeIfAbsent(param.getNom(), (val) -> {
                     if (param.getValeurParDefaut() == null) {
+                        // erreur appel fonction
                         throw new ASErreur.ErreurAppelFonction(this.nom, "l'argument: " + param.getNom() + " n'a pas reçu de valeur" +
                                                                          "et ne poss\u00E8de aucune valeur par d\u00E9faut");
                     }

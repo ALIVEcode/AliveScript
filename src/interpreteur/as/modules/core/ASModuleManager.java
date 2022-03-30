@@ -85,6 +85,7 @@ public record ASModuleManager(Executeur executeurInstance) {
         fctEtConstPasDansModule.removeAll(module.getNomsConstantesEtFonctions());
 
         if (fctEtConstPasDansModule.size() > 0)
+            // erreur module
             throw new ASErreur.ErreurModule("Le module '" + nomModule + "' ne contient pas les fonctions ou les constantes: "
                     + fctEtConstPasDansModule.toString()
                     .replaceAll("\\[|]", ""));
@@ -102,6 +103,7 @@ public record ASModuleManager(Executeur executeurInstance) {
         try {
             module = MODULE_FACTORY.get(EnumModule.valueOf(nomModule));
         } catch (IllegalArgumentException err) {
+            // erreur module
             throw new ASErreur.ErreurModule("Le module '" + nomModule + "' n'existe pas");
         }
         return module.charger(executeurInstance);

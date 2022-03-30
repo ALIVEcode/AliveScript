@@ -271,6 +271,7 @@ public class ModuleAI {
                         try {
                             doubles = liste.getValue().stream().map(e -> ((Number) e.getValue()).doubleValue()).toArray(Double[]::new);
                         } catch (ClassCastException err) {
+                            // erreur appel fonction
                             throw new ASErreur.ErreurType("La fonction ecartType prend une liste de nombre, mais la liste pass\u00E9e en param\u00E8tre n'est pas compos\u00E9e que de nombres.");
                         }
                         return new ASDecimal(standardDeviation(doubles));
@@ -305,6 +306,7 @@ public class ModuleAI {
                             x = lst1.getValue().stream().map(e -> ((Number) e.getValue()).doubleValue()).toArray(Double[]::new);
                             y = lst2.getValue().stream().map(e -> ((Number) e.getValue()).doubleValue()).toArray(Double[]::new);
                         } catch (ClassCastException err) {
+                            // erreur appel fonction
                             throw new ASErreur.ErreurType("La fonction ecartType prend une liste de nombre, mais la liste pass\u00E9e en param\u00E8tre n'est pas compos\u00E9e que de nombres.");
                         }
                         return new ASDecimal(correlationCoefficient(x, y));
@@ -339,6 +341,7 @@ public class ModuleAI {
                             x = lst1.getValue().stream().map(e -> ((Number) e.getValue()).doubleValue()).toArray(Double[]::new);
                             y = lst2.getValue().stream().map(e -> ((Number) e.getValue()).doubleValue()).toArray(Double[]::new);
                         } catch (ClassCastException err) {
+                            // erreur appel fonction
                             throw new ASErreur.ErreurType("La fonction ecartType prend une liste de nombre, mais la liste pass\u00E9e en param\u00E8tre n'est pas compos\u00E9e que de nombres.");
                         }
                         return new ASDecimal(determinationCoefficient(x, y));
@@ -361,6 +364,7 @@ public class ModuleAI {
                         ASListe liste = new ASListe();
 
                         if (!(col.equalsIgnoreCase("x") || col.equalsIgnoreCase("y"))) {
+                            // erreur appel fonction
                             throw new ASErreur.ErreurInputOutput("La fonction valeursColonne() prend en param\u00E8tre le caract\u00E8re \"x\" ou \"y\" seulement.");
                         }
                         System.out.println(col);

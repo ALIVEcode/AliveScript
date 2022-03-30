@@ -44,6 +44,7 @@ public record BinOp(Expression<?> gauche,
             }
 
             if (((Number) droite.getValue()).doubleValue() == 0) {
+                // erreur divison 0
                 throw new ASErreur.ErreurDivisionParZero("Division par z\u00E9ro impossible");
             }
             return new ASDecimal(((Number) gauche.getValue()).doubleValue() / ((Number) droite.getValue()).doubleValue());
@@ -62,6 +63,7 @@ public record BinOp(Expression<?> gauche,
          */
         MOD((gauche, droite) -> {
             if (((Number) droite.getValue()).doubleValue() == 0)
+                // erreur modulo 0
                 throw new ASErreur.ErreurModuloZero("Modulo par z\u00E9ro impossible");
             double result = ((Number) gauche.getValue()).intValue() % ((Number) droite.getValue()).intValue();
             return new ASEntier((int) result);
@@ -170,6 +172,7 @@ public record BinOp(Expression<?> gauche,
             } catch (ASErreur.ErreurAliveScript erreurAliveScript) {
                 throw erreurAliveScript;
             } catch (Exception e) {
+                // erreur type
                 throw new ASErreur.ErreurType("L'op\u00E9ration '" + nom + "' n'est pas d\u00E9finie pour " +
                         "un \u00E9l\u00E9ment de type '" + g.obtenirNomType() + "' " +
                         "et un \u00E9l\u00E9ment de type '" + d.obtenirNomType() + "'.");
