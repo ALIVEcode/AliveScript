@@ -212,7 +212,7 @@ public class ASFonction implements ASObjet<Object> {
 
             valeur = fonction.executeurInstance.executerScope(fonction.coordBlocName + fonction.nom, null, coordReprise == null ? null : coordReprise.toString());
             if (valeur instanceof String s) {
-                //System.out.println("valeur: " + valeur);
+//                System.out.println("valeur: " + valeur);
                 coordReprise = fonction.executeurInstance.obtenirCoordRunTime().copy();
                 fonction.executeurInstance.setCoordRunTime(ancienneCoord.toString());
                 throw new ASErreur.StopSendData(s);

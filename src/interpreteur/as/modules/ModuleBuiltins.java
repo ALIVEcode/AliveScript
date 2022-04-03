@@ -175,7 +175,8 @@ public class ModuleBuiltins {
                 }, new ASType("tout")) {
                     @Override
                     public ASObjet<?> executer() {
-                        return this.getParamsValeursDict().get("element");
+                        ASObjet<?> element = this.getParamsValeursDict().get("element");
+                        return new ASTexte(element.info());
                     }
                 },
                 // getVar

@@ -1,6 +1,7 @@
 package websocketserver;
 
 import org.glassfish.tyrus.server.Server;
+import websocketserver.endpoints.AliveScriptExecutionEndpoint;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,10 +9,10 @@ import java.io.InputStreamReader;
 public class ASWebSocketServer {
     private static final int PORT = 8080;
     private static final String HOST = "localhost";
-    private static final String PATH = "/ws";
+    private static final String PATH = "/as";
 
     public static void main(String[] args) {
-        Server server = new Server(HOST, PORT, PATH, null, AliveScriptEndpoint.class);
+        Server server = new Server(HOST, PORT, PATH, null, AliveScriptExecutionEndpoint.class);
 
         try {
             server.start();

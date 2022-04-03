@@ -51,7 +51,7 @@ public class ModuleIoT {
                         ASTexte id = (ASTexte) this.getValeurParam("id");
                         ASObjet<?> valueAs = (ASObjet<?>) this.getValeurParam("value");
 
-                        executeurInstance.addData(new Data(Data.Id.UPDATE_COMPONENT).addParam(projectId).addParam(id).addParam(valueAs.getValue()));
+                       // executeurInstance.addData(new Data(Data.Id.UPDATE_COMPONENT).addParam(projectId).addParam(id).addParam(valueAs.getValue()));
                         return new ASNul();
                     }
                 },

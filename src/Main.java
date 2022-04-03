@@ -11,6 +11,9 @@ public class Main {
                 afficher "hey!"
             fin fonction
             abc()
+            
+            const def = fonction(msg="abc")
+            
             """.split("\n");
 
     public static void main(String[] args) {

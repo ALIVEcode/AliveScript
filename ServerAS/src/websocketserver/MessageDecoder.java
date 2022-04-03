@@ -7,6 +7,8 @@ import websocketserver.model.MessageTypes;
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class MessageDecoder implements Decoder.Text<Message> {
     @Override
@@ -14,16 +16,27 @@ public class MessageDecoder implements Decoder.Text<Message> {
         System.out.println("Decoding message: " + s);
         JSONObject jsonObject = new JSONObject(s);
         String type = jsonObject.getString("type");
+        MessageTypes messageType;
         try {
-            return new Message(MessageTypes.valueOf(type));
+            messageType = MessageTypes.valueOf(type);
         } catch (IllegalArgumentException e) {
             throw new DecodeException(s, "Unknown message type: " + type);
         }
+        Hashtable<String, Object> messageOptions = switch (messageType) {
+            case COMPILE -> new Hashtable<>(Map.ofEntries(Map.entry("lines", jsonObject.getString("lines"))));
+            case EXEC_FUNC -> new Hashtable<>(Map.ofEntries(
+                    Map.entry("funcName", jsonObject.getString("funcName")),
+                    Map.entry("args", jsonObject.getJSONArray("args"))
+            ));
+            default -> new Hashtable<>();
+        };
+        System.out.println("Decoded options: " + messageOptions);
+        return new Message(messageType, messageOptions);
     }
 
     @Override
     public boolean willDecode(String s) {
-        return false;
+        return true;
     }
 
     @Override

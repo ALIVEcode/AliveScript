@@ -1,7 +1,8 @@
 package websocketserver.model;
 
-import org.json.JSONArray;
 
-public record Message(MessageTypes type) {
+import java.util.Hashtable;
+
+public record Message(MessageTypes type, Hashtable<String, Object> options) {
 
 }

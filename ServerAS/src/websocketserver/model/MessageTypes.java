@@ -17,6 +17,18 @@ public enum MessageTypes {
      * </pre>
      */
     COMPILE(format -> true),
+
+    /**
+     * Utilisé pour dire à alivescript d'exécuter une fonction en particulier
+     * Format:
+     * <pre>
+     * {
+     *     functionName: string,
+     *     args?: any[]
+     * }
+     * </pre>
+     */
+    EXEC_FUNC(format -> true),
     /**
      * Format:
      * <pre>

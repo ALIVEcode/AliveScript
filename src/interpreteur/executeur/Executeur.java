@@ -2,6 +2,9 @@ package interpreteur.executeur;
 
 import interpreteur.as.ASAst;
 import interpreteur.as.ASLexer;
+import interpreteur.as.lang.ASFonctionModule;
+import interpreteur.as.lang.datatype.ASFonction;
+import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.managers.ASFonctionManager;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.erreurs.ASErreur;
@@ -76,6 +79,7 @@ public class Executeur {
     private final Stack<Object> dataResponse = new Stack<>();
     // ast
     private final ASAst ast;
+    private final Translator translator;
     //debug mode
     public boolean debug = false;
     private JSONObject context = null;
@@ -84,7 +88,6 @@ public class Executeur {
     private boolean compilationActive = false;
     private boolean executionActive = false;
     private boolean canExecute = false;
-    private final Translator translator;
 
     public Executeur(Language language) {
         translator = new Translator(language);
@@ -96,10 +99,6 @@ public class Executeur {
     @Deprecated(since = "now")
     public Executeur() {
         this(Language.FR);
-    }
-
-    public Translator getTranslator() {
-        return translator;
     }
 
     public static void printCompiledCode(String code) {
@@ -137,6 +136,10 @@ public class Executeur {
             }
         }
         System.out.println();
+    }
+
+    public Translator getTranslator() {
+        return translator;
     }
 
     /**
@@ -285,6 +288,12 @@ public class Executeur {
         }
         coordCompileTime.remove(coordCompileTime.size() - 1);
         return coordCompileTime.get(coordCompileTime.size() - 1).toString();
+    }
+
+    public ArrayList<Data> consumeData() {
+        var data = new ArrayList<>(this.datas);
+        this.datas.clear();
+        return data;
     }
 
     /**
@@ -578,10 +587,14 @@ public class Executeur {
         return (ligneParsed instanceof Programme.ProgrammeFin || !executionActive || resultat == null) ? datas.toString() : resultat;
     }
 
+    public JSONArray executerMain(boolean resume) {
+        return executerMain(resume, true);
+    }
+
     /**
      * fonction executant le scope principal ("main")
      */
-    public JSONArray executerMain(boolean resume) {
+    public JSONArray executerMain(boolean resume, boolean resetIfFinished) {
         executionActive = true;
         // sert au calcul du temps qu'a pris le code pour etre execute
         LocalDateTime before = LocalDateTime.now();
@@ -610,12 +623,27 @@ public class Executeur {
             //System.out.println(datas);
             // boolean servant a indique que l'execution est terminee
             executionActive = false;
-            reset();
+            if (resetIfFinished) reset();
             returnData.put(Data.endOfExecution());
         }
         datas.clear();
 
         return returnData;
+    }
+
+    public void executerFonction(String nomFonction, ArrayList<ASObjet<?>> args) {
+        executionActive = true;
+        var var = ASScope.getCurrentScopeInstance().getVariable(nomFonction);
+        if (var == null) {
+            return;
+        }
+        var valeur = var.getValeurApresGetter();
+        if (valeur instanceof ASFonction fonction) {
+            fonction.makeInstance().executer(args);
+        } else if (valeur instanceof ASFonctionModule fonctionModule) {
+            fonctionModule.setParamPuisExecute(args);
+        }
+        executionActive = false;
     }
 
     public Object resumeExecution() {
