@@ -19,9 +19,11 @@ import language.Language;
 import language.Translator;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import utils.Pair;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 
@@ -88,6 +90,7 @@ public class Executeur {
     private boolean compilationActive = false;
     private boolean executionActive = false;
     private boolean canExecute = false;
+    private Pair<Stack<ASScope>, Stack<ASScope.ScopeInstance>> scope;
 
     public Executeur(Language language) {
         translator = new Translator(language);
@@ -623,7 +626,15 @@ public class Executeur {
             //System.out.println(datas);
             // boolean servant a indique que l'execution est terminee
             executionActive = false;
-            if (resetIfFinished) reset();
+            if (!resetIfFinished) {
+                var newStack = new Stack<ASScope>();
+                newStack.addAll(ASScope.getScopeStack());
+                var newStackInstance = new Stack<ASScope.ScopeInstance>();
+                newStackInstance.addAll(ASScope.getScopeInstanceStack());
+                this.scope = new Pair<>(newStack, newStackInstance);
+            }
+
+            reset();
             returnData.put(Data.endOfExecution());
         }
         datas.clear();
@@ -633,6 +644,8 @@ public class Executeur {
 
     public void executerFonction(String nomFonction, ArrayList<ASObjet<?>> args) {
         executionActive = true;
+        ASScope.loadFromPair(this.scope);
+
         var var = ASScope.getCurrentScopeInstance().getVariable(nomFonction);
         if (var == null) {
             return;
