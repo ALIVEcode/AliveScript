@@ -7,8 +7,11 @@ public class Main {
             var a = 12
             afficher a
             afficher a
+            fonction abc()
+                afficher "hey!"
+            fin fonction
+            abc()
             """.split("\n");
-
 
     public static void main(String[] args) {
         Executeur executeur = new Executeur(Language.FR);
