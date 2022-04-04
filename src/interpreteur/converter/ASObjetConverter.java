@@ -70,24 +70,34 @@ public class ASObjetConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static ASObjet<?> fromJSON(JSONObject data) {
+    public static ASListe fromJSON(JSONObject data) {
         var result = new ASListe();
 
         for (var key : (Set<String>) data.keySet()) {
-            var element = data.get(key);
-            switch (element) {
-                case JSONArray jsonArray -> result.ajouterElement(fromJSON(jsonArray));
-                case JSONObject jsonObject -> result.ajouterElement(fromJSON(jsonObject));
-                default -> result.ajouterElement(fromJavaObject(element));
+            var asKey = new ASTexte(key);
+            if (data.isNull(key)) {
+                result.ajouterElement(new ASPaire(asKey, new ASNul()));
+                continue;
             }
+            var element = data.get(key);
+            ASPaire pair = switch (element) {
+                case JSONArray jsonArray -> new ASPaire(asKey, fromJSON(jsonArray));
+                case JSONObject jsonObject -> new ASPaire(asKey, fromJSON(jsonObject));
+                default -> new ASPaire(asKey, fromJavaObject(element));
+            };
+            result.ajouterElement(pair);
         }
         return result;
     }
 
-    public static ASObjet<?> fromJSON(JSONArray data) {
+    public static ASListe fromJSON(JSONArray data) {
         var result = new ASListe();
 
         for (int i = 0; i < data.length(); i++) {
+            if (data.isNull(i)) {
+                result.ajouterElement(new ASNul());
+                continue;
+            }
             var element = data.get(i);
             switch (element) {
                 case JSONArray jsonArray -> result.ajouterElement(fromJSON(jsonArray));
@@ -127,7 +137,9 @@ public class ASObjetConverter {
             }
             case null -> new ASNul();
             default -> throw new ASObjetConversionException("The converted object must be " +
-                                                            "a primitive, an ArrayList or a Map (recursively)");
+                                                            "a primitive, an ArrayList or a Map (recursively), " +
+                                                            "not an object ( " + object + " ) of type "
+                                                            + object.getClass());
         };
     }
 }

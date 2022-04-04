@@ -1,12 +1,14 @@
 package websocketserver.endpoints;
 
 import interpreteur.as.erreurs.ASErreur;
+import interpreteur.as.lang.datatype.ASListe;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.datatype.ASTexte;
 import interpreteur.ast.buildingBlocs.expressions.AppelFonc;
 import interpreteur.ast.buildingBlocs.expressions.CreerListe;
 import interpreteur.ast.buildingBlocs.expressions.ValeurConstante;
 import interpreteur.ast.buildingBlocs.expressions.Var;
+import interpreteur.converter.ASObjetConverter;
 import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
 import interpreteur.generateurs.ast.AstGenerator;
@@ -85,10 +87,13 @@ public class AliveScriptExecutionEndpoint {
                     return;
                 }
                 var funcName = (String) message.options().get("funcName");
-                var args = (JSONArray) message.options().get("args");
-                var argsArrayList = new ArrayList<ASObjet<?>>();
-                // TODO conversion entre JSONArray -> ArrayList<ASObjet<?>>
-                executeur.executerFonction(funcName, new ArrayList<>(List.of(new ASTexte(args.getString(0)))));
+                ASListe args;
+                if (message.options().containsKey("args"))
+                    args = ASObjetConverter.fromJSON((JSONArray) message.options().get("args"));
+                else
+                    args = new ASListe();
+
+                executeur.executerFonction(funcName, args.getValue());
                 session.getAsyncRemote().sendText(executeur.consumeData().toString());
             }
             default -> {
