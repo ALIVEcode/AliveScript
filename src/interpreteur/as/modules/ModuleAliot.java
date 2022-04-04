@@ -100,10 +100,12 @@ public class ModuleAliot {
                 // envoyerAction
                 // TODO
                 new ASFonctionModule("envoyerAction", new ASParametre[]{
-                        ASParametre.obligatoire("callback", ASTypeBuiltin.fonctionType.asType())
+                        ASParametre.obligatoire("actionId", ASTypeBuiltin.texte.asType()),
+                        ASParametre.obligatoire("data", ASTypeBuiltin.dict.asType())
                 }, ASTypeBuiltin.entier.asType()) {
                     @Override
                     public ASObjet<?> executer() {
+                        ASObjet<?> data = getValeurParam("data");
                         executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER));
                         return new ASNul();
                     }

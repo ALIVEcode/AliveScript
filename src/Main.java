@@ -4,15 +4,36 @@ import language.Language;
 public class Main {
 
     static final String[] CODE = """
-            var a = 12
-            afficher a
-            afficher a
-            fonction abc()
-                afficher "hey!"
+            fonction o()
+                afficher "o"
             fin fonction
-            abc()
             
-            const def = fonction(msg="abc")
+            fonction abc()
+                fonction o()
+                    afficher "b"
+                fin fonction
+                o()
+            fin fonction
+            
+            var _ao = 0
+            var ao
+            get ao
+                retourner _ao
+            fin get
+            
+            
+            set ao(a)
+                afficher a
+                _ao = a
+                retourner _ao
+            fin set
+            
+            afficher ao
+            ao += 1
+            afficher ao
+            abc()
+            o()
+            
             
             """.split("\n");
 

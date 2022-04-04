@@ -4,9 +4,12 @@ import interpreteur.as.lang.ASFonctionModule;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.ASType;
+import org.jetbrains.annotations.Contract;
 
 public class ASFonctionManager {
-
+    public static final String FONCTION_SCOPE_START = "fonc~";
+    public static final String GETTER_SCOPE_START = "get~";
+    public static final String SETTER_SCOPE_START = "set~";
     private static String structure = "";
 
     // met la fonction dans le dictionnaire de fonction et cree enregistre la fonction dans une Variable
@@ -33,6 +36,12 @@ public class ASFonctionManager {
     public static void retirerStructure() {
         structure = structure.contains(".") ? structure.substring(0, structure.lastIndexOf(".")) : "";
 
+    }
+
+    @Contract(pure = true)
+    public static String makeFunctionNameSignature(String currentScope, String functionName) {
+        String s = currentScope + "@" + functionName;
+        return s;
     }
 
     public static void reset() {
