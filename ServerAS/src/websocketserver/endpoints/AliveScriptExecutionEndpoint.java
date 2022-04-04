@@ -2,31 +2,21 @@ package websocketserver.endpoints;
 
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.datatype.ASListe;
-import interpreteur.as.lang.datatype.ASObjet;
-import interpreteur.as.lang.datatype.ASTexte;
-import interpreteur.ast.buildingBlocs.expressions.AppelFonc;
-import interpreteur.ast.buildingBlocs.expressions.CreerListe;
-import interpreteur.ast.buildingBlocs.expressions.ValeurConstante;
-import interpreteur.ast.buildingBlocs.expressions.Var;
-import interpreteur.converter.ASObjetConverter;
+import converter.ASObjetConverter;
 import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
-import interpreteur.generateurs.ast.AstGenerator;
 import language.Language;
 import org.json.JSONArray;
 import websocketserver.MessageDecoder;
 import websocketserver.MessageEncoder;
 import websocketserver.model.Message;
-import websocketserver.model.MessageTypes;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 

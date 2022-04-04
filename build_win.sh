@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ -d ./out/production/Interpreteur/interpreteur ]
-then rm -r -f ./out/production/Interpreteur/interpreteur
+if [ -d ./out/production/Interpreteur/ ]
+then rm -r -f ./out/production/Interpreteur/
 fi
-if [ -d ./out/production/ServerAS/server ]
+if [ -d ./out/production/ServerAS/ ]
 then rm -r -f ./out/production/ServerAS/
 fi
 

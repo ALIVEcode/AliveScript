@@ -87,10 +87,15 @@ public class ModuleAliot {
                 // arreterEcoute
                 // TODO
                 new ASFonctionModule("arreterEcoute", new ASParametre[]{
-                        ASParametre.obligatoire("ecouteurId", ASTypeBuiltin.entier.asType())
+                        ASParametre.obligatoire("ecouteurId", new ASType("texte|fonctionType"))
                 }, ASTypeBuiltin.booleen.asType()) {
                     @Override
                     public ASObjet<?> executer() {
+                        ASObjet<?> func = getValeurParam("ecouteurId");
+                        String funcName = func instanceof ASFonctionModule fonctionModule
+                                ? fonctionModule.getNom() :
+                                (String) func.getValue();
+                        executeurInstance.addData(new Data(Data.Id.UNSUBSCRIBE_LISTENER).addParam(funcName));
                         return new ASNul();
                     }
                 },

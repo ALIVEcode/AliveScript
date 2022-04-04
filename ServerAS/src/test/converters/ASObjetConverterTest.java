@@ -3,9 +3,8 @@ package test.converters;
 
 import interpreteur.as.lang.datatype.*;
 import org.json.JSONArray;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import interpreteur.converter.ASObjetConverter;
+import converter.ASObjetConverter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

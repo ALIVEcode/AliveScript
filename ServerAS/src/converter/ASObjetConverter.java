@@ -1,4 +1,4 @@
-package interpreteur.converter;
+package converter;
 
 
 import interpreteur.as.lang.datatype.*;
@@ -17,16 +17,14 @@ public class ASObjetConverter {
      * @return Object -> can be JSONObjet or JSONArray
      */
     public static Object toJSON(ASObjet<?> asObjet) throws JSONException {
-        switch (asObjet) {
-            case ASListe asListe -> {
-                if (asListe.estDict()) {
-                    return ASDictToJSON(asListe);
-                } else {
-                    return ASListeToJSON(asListe);
-                }
+        if (asObjet instanceof ASListe asListe) {
+            if (asListe.estDict()) {
+                return ASDictToJSON(asListe);
+            } else {
+                return ASListeToJSON(asListe);
             }
-            case null, default -> throw new JSONException("Unexpected value: " + asObjet);
         }
+        throw new JSONException("Unexpected value: " + asObjet);
     }
 
     public static JSONObject ASDictToJSON(ASListe asDict) {
@@ -80,11 +78,14 @@ public class ASObjetConverter {
                 continue;
             }
             var element = data.get(key);
-            ASPaire pair = switch (element) {
-                case JSONArray jsonArray -> new ASPaire(asKey, fromJSON(jsonArray));
-                case JSONObject jsonObject -> new ASPaire(asKey, fromJSON(jsonObject));
-                default -> new ASPaire(asKey, fromJavaObject(element));
-            };
+            ASPaire pair;
+            if (element instanceof JSONArray jsonArray) {
+                pair = new ASPaire(asKey, fromJSON(jsonArray));
+            } else if (element instanceof JSONObject jsonObject) {
+                pair = new ASPaire(asKey, fromJSON(jsonObject));
+            } else {
+                pair = new ASPaire(asKey, fromJavaObject(element));
+            }
             result.ajouterElement(pair);
         }
         return result;
@@ -99,10 +100,12 @@ public class ASObjetConverter {
                 continue;
             }
             var element = data.get(i);
-            switch (element) {
-                case JSONArray jsonArray -> result.ajouterElement(fromJSON(jsonArray));
-                case JSONObject jsonObject -> result.ajouterElement(fromJSON(jsonObject));
-                default -> result.ajouterElement(fromJavaObject(element));
+            if (element instanceof JSONArray jsonArray) {
+                result.ajouterElement(fromJSON(jsonArray));
+            } else if (element instanceof JSONObject jsonObject) {
+                result.ajouterElement(fromJSON(jsonObject));
+            } else {
+                result.ajouterElement(fromJavaObject(element));
             }
         }
         return result;
@@ -110,36 +113,43 @@ public class ASObjetConverter {
 
 
     public static ASObjet<?> fromJavaObject(Object object) throws ASObjetConversionException {
-        return switch (object) {
-            case Number num -> ASNombre.cast(num);
-            case String s -> new ASTexte(s);
-            case Boolean bool -> new ASBooleen(bool);
-            case ArrayList<?> arrayList -> {
-                var result = new ASListe();
-                for (var element : arrayList) {
-                    result.ajouterElement(fromJavaObject(element));
-                }
-                yield result;
+        if (object instanceof Number num) {
+            return ASNombre.cast(num);
+
+        } else if (object instanceof String s) {
+            return new ASTexte(s);
+
+        } else if (object instanceof Boolean bool) {
+            return new ASBooleen(bool);
+
+        } else if (object instanceof ArrayList<?> arrayList) {
+            var result = new ASListe();
+            for (var element : arrayList) {
+                result.ajouterElement(fromJavaObject(element));
             }
-            case Map<?, ?> map -> {
-                var result = new ASListe();
-                for (var element : map.entrySet()) {
-                    result.ajouterElement(fromJavaObject(element));
-                }
-                yield result;
+            return result;
+
+        } else if (object instanceof Map<?, ?> map) {
+            var result = new ASListe();
+            for (var element : map.entrySet()) {
+                result.ajouterElement(fromJavaObject(element));
             }
-            case Map.Entry<?, ?> entry -> {
-                var key = fromJavaObject(entry.getValue());
-                if (!(key instanceof ASTexte asTexte)) {
-                    throw new ASObjetConversionException("The key of an entry must be a String");
-                }
-                yield new ASPaire(asTexte, fromJavaObject(entry.getValue()));
+            return result;
+
+        } else if (object instanceof Map.Entry<?, ?> entry) {
+            var key = fromJavaObject(entry.getValue());
+            if (!(key instanceof ASTexte asTexte)) {
+                throw new ASObjetConversionException("The key of an entry must be a String");
             }
-            case null -> new ASNul();
-            default -> throw new ASObjetConversionException("The converted object must be " +
-                                                            "a primitive, an ArrayList or a Map (recursively), " +
-                                                            "not an object ( " + object + " ) of type "
-                                                            + object.getClass());
-        };
+            return new ASPaire(asTexte, fromJavaObject(entry.getValue()));
+
+        } else if (object == null) {
+            return new ASNul();
+        }
+
+        throw new ASObjetConversionException("The converted object must be " +
+                                             "a primitive, an ArrayList or a Map (recursively), " +
+                                             "not an object ( " + object + " ) of type "
+                                             + object.getClass());
     }
 }
