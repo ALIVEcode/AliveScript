@@ -10,6 +10,7 @@ public class ASFonctionManager {
     public static final String FONCTION_SCOPE_START = "fonc~";
     public static final String GETTER_SCOPE_START = "get~";
     public static final String SETTER_SCOPE_START = "set~";
+    public static final String SCOPE_SEPARATOR = "@";
     private static String structure = "";
 
     // met la fonction dans le dictionnaire de fonction et cree enregistre la fonction dans une Variable
@@ -40,7 +41,7 @@ public class ASFonctionManager {
 
     @Contract(pure = true)
     public static String makeFunctionNameSignature(String currentScope, String functionName) {
-        String s = currentScope + "@" + functionName;
+        String s = currentScope + SCOPE_SEPARATOR + functionName;
         return s;
     }
 

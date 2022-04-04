@@ -1,0 +1,3 @@
+#!/bin/bash
+
+java -Dfile.encoding=UTF-8 -cp ./out/production/Interpreteur/:./out/production/ServerAS/:./lib/json-20140107.jar:./lib/snakeyaml-1.28.jar:./lib/annotations-19.0.0.jar:./lib/javax.websocket-api-1.1.jar:./lib/dotenv-java-2.2.0.jar:./lib/javax.websocket-api-1.1.jar:lib/tyrus-container-grizzly-client-1.15.jar:./lib/tyrus-spi-1.15.jar:./lib/tyrus-core-1.15.jar:./lib/grizzly-framework-2.4.4.jar:./lib/grizzly-http-server-2.4.4.jar:./lib/hamcrest-core-1.3.jar:./lib/tyrus-container-grizzly-server-1.15.jar:./lib/grizzly-http-2.4.4.jar:./lib/tyrus-server-1.15.jar:./lib/tyrus-standalone-client-1.15.jar:./lib/apiguardian-api-1.1.2.jar websocketserver.ASWebSocketServer

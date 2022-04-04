@@ -90,7 +90,7 @@ public class Executeur {
     private boolean compilationActive = false;
     private boolean executionActive = false;
     private boolean canExecute = false;
-    private Pair<Stack<ASScope>, Stack<ASScope.ScopeInstance>> scope;
+    private Optional<Pair<Stack<ASScope>, Stack<ASScope.ScopeInstance>>> scope;
 
     public Executeur(Language language) {
         translator = new Translator(language);
@@ -590,14 +590,10 @@ public class Executeur {
         return (ligneParsed instanceof Programme.ProgrammeFin || !executionActive || resultat == null) ? datas.toString() : resultat;
     }
 
-    public JSONArray executerMain(boolean resume) {
-        return executerMain(resume, true);
-    }
-
     /**
      * fonction executant le scope principal ("main")
      */
-    public JSONArray executerMain(boolean resume, boolean resetIfFinished) {
+    public JSONArray executerMain(boolean resume) {
         executionActive = true;
         // sert au calcul du temps qu'a pris le code pour etre execute
         LocalDateTime before = LocalDateTime.now();
@@ -626,13 +622,12 @@ public class Executeur {
             //System.out.println(datas);
             // boolean servant a indique que l'execution est terminee
             executionActive = false;
-            if (!resetIfFinished) {
-                var newStack = new Stack<ASScope>();
-                newStack.addAll(ASScope.getScopeStack());
-                var newStackInstance = new Stack<ASScope.ScopeInstance>();
-                newStackInstance.addAll(ASScope.getScopeInstanceStack());
-                this.scope = new Pair<>(newStack, newStackInstance);
-            }
+
+            var newStack = new Stack<ASScope>();
+            newStack.addAll(ASScope.getScopeStack());
+            var newStackInstance = new Stack<ASScope.ScopeInstance>();
+            newStackInstance.addAll(ASScope.getScopeInstanceStack());
+            this.scope = Optional.of(new Pair<>(newStack, newStackInstance));
 
             reset();
             returnData.put(Data.endOfExecution());
@@ -644,7 +639,7 @@ public class Executeur {
 
     public void executerFonction(String nomFonction, ArrayList<ASObjet<?>> args) {
         executionActive = true;
-        ASScope.loadFromPair(this.scope);
+        this.scope.ifPresent(ASScope::loadFromPair);
 
         var var = ASScope.getCurrentScopeInstance().getVariable(nomFonction);
         if (var == null) {
@@ -660,6 +655,8 @@ public class Executeur {
     }
 
     public Object resumeExecution() {
+        this.scope.ifPresent(ASScope::loadFromPair);
+
         Coordonnee coordActuel = obtenirCoordRunTime();
         return executerScope(coordActuel.getScope(), null, coordActuel.toString());
     }

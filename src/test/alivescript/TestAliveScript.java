@@ -85,6 +85,49 @@ public class TestAliveScript {
                 .prints("[1, [1, 2], vrai, [1, 2, 3]]")
                 .ends();
     }
+
+    @Test
+    public void testFoncGetSet() {
+        assertCompiles("""
+                fonction o()
+                    afficher "o"
+                fin fonction
+                            
+                fonction abc()
+                    fonction o()
+                        afficher "b"
+                    fin fonction
+                    o()
+                fin fonction
+                            
+                var _ao = 0
+                var ao
+                get ao
+                    retourner _ao
+                fin get
+                            
+                            
+                set ao(a)
+                    afficher a
+                    _ao = a
+                    retourner _ao
+                fin set
+                            
+                afficher ao
+                ao += 1
+                afficher ao
+                abc()
+                o()
+                """);
+        assertExecution()
+                .prints(0)
+                .prints(1)
+                .prints(1)
+                .prints("b")
+                .prints("o")
+                .ends();
+
+    }
 }
 
 

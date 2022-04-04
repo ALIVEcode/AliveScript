@@ -21,9 +21,6 @@ public class ASWebSocketServer {
 
         try {
             server.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            System.out.print("Please press a key to stop the server.");
-            reader.readLine();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

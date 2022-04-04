@@ -68,7 +68,7 @@ public class AliveScriptExecutionEndpoint {
                     session.getAsyncRemote().sendText(result.toString());
                     return;
                 }
-                JSONArray resultExec = executeur.executerMain(false, false);
+                JSONArray resultExec = executeur.executerMain(false);
                 if (resultExec.getJSONObject(resultExec.length() - 1).getInt("id") != 0) {
                     session.getAsyncRemote().sendText(new Data(Data.Id.ERREUR).addParam("ErreurIO").addParam("Les commandes d'IO sont interdites dans ce contexte").toString());
                     return;

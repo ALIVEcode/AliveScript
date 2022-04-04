@@ -33,7 +33,8 @@ public class AliveScriptExecutionTester {
 
     //----------------- tests -----------------//
 
-    public AliveScriptExecutionTester prints(String message) {
+    public AliveScriptExecutionTester prints(Object message) {
+        message = message.toString();
         var action = getNextAction();
         assertEquals(300, action.getInt("id"));
         assertEquals(message, action.getJSONArray("p").getString(0));
