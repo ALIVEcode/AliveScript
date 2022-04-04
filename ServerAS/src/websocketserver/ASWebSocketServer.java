@@ -14,7 +14,7 @@ public class ASWebSocketServer {
 
     private static final int PORT = Integer.parseInt(env.get("WS_SERVER_PORT"));
     private static final String PATH = env.get("WS_BASE_PATH");
-    private static final String HOST = env.get("WS_AS_URL");
+    private static final String HOST = env.get("WS_AS_HOST");
 
     public static void main(String[] args) {
         Server server = new Server(HOST, PORT, PATH, null, AliveScriptExecutionEndpoint.class);
