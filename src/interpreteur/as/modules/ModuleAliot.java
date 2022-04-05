@@ -7,6 +7,7 @@ import interpreteur.as.lang.ASTypeBuiltin;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.modules.core.ASModule;
+import interpreteur.converter.ASObjetConverter;
 import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
 import org.json.JSONArray;
@@ -111,7 +112,7 @@ public class ModuleAliot {
                     @Override
                     public ASObjet<?> executer() {
                         ASObjet<?> data = getValeurParam("data");
-                        executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER));
+                        executeurInstance.addData(new Data(Data.Id.SEND_ACTION).addParam(data));
                         return new ASNul();
                     }
                 },
@@ -119,11 +120,12 @@ public class ModuleAliot {
                 // changerDoc
                 // TODO
                 new ASFonctionModule("changerDoc", new ASParametre[]{
-                        ASParametre.obligatoire("callback", ASTypeBuiltin.fonctionType.asType())
+                        ASParametre.obligatoire("data", ASTypeBuiltin.dict.asType())
                 }, ASTypeBuiltin.entier.asType()) {
                     @Override
                     public ASObjet<?> executer() {
-                        executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER));
+                        var data = getValeurParam("data");
+                        executeurInstance.addData(new Data(Data.Id.UPDATE_DOC).addParam(ASObjetConverter.toJSON(data)));
                         return new ASNul();
                     }
                 },

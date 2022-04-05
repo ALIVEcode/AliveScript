@@ -590,10 +590,14 @@ public class Executeur {
         return (ligneParsed instanceof Programme.ProgrammeFin || !executionActive || resultat == null) ? datas.toString() : resultat;
     }
 
+    public JSONArray executerMain(boolean resume) {
+        return executerMain(resume, true);
+    }
+
     /**
      * fonction executant le scope principal ("main")
      */
-    public JSONArray executerMain(boolean resume) {
+    public JSONArray executerMain(boolean resume, boolean saveScope) {
         executionActive = true;
         // sert au calcul du temps qu'a pris le code pour etre execute
         LocalDateTime before = LocalDateTime.now();
@@ -622,15 +626,15 @@ public class Executeur {
             //System.out.println(datas);
             // boolean servant a indique que l'execution est terminee
             executionActive = false;
-
-            var newStack = new Stack<ASScope>();
-            newStack.addAll(ASScope.getScopeStack());
-            var newStackInstance = new Stack<ASScope.ScopeInstance>();
-            newStackInstance.addAll(ASScope.getScopeInstanceStack());
-            this.scope = Optional.of(new Pair<>(newStack, newStackInstance));
-
-            reset();
+            if (saveScope) {
+                var newStack = new Stack<ASScope>();
+                newStack.addAll(ASScope.getScopeStack());
+                var newStackInstance = new Stack<ASScope.ScopeInstance>();
+                newStackInstance.addAll(ASScope.getScopeInstanceStack());
+                this.scope = Optional.of(new Pair<>(newStack, newStackInstance));
+            }
             returnData.put(Data.endOfExecution());
+            reset();
         }
         datas.clear();
 
@@ -639,7 +643,9 @@ public class Executeur {
 
     public void executerFonction(String nomFonction, ArrayList<ASObjet<?>> args) {
         executionActive = true;
-        this.scope.ifPresent(ASScope::loadFromPair);
+        this.scope.ifPresentOrElse(ASScope::loadFromPair, () -> {
+            throw new ASErreur.ErreurAliveScript("ErreurCompilation", "Le code n'est pas compil\u00E9");
+        });
 
         var var = ASScope.getCurrentScopeInstance().getVariable(nomFonction);
         if (var == null) {
@@ -655,10 +661,15 @@ public class Executeur {
     }
 
     public Object resumeExecution() {
-        this.scope.ifPresent(ASScope::loadFromPair);
+        this.scope.ifPresentOrElse(ASScope::loadFromPair, () -> {
+            throw new ASErreur.ErreurAliveScript("ErreurCompilation", "Le code n'est pas compil\u00E9");
+        });
 
         Coordonnee coordActuel = obtenirCoordRunTime();
-        return executerScope(coordActuel.getScope(), null, coordActuel.toString());
+        executionActive = true;
+        Object o = executerScope(coordActuel.getScope(), null, coordActuel.toString());
+        executionActive = false;
+        return o;
     }
 
     /**

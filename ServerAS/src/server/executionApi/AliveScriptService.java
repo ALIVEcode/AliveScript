@@ -122,7 +122,7 @@ public class AliveScriptService {
 
     public String execute() {
         JSONObject returnData = new JSONObject();
-        JSONArray result = executeur.executerMain(resume);
+        JSONArray result = executeur.executerMain(resume, true);
 
         // if the method was to be called later, resume would be true
         if (!resume) resume = true;
@@ -130,7 +130,7 @@ public class AliveScriptService {
         try {
             boolean executionFinished;
             int index = result.length() - 1;
-            if(index < 0) {
+            if (index < 0) {
                 executionFinished = true;
                 result.put(Data.endOfExecution());
             } else {
@@ -159,10 +159,10 @@ public class AliveScriptService {
     @Override
     public String toString() {
         return "server.executionApi.AliveScriptService{" +
-                "idToken=" + idToken +
-                ", executeur=" + executeur +
-                ", resume=" + resume +
-                '}';
+               "idToken=" + idToken +
+               ", executeur=" + executeur +
+               ", resume=" + resume +
+               '}';
     }
 
     enum ResponseStatus {

@@ -1,4 +1,4 @@
-package converter;
+package interpreteur.converter;
 
 
 import interpreteur.as.lang.datatype.*;

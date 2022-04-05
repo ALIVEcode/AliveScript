@@ -10,10 +10,12 @@ import javax.websocket.EndpointConfig;
 import java.util.Hashtable;
 import java.util.Map;
 
+import static websocketserver.ASWebSocketServer.logger;
+
 public class MessageDecoder implements Decoder.Text<Message> {
     @Override
     public Message decode(String s) throws DecodeException {
-        System.out.println("Decoding message: " + s);
+        logger.info("Decoding message: " + s);
         JSONObject jsonObject = new JSONObject(s);
         String type = jsonObject.getString("type");
         MessageTypes messageType;
@@ -30,7 +32,7 @@ public class MessageDecoder implements Decoder.Text<Message> {
             ));
             default -> new Hashtable<>();
         };
-        System.out.println("Decoded options: " + messageOptions);
+        logger.info("Decoded options: " + messageOptions.toString().replace("\n", "\\n"));
         return new Message(messageType, messageOptions);
     }
 

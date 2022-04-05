@@ -2,7 +2,7 @@ package websocketserver.endpoints;
 
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.datatype.ASListe;
-import converter.ASObjetConverter;
+import interpreteur.converter.ASObjetConverter;
 import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
 import language.Language;
@@ -23,7 +23,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 @ServerEndpoint(
         value = "/execute/{tokenId}",
-        encoders = MessageEncoder.class,
         decoders = MessageDecoder.class
 )
 public class AliveScriptExecutionEndpoint {
@@ -60,7 +59,7 @@ public class AliveScriptExecutionEndpoint {
                     session.getAsyncRemote().sendText(result.toString());
                     return;
                 }
-                JSONArray resultExec = executeur.executerMain(false);
+                JSONArray resultExec = executeur.executerMain(false, true);
                 if (resultExec.getJSONObject(resultExec.length() - 1).getInt("id") != 0) {
                     session.getAsyncRemote().sendText(new Data(Data.Id.ERREUR).addParam("ErreurIO").addParam("Les commandes d'IO sont interdites dans ce contexte").toString());
                     return;
