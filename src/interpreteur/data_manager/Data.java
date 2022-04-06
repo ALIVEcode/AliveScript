@@ -56,6 +56,8 @@ public class Data extends JSONObject {
 
         AFFICHER(Categorie.UTILITAIRE),  // 0
         ATTENDRE(Categorie.UTILITAIRE),  // 1
+        NOTIF_INFO(Categorie.UTILITAIRE),     // 2
+        NOTIF_ERR(Categorie.UTILITAIRE),     // 2
 
         ERREUR(Categorie.ERREUR),
 

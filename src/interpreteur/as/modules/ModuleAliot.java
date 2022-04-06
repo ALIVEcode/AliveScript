@@ -57,14 +57,14 @@ public class ModuleAliot {
 
                 // ecouterDocChange
                 // TODO
-                new ASFonctionModule("ecouterDocChange", new ASParametre[]{
+                new ASFonctionModule("ecouterDoc", new ASParametre[]{
                         ASParametre.obligatoire("champs", ASTypeBuiltin.iterable.asType()),
-                        ASParametre.obligatoire("callback", ASTypeBuiltin.fonctionType.asType())
+                        ASParametre.obligatoire("ecouteur", ASTypeBuiltin.fonctionType.asType())
                 }, ASTypeBuiltin.entier.asType()) {
                     @Override
                     public ASObjet<?> executer() {
                         ASObjet<?> champs = getValeurParam("champs");
-                        ASObjet<?> callback = getValeurParam("callback");
+                        ASObjet<?> callback = getValeurParam("ecouteur");
                         String funcName = callback instanceof ASFonctionModule fonctionModule
                                 ? fonctionModule.getNom()
                                 : callback instanceof ASFonction fonction
@@ -76,7 +76,9 @@ public class ModuleAliot {
                                 throw new ASErreur.ErreurAppelFonction("La liste doit \u00EAtre une liste d'\u00E9l\u00E9ments de type texte");
                             }
                             var champsStringList = liste.getValue().stream().map(el -> (String) el.getValue()).toList();
-                            executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER).addParam(new JSONArray(champsStringList)).addParam(funcName));
+                            executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER)
+                                    .addParam(new JSONArray(champsStringList))
+                                    .addParam(funcName));
                             return new ASNul();
                         }
 
@@ -87,15 +89,17 @@ public class ModuleAliot {
 
                 // arreterEcoute
                 // TODO
-                new ASFonctionModule("arreterEcoute", new ASParametre[]{
-                        ASParametre.obligatoire("ecouteurId", new ASType("texte|fonctionType"))
+                new ASFonctionModule("enleverEcouteur", new ASParametre[]{
+                        ASParametre.obligatoire("ecouteur", new ASType("texte|fonctionType"))
                 }, ASTypeBuiltin.booleen.asType()) {
                     @Override
                     public ASObjet<?> executer() {
-                        ASObjet<?> func = getValeurParam("ecouteurId");
+                        ASObjet<?> func = getValeurParam("ecouteur");
                         String funcName = func instanceof ASFonctionModule fonctionModule
                                 ? fonctionModule.getNom() :
-                                (String) func.getValue();
+                                func instanceof ASFonction function ?
+                                        function.getNom() :
+                                        (String) func.getValue();
                         executeurInstance.addData(new Data(Data.Id.UNSUBSCRIBE_LISTENER).addParam(funcName));
                         return new ASNul();
                     }
@@ -104,15 +108,27 @@ public class ModuleAliot {
                 //----------------- envoyeur -----------------//
 
                 // envoyerAction
-                // TODO
+                // TODO retourner un ASEntier
                 new ASFonctionModule("envoyerAction", new ASParametre[]{
-                        ASParametre.obligatoire("actionId", ASTypeBuiltin.texte.asType()),
-                        ASParametre.obligatoire("data", ASTypeBuiltin.dict.asType())
-                }, ASTypeBuiltin.entier.asType()) {
+                        ASParametre.obligatoire("actionId", ASTypeBuiltin.entier.asType()),
+                        ASParametre.obligatoire("data", ASTypeBuiltin.dict.asType()),
+                        new ASParametre("targetId", ASTypeBuiltin.texte.asType(), new ASNul())
+                }, ASTypeBuiltin.nulType.asType()) {
                     @Override
                     public ASObjet<?> executer() {
-                        ASObjet<?> data = getValeurParam("data");
-                        executeurInstance.addData(new Data(Data.Id.SEND_ACTION).addParam(data));
+                        var data = getValeurParam("data");
+                        var actionId = getValeurParam("actionId");
+                        var target = getValeurParam("targetId");
+                        if (target instanceof ASNul) {
+                            executeurInstance.addData(new Data(Data.Id.SEND_ACTION)
+                                    .addParam(actionId.getValue())
+                                    .addParam(ASObjetConverter.toJSON(data)));
+                        } else {
+                            executeurInstance.addData(new Data(Data.Id.SEND_ACTION)
+                                    .addParam(actionId.getValue())
+                                    .addParam(ASObjetConverter.toJSON(data))
+                                    .addParam(target.getValue()));
+                        }
                         return new ASNul();
                     }
                 },
@@ -137,6 +153,30 @@ public class ModuleAliot {
                     @Override
                     public ASObjet<?> executer() {
                         executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER));
+                        return new ASNul();
+                    }
+                },
+
+                // notif
+                new ASFonctionModule("notif", new ASParametre[]{
+                        ASParametre.obligatoire("message", ASTypeBuiltin.texte.asType())
+                }, ASTypeBuiltin.entier.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        var msg = getValeurParam("message").getValue();
+                        executeurInstance.addData(new Data(Data.Id.NOTIF_INFO).addParam(msg));
+                        return new ASNul();
+                    }
+                },
+
+                // notif
+                new ASFonctionModule("notif_err", new ASParametre[]{
+                        ASParametre.obligatoire("message", ASTypeBuiltin.texte.asType())
+                }, ASTypeBuiltin.entier.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        var msg = getValeurParam("message").getValue();
+                        executeurInstance.addData(new Data(Data.Id.NOTIF_ERR).addParam(msg));
                         return new ASNul();
                     }
                 },
