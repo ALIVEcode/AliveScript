@@ -1,9 +1,9 @@
 package interpreteur.ast.buildingBlocs.programmes;
 
-import interpreteur.as.lang.ASFonctionModule;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASFonction;
 import interpreteur.as.lang.ASScope;
+import interpreteur.as.lang.datatype.ASParametre;
 import interpreteur.as.lang.managers.ASFonctionManager;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.as.lang.ASType;
@@ -47,8 +47,8 @@ public class CreerSetter extends Programme {
             ASScope scope = new ASScope(this.scope);
             scope.setParent(ASScope.getCurrentScopeInstance());
 
-            ASFonction set = new ASFonction(this.var.getNom(), new ASFonctionModule.Parametre[]{
-                    new ASFonctionModule.Parametre(this.type, this.nomArg.getNom(), null)
+            ASFonction set = new ASFonction(this.var.getNom(), new ASParametre[]{
+                    new ASParametre(this.nomArg.getNom(), this.type, null)
             }, this.type, executeurInstance);
 
             scope.declarerVariable(new ASVariable(this.nomArg.getNom(), null, this.type));

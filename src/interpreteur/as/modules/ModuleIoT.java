@@ -12,20 +12,17 @@ public class ModuleIoT {
     static ASModule charger(Executeur executeurInstance) {
         return new ASModule(new ASFonctionModule[] {
                 new ASFonctionModule("update",
-                        new ASFonctionModule.Parametre[] {
-                            new ASFonctionModule.Parametre(
-                                    ASTypeBuiltin.texte.asType(),
-                                    "projectId",
+                        new ASParametre[] {
+                            new ASParametre(
+                                    "projectId", ASTypeBuiltin.texte.asType(),
                                     null
                             ),
-                            new ASFonctionModule.Parametre(
-                                    ASTypeBuiltin.texte.asType(),
-                                    "id",
+                            new ASParametre(
+                                    "id", ASTypeBuiltin.texte.asType(),
                                     null
                             ),
-                            new ASFonctionModule.Parametre(
-                                    ASTypeBuiltin.tout.asType(),
-                                    "value",
+                            new ASParametre(
+                                    "value", ASTypeBuiltin.tout.asType(),
                                     null
                             )
                         }, ASTypeBuiltin.nombre.asType()) {
@@ -40,10 +37,9 @@ public class ModuleIoT {
                     }
                 },
                 new ASFonctionModule("get",
-                        new ASFonctionModule.Parametre[] {
-                                new ASFonctionModule.Parametre(
-                                        ASTypeBuiltin.texte.asType(),
-                                        "key",
+                        new ASParametre[] {
+                                new ASParametre(
+                                        "key", ASTypeBuiltin.texte.asType(),
                                         new ASNul()
                                 )
                         }, ASTypeBuiltin.nombre.asType()) {
@@ -73,15 +69,13 @@ public class ModuleIoT {
                     }
                 },
                 new ASFonctionModule("getComponentValue",
-                        new ASFonctionModule.Parametre[] {
-                                new ASFonctionModule.Parametre(
-                                        ASTypeBuiltin.texte.asType(),
-                                        "projectId",
+                        new ASParametre[] {
+                                new ASParametre(
+                                        "projectId", ASTypeBuiltin.texte.asType(),
                                         null
                                 ),
-                                new ASFonctionModule.Parametre(
-                                        ASTypeBuiltin.texte.asType(),
-                                        "id",
+                                new ASParametre(
+                                        "id", ASTypeBuiltin.texte.asType(),
                                         null
                                 )
                         }, ASTypeBuiltin.nombre.asType()) {

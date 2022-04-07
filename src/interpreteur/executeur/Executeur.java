@@ -12,6 +12,8 @@ import interpreteur.ast.buildingBlocs.programmes.Declarer;
 import interpreteur.data_manager.Data;
 import interpreteur.data_manager.DataVoiture;
 import io.github.cdimascio.dotenv.Dotenv;
+import language.Language;
+import language.Translator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -48,6 +50,8 @@ afficher "fin"
 public class Executeur {
 
     private final static int MAX_DATA_BEFORE_SEND;
+    // coordonne ou commencer tous les programmes
+    final private static Coordonnee debutCoord = new Coordonnee("<0>main");
 
     static {
         Dotenv dotenv = Dotenv.configure()
@@ -56,8 +60,6 @@ public class Executeur {
         MAX_DATA_BEFORE_SEND = Integer.parseInt(dotenv.get("MAX_DATA_BEFORE_SEND"));
     }
 
-    // coordonne ou commencer tous les programmes
-    final private static Coordonnee debutCoord = new Coordonnee("<0>main");
     // lexer et parser
     private final ASLexer lexer;
     //------------------------ compilation -----------------------------//
@@ -70,25 +72,34 @@ public class Executeur {
 
     // data explaining the actions to do to the com.server
     private final ArrayList<Data> datas = new ArrayList<>();
-
-    private JSONObject context = null;
-
     // data stack used when the program asks the site for information
     private final Stack<Object> dataResponse = new Stack<>();
+    // ast
+    private final ASAst ast;
     //debug mode
     public boolean debug = false;
+    private JSONObject context = null;
     private String[] anciennesLignes = null;
     // failsafe
     private boolean compilationActive = false;
     private boolean executionActive = false;
     private boolean canExecute = false;
-    // ast
-    private final ASAst ast;
+    private final Translator translator;
 
-    public Executeur() {
-        lexer =  new ASLexer();
+    public Executeur(Language language) {
+        translator = new Translator(language);
+        lexer = new ASLexer(language.getASLexerPath()); // utiliser translator pour passer bon yaml
         asModuleManager = new ASModuleManager(this);
         ast = new ASAst(this);
+    }
+
+    @Deprecated(since = "now")
+    public Executeur() {
+        this(Language.FR);
+    }
+
+    public Translator getTranslator() {
+        return translator;
     }
 
     public static void printCompiledCode(String code) {
@@ -135,32 +146,6 @@ public class Executeur {
         return lexer;
     }
 
-    public static void main(String[] args) {
-
-
-        String[] lines = """
-                var a = {
-                "salut": "hey!",
-                "bonjour": 122
-                }
-                afficher a
-                """.split("\n");
-
-
-        Executeur executeur = new Executeur();
-        executeur.debug = true;
-        Object a;
-        if (!(a = executeur.compiler(lines, true)).equals("[]")) System.out.println(a);
-        // executeur.printCompileDict();
-        System.out.println(executeur.executerMain(false));
-
-        Executeur executeur2 = new Executeur();
-        executeur2.debug = true;
-        Object a2;
-        if (!(a2 = executeur2.compiler(lines, true)).equals("[]")) System.out.println(a2);
-        // executeur.printCompileDict();
-        System.out.println(executeur2.executerMain(false));
-    }
 
     // methode utilisee a chaque fois qu'une info doit etre afficher par le langage
     public void ecrire(String texte) {
@@ -205,9 +190,14 @@ public class Executeur {
             for (var param : additionnalParams)
                 dataToGet.addParam(param);
             throw new AskForDataResponse(dataToGet);
-        }
-        else
+        } else
             return this.dataResponse.pop();
+    }
+
+    public JSONObject getContext() {
+        if (context == null)
+            throw new ASErreur.ErreurContexteAbsent("Il n'y a pas de contexte");
+        return context;
     }
 
     public void setContext(JSONObject context) {
@@ -215,12 +205,6 @@ public class Executeur {
             throw new IllegalArgumentException("aaaaa");
         }
         this.context = context;
-    }
-
-    public JSONObject getContext() {
-        if (context == null)
-            throw new ASErreur.ErreurContexteAbsent("Il n'y a pas de contexte");
-        return context;
     }
 
     public Object pushDataResponse(Object item) {
@@ -509,8 +493,8 @@ public class Executeur {
          */
         if (debug)
             System.out.println("compilation done in "
-                    + (LocalDateTime.now().toLocalTime().toNanoOfDay() - before.toLocalTime().toNanoOfDay()) / Math.pow(10, 9)
-                    + " seconds\n");
+                               + (LocalDateTime.now().toLocalTime().toNanoOfDay() - before.toLocalTime().toNanoOfDay()) / Math.pow(10, 9)
+                               + " seconds\n");
 
         // set la valeur des anciennes lignes de code aux nouvelles lignes donnees en parametre
         anciennesLignes = lignes;
@@ -554,7 +538,7 @@ public class Executeur {
                 }
 
                 if (datas.size() >= MAX_DATA_BEFORE_SEND) {
-                    synchronized(datas) {
+                    synchronized (datas) {
                         return datas.toString();
                     }
                 }
@@ -622,7 +606,7 @@ public class Executeur {
         if (coordRunTime.toString() == null || !executionActive) {
             if (debug)
                 System.out.println("execution " + (executionActive ? "done" : "interruped") + " in " +
-                        (LocalDateTime.now().toLocalTime().toNanoOfDay() - before.toLocalTime().toNanoOfDay()) / Math.pow(10, 9) + " seconds\n");
+                                   (LocalDateTime.now().toLocalTime().toNanoOfDay() - before.toLocalTime().toNanoOfDay()) / Math.pow(10, 9) + " seconds\n");
             //System.out.println(datas);
             // boolean servant a indique que l'execution est terminee
             executionActive = false;
@@ -652,7 +636,7 @@ public class Executeur {
 
         ASFonctionManager.reset();
 
-        asModuleManager.utiliserModuleBuitlins();
+        asModuleManager.utiliserModuleBuiltins();
         //for (ASObjet.Fonction fonction : asModuleManager.getModuleBuiltins().getFonctions())
         //    FonctionManager.ajouterFonction(fonction);
         //for (ASObjet.Variable variable : asModuleManager.getModuleBuiltins().getVariables()) {

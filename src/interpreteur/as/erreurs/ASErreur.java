@@ -25,21 +25,27 @@ public interface ASErreur {
 
         public Data getAsData(Executeur executeurInstance) {
             int ligne = executeurInstance.getLineFromCoord(executeurInstance.obtenirCoordRunTime()) + 1;
+            var nomErreur = executeurInstance.getTranslator().translate(this.nomErreur);
             return new Data(Data.Id.ERREUR).addParam(nomErreur).addParam(super.getMessage()).addParam(ligne);
         }
 
+        @Deprecated
         public Data getAsData(int ligne) {
             return new Data(Data.Id.ERREUR).addParam(nomErreur).addParam(super.getMessage()).addParam(ligne);
         }
 
         public void afficher(Executeur executeurInstance) {
             int ligne = executeurInstance.getLineFromCoord(executeurInstance.obtenirCoordRunTime()) + 1;
-            executeurInstance.ecrire(this.nomErreur + " (à la ligne " + ligne
+            var nomErreur = executeurInstance.getTranslator().translate(this.nomErreur);
+
+            executeurInstance.ecrire(nomErreur + " (à la ligne " + ligne
                     + ") -> " + super.getMessage());
         }
 
         public void afficher(Executeur executeurInstance, int ligne) {
-            executeurInstance.ecrire(this.nomErreur + " (à la ligne " + ligne
+            var nomErreur = executeurInstance.getTranslator().translate(this.nomErreur);
+
+            executeurInstance.ecrire(nomErreur + " (à la ligne " + ligne
                     + ") -> " + super.getMessage());
         }
 
@@ -92,45 +98,45 @@ public interface ASErreur {
     class ErreurFermeture extends ErreurAliveScript {
 
         public ErreurFermeture(String blocActuel) {
-            super("le bloc: '" + blocActuel + "' n'a pas été fermé.", "ErreurFermeture");
+            super("le bloc: '" + blocActuel + "' n'a pas été fermé.", "error.Closure");
         }
 
         public ErreurFermeture(String blocActuel, String mauvaiseFermeture) {
             super("le bloc: '" + blocActuel + "' a été fermé avec '"
-                    + mauvaiseFermeture + "' alors qu'il ne peut pas être fermé.", "ErreurFermeture");
+                    + mauvaiseFermeture + "' alors qu'il ne peut pas être fermé.", "error.Closure");
         }
 
         public ErreurFermeture(String blocActuel, String mauvaiseFermeture, String bonneFermeture) {
             super("le bloc: '" + blocActuel + "' a été fermé avec '"
-                    + mauvaiseFermeture + "' alors qu'il doit être fermé avec '" + bonneFermeture + "'.", "ErreurFermeture");
+                    + mauvaiseFermeture + "' alors qu'il doit être fermé avec '" + bonneFermeture + "'.", "error.Closure");
         }
     }
 
     class ErreurContexteAbsent extends ErreurAliveScript {
         public ErreurContexteAbsent(String message) {
-            super(message, "ErreurContexteAbsent");
+            super(message, "error.MissingContext");
         }
     }
 
     class ErreurSyntaxe extends ErreurAliveScript {
         public ErreurSyntaxe(String message) {
-            super(message, "ErreurSyntaxe");
+            super(message, "error.Syntax");
         }
     }
 
     class ErreurModule extends ErreurAliveScript {
         public ErreurModule(String message) {
-            super(message, "ErreurModule");
+            super(message, "error.Module");
         }
     }
 
     class ErreurAppelFonction extends ErreurAliveScript {
         public ErreurAppelFonction(String message) {
-            super(message, "ErreurAppelFonction");
+            super(message, "error.FunctionCall");
         }
 
         public ErreurAppelFonction(String nom, String message) {
-            super("dans la fonction '" + nom + "': " + message, "ErreurAppelFonction");
+            super("dans la fonction '" + nom + "': " + message, "error.FunctionCall");
         }
     }
 
@@ -142,13 +148,13 @@ public interface ASErreur {
 
     class ErreurInputOutput extends ErreurAliveScript {
         public ErreurInputOutput(String message) {
-            super(message, "ErreurInputOutput");
+            super(message, "error.InputOutput");
         }
     }
 
     class ErreurAssignement extends ErreurAliveScript {
         public ErreurAssignement(String message) {
-            super(message, "ErreurAssignement");
+            super(message, "error.Assignment");
         }
     }
 
@@ -160,7 +166,13 @@ public interface ASErreur {
 
     class ErreurType extends ErreurAliveScript {
         public ErreurType(String message) {
-            super(message, "ErreurType");
+            super(message, "error.Type");
+        }
+    }
+
+    class ErreurTypePasAppelable extends ErreurAliveScript {
+        public ErreurTypePasAppelable(String message) {
+            super(message, "error.TypeNotCallable");
         }
     }
 
@@ -172,37 +184,37 @@ public interface ASErreur {
 
     class ErreurClefDupliquee extends ErreurAliveScript {
         public ErreurClefDupliquee(String msg) {
-            super(msg, "ErreurClef");
+            super(msg, "error.DuplicateKey");
         }
     }
 
     class ErreurIndex extends ErreurAliveScript {
         public ErreurIndex(String message) {
-            super(message, "ErreurIndex");
+            super(message, "error.Index");
         }
     }
 
     class ErreurVariableInconnue extends ErreurAliveScript {
         public ErreurVariableInconnue(String message) {
-            super(message, "ErreurVariableInconnue");
+            super(message, "error.UnknownVariable");
         }
     }
 
     class ErreurComparaison extends ErreurAliveScript {
         public ErreurComparaison(String message) {
-            super(message, "ErreurComparaison");
+            super(message, "error.Comparison");
         }
     }
 
     class ErreurFormatage extends ErreurAliveScript {
         public ErreurFormatage(String message) {
-            super(message, "ErreurFormatage");
+            super(message, "error.Formating");
         }
     }
 
     class ErreurSuite extends ErreurAliveScript {
         public ErreurSuite(String message) {
-            super(message, "ErreurSuite");
+            super(message, "error.Range");
         }
     }
 
@@ -211,7 +223,7 @@ public interface ASErreur {
 
     class ErreurEntierInvalide extends ErreurAliveScript {
         public ErreurEntierInvalide(String message) {
-            super(message, "ErreurEntierInvalide");
+            super(message, "error.InvalidInt");
         }
     }
 
@@ -223,13 +235,13 @@ public interface ASErreur {
 
     class ErreurDivisionParZero extends ErreurAliveScript {
         public ErreurDivisionParZero(String message) {
-            super(message, "ErreurDivisionParZero");
+            super(message, "error.DivisionByZero");
         }
     }
 
     class ErreurModuloZero extends ErreurAliveScript {
         public ErreurModuloZero(String message) {
-            super(message, "ErreurModuloZero");
+            super(message, "error.ZeroModulo");
         }
     }
 

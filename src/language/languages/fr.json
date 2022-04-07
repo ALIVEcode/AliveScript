@@ -1,0 +1,82 @@
+{
+  "error": {
+    "Closure": "ErreurFermeture",
+    "MissingContext": "ErreurContexteAbsent",
+    "Syntax": "ErreurSyntaxe",
+    "Module": "ErreurModule",
+    "FunctionCall": "ErreurAppelFonction",
+    "InputOutput": "ErreurInputOutput",
+    "Assignment": "ErreurAssignement",
+    "Type": "ErreurType",
+    "DuplicateKey": "ErreurClefDupliquee",
+    "Index": "ErreurIndex",
+    "UnknownVariable": "ErreurVariableInconnue",
+    "Comparison": "ErreurComparaison",
+    "Formating": "ErreurFormatage",
+    "Range": "ErreurSuite",
+    "InvalidInt": "ErreurEntierInvalide",
+    "DivisonByZero": "ErreurDivisionParZero",
+    "ZeroModulo": "ErreurModuloZero"
+  },
+  "modules": {
+    "builtins": {
+      "constants": {
+        "endl": "finl"
+      },
+      "variables": {
+        "localVar": "varLocales",
+        "globalVar": "varGlobales",
+        "listVar": "varListe"
+      },
+      "functions": {
+        "print": "afficher",
+        "wait": "attendre",
+        "random": "aleatoire",
+        "typeOf": "typeDe",
+        "boolean": "booleen",
+        "auto": "auto",
+        "key": "clef",
+        "val": "val",
+        "info": "info",
+        "getVar": "getVar",
+        "list": "liste",
+        "reverse": "inv",
+        "map": "map",
+        "filter": "filtrer",
+        "join": "joindre",
+        "sum": "somme",
+        "max": "max",
+        "min": "min",
+        "length": "tailleDe",
+        "index": "indexDe",
+        "int": "entier",
+        "abs": "abs",
+        "float": "decimal",
+        "number": "nombre",
+        "bin": "bin",
+        "string": "texte",
+        "upper": "maj",
+        "lower": "minus",
+        "replace": "remplacer",
+        "replaceReg": "remplacerRe",
+        "match": "match",
+        "isNumeric": "estNumerique",
+        "format": "format"
+      }
+    },
+    "math": {
+      "constants": {
+        "pi": "pi",
+        "e": "e"
+      },
+      "functions": {
+        "rad": "rad",
+        "deg": "deg",
+        "sin": "sin",
+        "cos": "cos",
+        "tan": "tan",
+        "round": "arrondir"
+      }
+    }
+  }
+}

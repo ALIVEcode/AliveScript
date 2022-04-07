@@ -1,5 +1,6 @@
 package interpreteur.as;
 
+import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASType;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur.ErreurAssignement;
@@ -203,6 +204,8 @@ public class ASAst extends AstGenerator {
                     return new Declarer((Expression<?>) p.get(1), (Expression<?>) p.get(idxValeur), type, estConst);
                 });
 
+
+        /* Deprecated
         ajouterProgramme("{methode_moteur} expression~"
                          + "{methode_moteur}",
                 (p, variante) -> {
@@ -210,6 +213,7 @@ public class ASAst extends AstGenerator {
 
                     return new MethodeMoteur(nom, variante == 0 ? (Expression<?>) p.get(1) : null);
                 });
+        */
 
         ajouterProgramme("STRUCTURE NOM_VARIABLE", p -> new CreerStructure(((Token) p.get(1)).obtenirValeur()));
 
@@ -398,7 +402,17 @@ public class ASAst extends AstGenerator {
         );
 
         ajouterProgramme("expression",
-                p -> Programme.evalExpression((Expression<?>) p.get(0), p.get(0).toString())
+                p -> new Programme() {
+                    @Override
+                    public Object execute() {
+                        try {
+                            new AppelFonc((Expression<?>) p.get(0), new CreerListe()).eval();
+                        } catch (ASErreur.ErreurTypePasAppelable err) {
+                            ((Expression<?>) p.get(0)).eval();
+                        }
+                        return null;
+                    }
+                }
         );
     }
 

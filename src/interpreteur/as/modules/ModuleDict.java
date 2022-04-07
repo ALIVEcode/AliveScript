@@ -3,6 +3,7 @@ package interpreteur.as.modules;
 import interpreteur.as.lang.ASFonctionModule;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.ASTypeBuiltin;
+import interpreteur.as.lang.datatype.ASParametre;
 import interpreteur.as.modules.core.ASModule;
 import interpreteur.executeur.Executeur;
 
@@ -47,7 +48,7 @@ public class ModuleDict {
     static ASModule charger(Executeur executeurInstance) {
         return new ASModule(new ASFonctionModule[]{
 
-                new ASFonctionModule("creer", new ASFonctionModule.Parametre[]{
+                new ASFonctionModule("creer", new ASParametre[]{
 
                 }, ASTypeBuiltin.fonctionType.asType()) {
                     @Override

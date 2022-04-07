@@ -1,82 +1,86 @@
 package language;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Objects;
+import java.util.Scanner;
+import java.util.stream.Stream;
 
-public record Language(JSONObject languageDict) {
+public enum Language {
+    EN("en"),
+    FR("fr"),
+    // ES("es"),
+    ;
+
+    private final String codeISO639_1;
+    private final JSONObject languageDict;
+    private final String asLexerPath;
+
+    Language(String codeISO639_1) {
+        this.codeISO639_1 = codeISO639_1;
+        languageDict = loadLanguage(codeISO639_1);
+        asLexerPath = "interpreteur/regle_et_grammaire/ASGrammaire_" + codeISO639_1 + ".yaml";
+    }
+
+    public static boolean isSupportedLanguage(String codeISO639_1) {
+        return Stream.of(Language.values()).anyMatch(language -> language.codeISO639_1.equals(codeISO639_1));
+    }
+
     /**
-     * To test the class
+     * @param codeISO639_1 Code ISO 639-1 correspondant au langage désiré
+     * @return Un JSON du langage
      */
-    public static void main(String[] args) {
-        var Fr = new Language(new JSONObject()
-                .put("error", new JSONObject()
-                        .put("type", new JSONObject()
-                                .put("invalide3", "$0 est un type invalide: $1 ou $2 sont les types autorisés."))
-                )
-        );
-        String a = Fr.convert("error.type.invalide3", "entier", "texte", "booleen");
-        System.out.println(a);
+    public JSONObject loadLanguage(String codeISO639_1) {
+        // Endroit où se trouve le fichier JSON correspondant au langage
+        String path = "language/languages/" + codeISO639_1 + ".json";
+
+
+        return loadJSON(path);
+
     }
 
-    public String convert(String translationPath, String... values) {
-        JSONObject current = languageDict;
-        String[] splittedPath = translationPath.split("\\.");
+    /**
+     * @param path Le chemin du fichier à partir du dossier '{@code src}'
+     * @return Un objet JSON
+     */
+    public JSONObject loadJSON(String path) {
+        StringBuilder fileContent = new StringBuilder();
         try {
-            // path until the last key
-            for (int i = 0; i < splittedPath.length - 1; i++) {
-                current = current.getJSONObject(splittedPath[i]);
-            }
-            return current.get(splittedPath[splittedPath.length - 1]) instanceof String s
-                    ? formatConvertedString(s, values)
-                    : translationPath;
 
-        } catch (JSONException err) {
-            return translationPath;
+            var file = new File(Objects.requireNonNull(getClass().getClassLoader()
+                    .getResource(path)).getFile());
+
+            Scanner in = new Scanner(file);
+            while (in.hasNextLine())
+                fileContent.append(in.nextLine());
+
+            in.close();
+
+        } catch (FileNotFoundException e) {
+            System.err.println("Le fichier n'a pas été trouvé !");
+
         }
+        return (!fileContent.toString().equals("") ?
+                // Si le fichier a bien été trouvé
+                new JSONObject(fileContent.toString()) :
+                // Sinon
+                null);
     }
 
-    private String formatConvertedString(String convertedString, String... values) {
-        // matches the symbol $ (not preceded by a \) followed by a number
-        var dollarSplitter = "(?<!\\\\)\\$(?=\\d)";
-        var numSplitter = "(?<=\\d)(?=\\D)";
-        var splitted = convertedString.split(dollarSplitter);
-
-        // because the first element won't ever contain a variable, we don't parse it
-        return splitted[0] + List.of(splitted)
-                .subList(1, splitted.length)
-                .stream()
-                .map(s -> {
-                    try {
-                        // separates the index of the value from the text
-                        String[] s_ = s.split(numSplitter, 2);
-                        // get the value at the index
-                        String value = values[Integer.parseInt(s_[0])];
-                        // if there is text after the variable
-                        String textAfter = s_.length > 1 ? s_[1] : "";
-
-                        return value + textAfter;
-                    } catch (NumberFormatException | ArrayIndexOutOfBoundsException err) {
-                        // if something fails, just return the $ with the index like nothing happened
-                        return "$" + s;
-                    }
-                })
-                .collect(Collectors.joining());
+    public JSONObject getLanguageDict() {
+        return languageDict;
     }
+
+    public String getASLexerPath() {
+        return asLexerPath;
+    }
+
+    //public interpreteur.as.ASLexer getASLexer() {
+    //return asLexer;
+    // }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

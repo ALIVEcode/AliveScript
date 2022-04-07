@@ -1,9 +1,9 @@
 package interpreteur.ast.buildingBlocs.programmes;
 
-import interpreteur.as.lang.ASFonctionModule;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASFonction;
 import interpreteur.as.lang.ASScope;
+import interpreteur.as.lang.datatype.ASParametre;
 import interpreteur.as.lang.managers.ASFonctionManager;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.ast.buildingBlocs.expressions.Argument;
@@ -37,7 +37,7 @@ public class CreerFonction extends Programme {
     @Override
     public NullType execute() {
         ASScope scope = new ASScope(this.scope);
-        ASFonction fonction = new ASFonction(var.getNom(), this.args.stream().map(Argument::eval).toArray(ASFonctionModule.Parametre[]::new), this.typeRetour, executeurInstance);
+        ASFonction fonction = new ASFonction(var.getNom(), this.args.stream().map(Argument::eval).toArray(ASParametre[]::new), this.typeRetour, executeurInstance);
 
         ASScope.getCurrentScopeInstance().getVariable(fonction.getNom()).changerValeur(fonction);
         // declare fonction
@@ -45,7 +45,7 @@ public class CreerFonction extends Programme {
 
         // declare params
         for (Argument arg : this.args) {
-            ASFonctionModule.Parametre param = arg.eval();
+            ASParametre param = arg.eval();
             scope.declarerVariable(new ASVariable(param.getNom(), param.getValeurParDefaut(), param.getType()));
             //ASObjet.VariableManager.ajouterVariable(new ASObjet.Variable(param.getNom(), param.getValeurParDefaut(), param.getType()), scopeName);
         }

@@ -7,8 +7,6 @@ import interpreteur.as.lang.ASScope;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.datatype.ASTexte;
 import interpreteur.as.modules.EnumModule;
-import interpreteur.as.modules.core.ASModule;
-import interpreteur.as.modules.core.ASModuleFactory;
 import interpreteur.executeur.Executeur;
 
 import java.util.*;
@@ -37,7 +35,7 @@ public record ASModuleManager(Executeur executeurInstance) {
         return MODULE_FACTORY.get(EnumModule.builtins).charger(executeurInstance);
     }
 
-    public void utiliserModuleBuitlins() {
+    public void utiliserModuleBuiltins() {
         var moduleBuiltins = getModuleBuiltins();
         moduleBuiltins.utiliser((String) null);
         ASScope.getCurrentScope().declarerVariable(new ASConstante("builtins", new ASListe(moduleBuiltins

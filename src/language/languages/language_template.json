@@ -1,0 +1,87 @@
+{
+  "error": {
+    "Closure": "error.Closure",
+    "MissingContext": "error.MissingContext",
+    "Syntax": "error.Syntax",
+    "Module": "error.Module",
+    "FunctionCall": "error.FunctionCall",
+    "InputOutput": "error.InputOutput",
+    "Assignment": "error.Assignment",
+    "Type": "error.Type",
+    "DuplicateKey": "error.DuplicateKey",
+    "Index": "error.Index",
+    "UnknownVariable": "error.UnknownVariable",
+    "Comparison": "error.Comparison",
+    "Formating": "error.Formating",
+    "Range": "error.Range",
+    "InvalidInt": "error.InvalidInt",
+    "DivisonByZero": "error.DivisionByZero",
+    "ZeroModulo": "error.ZeroModulo"
+  },
+  "modules": {
+    "builtins": {
+      "constants": {
+        "endl": "modules.builtins.constants.endl"
+      },
+      "variables": {
+        "localVar": "modules.builtins.variables.localVar",
+        "globalVar": "modules.builtins.variables.globalVar",
+        "listVar": "modules.builtins.variables.listVar"
+      },
+      "functions": {
+        "print": "modules.builtins.functions.print",
+        "wait": "modules.builtins.functions.wait",
+        "forward": "modules.builtins.functions.forward",
+        "backward": "modules.builtins.functions.backward",
+        "left": "modules.builtins.functions.left",
+        "right": "modules.builtins.functions.right",
+        "stop": "modules.builtins.functions.stop",
+        "random": "modules.builtins.functions.random",
+        "typeOf": "modules.builtins.functions.typeOf",
+        "boolean": "modules.builtins.functions.boolean",
+        "auto": "modules.builtins.functions.auto",
+        "key": "modules.builtins.functions.key",
+        "val": "modules.builtins.functions.val",
+        "info": "modules.builtins.functions.info",
+        "getVar": "modules.builtins.functions.getVar",
+        "list": "modules.builtins.functions.list",
+        "reverse": "modules.builtins.functions.reverse",
+        "map": "modules.builtins.functions.map",
+        "filter": "modules.builtins.functions.filter",
+        "join": "modules.builtins.functions.join",
+        "sum": "modules.builtins.functions.sum",
+        "max": "modules.builtins.functions.max",
+        "min": "modules.builtins.functions.min",
+        "length": "modules.builtins.functions.length",
+        "index": "modules.builtins.functions.index",
+        "int": "modules.builtins.functions.int",
+        "abs": "modules.builtins.functions.abs",
+        "float": "modules.builtins.functions.float",
+        "number": "modules.builtins.functions.number",
+        "bin": "modules.builtins.functions.bin",
+        "string": "modules.builtins.functions.string",
+        "upper": "modules.builtins.functions.upper",
+        "lower": "modules.builtins.functions.lower",
+        "replace": "modules.builtins.functions.replace",
+        "replaceReg": "modules.builtins.functions.replaceReg",
+        "match": "modules.builtins.functions.match",
+        "isNumeric": "modules.builtins.functions.isNumeric",
+        "format": "modules.builtins.functions.format"
+      }
+    },
+    "math": {
+      "constants": {
+        "pi": "modules.math.constants.pi",
+        "e": "modules.math.constants.e"
+      },
+      "functions": {
+        "rad": "modules.math.functions.rad",
+        "deg": "modules.math.functions.deg",
+        "sin": "modules.math.functions.sin",
+        "cos": "modules.math.functions.cos",
+        "tan": "modules.math.functions.tan",
+        "round": "modules.math.functions.round"
+      }
+    }
+  }
+}
