@@ -447,14 +447,10 @@ public class ModuleAI {
                         //Tell the linter to shut up
                         assert executeurInstance != null;
 
-                        System.out.println("test1");
-
                         //Ask for a response if it is empty
                         if (executeurInstance.getDataResponse().isEmpty()) {
-                            System.out.println("test2");
                             throw new ASErreur.AskForDataResponse(new Data(Data.Id.GET_EVALUER).addParam(x));
                         }
-                        System.out.println("test3");
 
                         //Get the response
                         ASDecimal data = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().pop().toString()));
