@@ -16,6 +16,8 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -29,7 +31,7 @@ public class AliveScriptExecutionEndpoint {
     private static final Set<AliveScriptExecutionEndpoint> ALIVE_SCRIPT_ENDPOINTS = new CopyOnWriteArraySet<>();
     private static final HashMap<String, Session> TOKEN_MAP = new HashMap<>();
     private Session session;
-    private Executeur executeur;
+    volatile private Executeur executeur;
     private String tokenId;
 
     @OnOpen
@@ -52,6 +54,23 @@ public class AliveScriptExecutionEndpoint {
 
     @OnMessage
     public void onMessage(Session session, Message message) {
+        int time = LocalDateTime.now().getSecond();
+        while (executeur == null) {
+            if (LocalDateTime.now().getSecond() - time > 5) {
+                try {
+                    session.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         switch (message.type()) {
             case COMPILE -> {
                 JSONArray result = executeur.compiler(((String) message.options().get("lines")).split("\n"), true);
