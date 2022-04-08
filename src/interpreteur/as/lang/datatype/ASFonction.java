@@ -1,5 +1,6 @@
 package interpreteur.as.lang.datatype;
 
+import interpreteur.as.lang.ASFonctionInterface;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASType;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Function;
 
-public class ASFonction implements ASObjet<Object> {
+public class ASFonction implements ASFonctionInterface {
 
     private final ASType typeRetour;
     private final ASParametre[] parametres;
@@ -69,14 +70,17 @@ public class ASFonction implements ASObjet<Object> {
         this.executeurInstance = executeurInstance;
     }
 
+    @Override
     public String getNom() {
         return nom;
     }
 
+    @Override
     public ASType getTypeRetour() {
         return this.typeRetour;
     }
 
+    @Override
     public ASParametre[] getParams() {
         return this.parametres;
     }
@@ -142,6 +146,11 @@ public class ASFonction implements ASObjet<Object> {
                 return executer.apply(paramsValeurs);
             }
         };
+    }
+
+    @Override
+    public ASObjet<?> apply(ArrayList<ASObjet<?>> args) {
+        return makeInstance().executer(args);
     }
 
     @Override

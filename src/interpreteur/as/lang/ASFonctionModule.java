@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-public abstract class ASFonctionModule implements ASObjet<Object> {
+public abstract class ASFonctionModule implements ASFonctionInterface {
     private final ASType typeRetour;
     private final ASParametre[] parametres; //String[] de forme {nomDuParam�tre, typeDuParam�tre (ou null s'il n'en poss�de pas)}
     private final Coordonnee coordReprise = null;
@@ -64,6 +64,7 @@ public abstract class ASFonctionModule implements ASObjet<Object> {
         this.typeRetour = typeRetour;
     }
 
+    @Override
     public String getNom() {
         return nom;
     }
@@ -72,10 +73,12 @@ public abstract class ASFonctionModule implements ASObjet<Object> {
         this.nom = nom;
     }
 
+    @Override
     public ASType getTypeRetour() {
         return this.typeRetour;
     }
 
+    @Override
     public ASParametre[] getParams() {
         return this.parametres;
     }
@@ -181,6 +184,11 @@ public abstract class ASFonctionModule implements ASObjet<Object> {
     }
 
     abstract public ASObjet<?> executer();
+
+    @Override
+    public ASObjet<?> apply(ArrayList<ASObjet<?>> args) {
+        return this.setParamPuisExecute(args);
+    }
 
     public void setScopeName(String scopeName) {
         this.scopeName = scopeName;

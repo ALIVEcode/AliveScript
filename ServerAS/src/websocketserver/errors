@@ -1,0 +1,57 @@
+utiliser Aliot
+
+Aliot.notif "Le script a commencé!"
+
+fonction pontOuvreOuFerme(chemin, ouvert)
+    Aliot.notif ouvert
+    si ouvert
+        Aliot.notif "Le pont est ouvert"
+    sinon
+        Aliot.notif "Le pont vient de se fermer"
+        Aliot.enleverEcouteur(pontOuvreOuFerme)
+        #pontSeFerme()
+    fin si
+fin fonction
+
+Aliot.ecouterDoc("/document/pont/ouvert", pontOuvreOuFerme)
+
+fonction lumiereChange(chemin, valeur)
+    Aliot.notif "La lumière est maintenant : " + valeur
+    si value == "green"
+        Aliot.enleverEcouteur(lumiereChange)
+        lumiereDevientVerte()
+    fin si
+fin fonction
+
+fonction pontSeFerme()
+    Aliot.envoyerAction("avancer", { "temps": 3 })
+    Aliot.envoyerAction("gauche")
+    Aliot.envoyerAction("avancer", { "temps": 2 })
+
+    #si Aliot.obtenirValeur("/document/lights/N/state") == "green"
+     #   lumiereDevientVerte()
+    #sinon
+        Aliot.envoyerAction("arreter")
+        Aliot.ecouterDoc("/document/lights/N/state", lumiereChange)
+    #fin si
+
+fin fonction
+
+fonction barriereOuvreOuFerme(chemin, ouvert)
+    si ouvert
+        Aliot.notif "La barrière du stationnement vient de s'ouvrir"
+        Aliot.enleverEcouteur(barriereOuvreOuFerme)
+        Aliot.envoyerAction("avancer", { "temps": 2 })
+        Aliot.envoyerAction("arreter")
+    sinon
+        Aliot.notif "La barrière du stationnement vient de se fermer"
+    fin si
+fin fonction
+
+fonction lumiereDevientVerte()
+    Aliot.envoyerAction("avancer", { "temps": 1 })
+    Aliot.envoyerAction("gauche")
+    Aliot.envoyerAction("avancer", { "temps": 3 })
+
+    Aliot.ecouterDoc("/document/stationnement/barriere-ouverte", barriereOuvreOuFerme)
+fin fonction

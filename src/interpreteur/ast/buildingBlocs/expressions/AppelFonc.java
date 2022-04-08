@@ -1,5 +1,6 @@
 package interpreteur.ast.buildingBlocs.expressions;
 
+import interpreteur.as.lang.ASFonctionInterface;
 import interpreteur.as.lang.ASFonctionModule;
 import interpreteur.as.lang.datatype.ASFonction;
 import interpreteur.as.erreurs.ASErreur;
@@ -12,21 +13,17 @@ public record AppelFonc(Expression<?> var,
     @Override
     public ASObjet<?> eval() {
         ASObjet<?> fonction = var.eval();
-        if (!(fonction instanceof ASFonction || fonction instanceof ASFonctionModule)) {
+        if (!(fonction instanceof ASFonctionInterface f)) {
             throw new ASErreur.ErreurTypePasAppelable("Un \u00E9l\u00E9ment de type '" + fonction.obtenirNomType() + "' ne peut pas \u00EAtre appel\u00E9");
         }
-        if (fonction instanceof ASFonction f) {
-            return f.makeInstance().executer(args.eval().getValue());
-        } else {
-            return ((ASFonctionModule) fonction).setParamPuisExecute(args.eval().getValue());
-        }
+        return f.apply(args.eval().getValue());
     }
 
     @Override
     public String toString() {
         return "AppelFonc{" +
-                "nom=" + var +
-                ", args=" + args +
-                '}';
+               "nom=" + var +
+               ", args=" + args +
+               '}';
     }
 }

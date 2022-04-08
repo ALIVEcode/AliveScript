@@ -1,10 +1,7 @@
 package interpreteur.as.modules;
 
 import interpreteur.as.erreurs.ASErreur;
-import interpreteur.as.lang.ASFonctionModule;
-import interpreteur.as.lang.ASType;
-import interpreteur.as.lang.ASTypeBuiltin;
-import interpreteur.as.lang.ASVariable;
+import interpreteur.as.lang.*;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.modules.core.ASModule;
 import interpreteur.converter.ASObjetConverter;
@@ -65,9 +62,7 @@ public class ModuleAliot {
                     public ASObjet<?> executer() {
                         ASObjet<?> champs = getValeurParam("champs");
                         ASObjet<?> callback = getValeurParam("ecouteur");
-                        String funcName = callback instanceof ASFonctionModule fonctionModule
-                                ? fonctionModule.getNom()
-                                : callback instanceof ASFonction fonction
+                        String funcName = callback instanceof ASFonctionInterface fonction
                                 ? fonction.getNom()
                                 : null;
 
@@ -95,11 +90,9 @@ public class ModuleAliot {
                     @Override
                     public ASObjet<?> executer() {
                         ASObjet<?> func = getValeurParam("ecouteur");
-                        String funcName = func instanceof ASFonctionModule fonctionModule
-                                ? fonctionModule.getNom() :
-                                func instanceof ASFonction function ?
-                                        function.getNom() :
-                                        (String) func.getValue();
+                        String funcName = func instanceof ASFonctionInterface fonction
+                                ? fonction.getNom()
+                                : (String) func.getValue();
                         executeurInstance.addData(new Data(Data.Id.UNSUBSCRIBE_LISTENER).addParam(funcName));
                         return new ASNul();
                     }
@@ -111,7 +104,7 @@ public class ModuleAliot {
                 // TODO retourner un ASEntier
                 new ASFonctionModule("envoyerAction", new ASParametre[]{
                         ASParametre.obligatoire("actionId", ASTypeBuiltin.entier.asType()),
-                        ASParametre.obligatoire("data", ASTypeBuiltin.dict.asType()),
+                        new ASParametre("data", ASTypeBuiltin.dict.asType(), new ASListe()),
                         new ASParametre("targetId", ASTypeBuiltin.texte.asType(), new ASNul())
                 }, ASTypeBuiltin.nulType.asType()) {
                     @Override
