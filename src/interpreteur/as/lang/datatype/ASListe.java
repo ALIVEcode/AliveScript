@@ -33,7 +33,7 @@ public class ASListe implements ASIterable<Object> {
     }
 
     public boolean estDict() {
-        return valeur.stream().allMatch(ASPaire.class::isInstance);
+        return !valeur.isEmpty() && valeur.stream().allMatch(ASPaire.class::isInstance);
     }
 
     public void clefValideOrThrow(ASObjet<?> nouvelElement) {

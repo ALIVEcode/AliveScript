@@ -569,7 +569,11 @@ public class ASAst extends AstGenerator {
                           + "!expression CROCHET_OUV CROCHET_FERM~"
                           + "!expression CROCHET_OUV #expression CROCHET_FERM",
                 (p, variante) -> {
-                    if (variante != 1 && variante != 4) return new CreerListe();
+                    if (variante == 0) {
+                        return new CreerDict();
+                    } else if (variante == 2 || variante == 3) {
+                        return new CreerListe();
+                    }
                     Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
                     if (contenu instanceof CreerListe.Enumeration enumeration)
                         return enumeration.buildCreerListe();
