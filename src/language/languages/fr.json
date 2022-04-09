@@ -29,8 +29,15 @@
         "listVar": "varListe"
       },
       "functions": {
+        "notif": "notif",
+        "notif_err": "notif_err",
         "print": "afficher",
         "wait": "attendre",
+        "forward": "avancer",
+        "backward": "reculer",
+        "left": "gauche",
+        "right": "droite",
+        "stop": "arreter",
         "random": "aleatoire",
         "typeOf": "typeDe",
         "boolean": "booleen",

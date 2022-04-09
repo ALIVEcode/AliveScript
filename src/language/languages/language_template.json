@@ -29,6 +29,8 @@
         "listVar": "modules.builtins.variables.listVar"
       },
       "functions": {
+        "notif": "modules.builtins.functions.notif",
+        "notif_err": "modules.builtins.functions.notif_err",
         "print": "modules.builtins.functions.print",
         "wait": "modules.builtins.functions.wait",
         "forward": "modules.builtins.functions.forward",

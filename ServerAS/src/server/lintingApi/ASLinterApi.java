@@ -42,18 +42,20 @@ public class ASLinterApi extends BaseApi {
         var executor = new Executeur(language);
         REGLES = executor.getLexer().getReglesAjoutees();
         var translator = executor.getTranslator();
-        var fonctionAfficher = translator.translate("modules.builtins.functions.print");
-        var fonctionAttendre = translator.translate("modules.builtins.functions.wait");
-        var fonctionAvancer = translator.translate("modules.builtins.functions.forward");
-        var fonctionReculer = translator.translate("modules.builtins.functions.backward");
-        var fonctionGauche = translator.translate("modules.builtins.functions.left");
-        var fonctionDroite = translator.translate("modules.builtins.functions.right");
-        var fonctionArreter = translator.translate("modules.builtins.functions.stop");
-
+        var functionAsCommands = List.of(
+                translator.translate("modules.builtins.functions.print"),       // afficher
+                translator.translate("modules.builtins.functions.notif"),       // notif
+                translator.translate("modules.builtins.functions.notif_err"),   // notif_err
+                translator.translate("modules.builtins.functions.wait"),        // attendre
+                translator.translate("modules.builtins.functions.forward"),     // avancer
+                translator.translate("modules.builtins.functions.backward"),    // reculer
+                translator.translate("modules.builtins.functions.left"),        // gauche
+                translator.translate("modules.builtins.functions.right"),       // droite
+                translator.translate("modules.builtins.functions.stop")         // arreter
+        );
         // adds all builtin functions
         List<String> fonctionsBuiltins = executor.getAsModuleManager().getModuleBuiltins().getNomsConstantesEtFonctions();
-        fonctionsBuiltins.remove(fonctionAfficher);  // remove afficher because it will be with commands
-        fonctionsBuiltins.remove(fonctionAttendre);  // remove attendre because it will be with commands
+        functionAsCommands.forEach(fonctionsBuiltins::remove); // remove because they will be with command
         fonctionsBuiltins = fonctionsBuiltins
                 .stream()
                 .map(fct -> "\\b" + fct + "\\b")
@@ -66,14 +68,8 @@ public class ASLinterApi extends BaseApi {
         modules.add("\\b\"experimental\"\\b");
 
         List<String> commands = getPatternsOfCategory("commandes");
-        // adds afficher, attendre and the function related to the motor to the commands
-        commands.add("\\b" + fonctionAfficher + "\\b");
-        commands.add("\\b" + fonctionAttendre + "\\b");
-        commands.add("\\b" + fonctionAvancer + "\\b");
-        commands.add("\\b" + fonctionReculer + "\\b");
-        commands.add("\\b" + fonctionGauche + "\\b");
-        commands.add("\\b" + fonctionDroite + "\\b");
-        commands.add("\\b" + fonctionArreter + "\\b");
+        // adds the functions related to the motor to the commands
+        functionAsCommands.forEach(func -> commands.add("\\b" + func + "\\b"));
 
         List<String> operators = getPatternsOfCategory("arithmetique");
         operators.addAll(getPatternsOfCategory("assignements"));
