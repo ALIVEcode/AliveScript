@@ -194,6 +194,30 @@ public class ModuleBuiltins {
                     }
                 },
 
+                // notif
+                new ASFonctionModule("notif", new ASParametre[]{
+                        ASParametre.obligatoire("message", ASTypeBuiltin.texte.asType())
+                }, ASTypeBuiltin.entier.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        var msg = getValeurParam("message").getValue();
+                        executeurInstance.addData(new Data(Data.Id.NOTIF_INFO).addParam(msg));
+                        return new ASNul();
+                    }
+                },
+
+                // notif
+                new ASFonctionModule("notif_err", new ASParametre[]{
+                        ASParametre.obligatoire("message", ASTypeBuiltin.texte.asType())
+                }, ASTypeBuiltin.entier.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        var msg = getValeurParam("message").getValue();
+                        executeurInstance.addData(new Data(Data.Id.NOTIF_ERR).addParam(msg));
+                        return new ASNul();
+                    }
+                },
+
 
                 //----------------- Voiture -----------------//
                 // TODO bouger cette section dans ModuleVoiture.java

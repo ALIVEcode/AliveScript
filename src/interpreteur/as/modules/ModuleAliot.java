@@ -8,6 +8,7 @@ import interpreteur.converter.ASObjetConverter;
 import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class ModuleAliot {
     /*
@@ -150,27 +151,21 @@ public class ModuleAliot {
                     }
                 },
 
-                // notif
-                new ASFonctionModule("notif", new ASParametre[]{
-                        ASParametre.obligatoire("message", ASTypeBuiltin.texte.asType())
-                }, ASTypeBuiltin.entier.asType()) {
+                new ASFonctionModule("getDoc", new ASParametre[]{
+                        new ASParametre("champs", ASTypeBuiltin.texte.asType(), new ASNul())
+                }, ASTypeBuiltin.dict.asType()) {
                     @Override
                     public ASObjet<?> executer() {
-                        var msg = getValeurParam("message").getValue();
-                        executeurInstance.addData(new Data(Data.Id.NOTIF_INFO).addParam(msg));
-                        return new ASNul();
-                    }
-                },
-
-                // notif
-                new ASFonctionModule("notif_err", new ASParametre[]{
-                        ASParametre.obligatoire("message", ASTypeBuiltin.texte.asType())
-                }, ASTypeBuiltin.entier.asType()) {
-                    @Override
-                    public ASObjet<?> executer() {
-                        var msg = getValeurParam("message").getValue();
-                        executeurInstance.addData(new Data(Data.Id.NOTIF_ERR).addParam(msg));
-                        return new ASNul();
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            ASObjet<?> obj = getValeurParam("champs");
+                            if (obj instanceof ASNul) {
+                                throw new ASErreur.AskForDataResponse(new Data(Data.Id.GET_DOC));
+                            }
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.GET_FIELD)
+                                    .addParam(obj.getValue()));
+                        }
+                        Object response = executeurInstance.getDataResponse().pop();
+                        return ASObjetConverter.fromJavaObjectOrJSON(response);
                     }
                 },
         };
