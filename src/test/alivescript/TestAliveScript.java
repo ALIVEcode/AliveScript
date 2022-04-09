@@ -2,18 +2,16 @@ package test.alivescript;
 
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.data_manager.Data;
+import language.Language;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static test.utils.AliveScriptTester.*;
 
-public class TestAliveScript {
-    private static final boolean DEBUG = true;
-
-    @BeforeEach
-    public void setup() {
-        resetExecuteur(DEBUG);
+public class TestAliveScript extends AbstractTestAliveScript {
+    public TestAliveScript() {
+        super(true, Language.FR);
     }
 
     @Test

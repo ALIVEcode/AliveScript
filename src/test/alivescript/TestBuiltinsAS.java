@@ -1,16 +1,20 @@
 package test.alivescript;
 
+import language.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static test.utils.AliveScriptTester.*;
 
-public class TestBuiltinsAS {
-    private static final boolean DEBUG = true;
+public class TestBuiltinsAS extends AbstractTestAliveScript {
+
+    public TestBuiltinsAS() {
+        super(true, Language.FR);
+    }
 
     @BeforeEach
     public void setup() {
-        resetExecuteur(DEBUG);
+        resetExecuteur(DEBUG, Language.FR);
     }
 
     @Test
