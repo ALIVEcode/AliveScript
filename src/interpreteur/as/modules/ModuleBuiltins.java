@@ -195,7 +195,7 @@ public class ModuleBuiltins {
                 },
 
                 // notif
-                new ASFonctionModule("notif", new ASParametre[]{
+                new ASFonctionModule("modules.builtins.functions.notif", new ASParametre[]{
                         ASParametre.obligatoire("message", ASTypeBuiltin.texte.asType())
                 }, ASTypeBuiltin.entier.asType()) {
                     @Override
@@ -207,7 +207,7 @@ public class ModuleBuiltins {
                 },
 
                 // notif
-                new ASFonctionModule("notif_err", new ASParametre[]{
+                new ASFonctionModule("modules.builtins.functions.notif_err", new ASParametre[]{
                         ASParametre.obligatoire("message", ASTypeBuiltin.texte.asType())
                 }, ASTypeBuiltin.entier.asType()) {
                     @Override

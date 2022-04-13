@@ -156,15 +156,10 @@ public class ModuleAliot {
                 }, ASTypeBuiltin.dict.asType()) {
                     @Override
                     public ASObjet<?> executer() {
-                        if (executeurInstance.getDataResponse().isEmpty()) {
-                            ASObjet<?> obj = getValeurParam("champs");
-                            if (obj instanceof ASNul) {
-                                throw new ASErreur.AskForDataResponse(new Data(Data.Id.GET_DOC));
-                            }
-                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.GET_FIELD)
-                                    .addParam(obj.getValue()));
-                        }
-                        Object response = executeurInstance.getDataResponse().pop();
+                        ASObjet<?> obj = getValeurParam("champs");
+                        Object response = executeurInstance.getDataResponseOrAsk(obj instanceof ASNul
+                                ? Data.Id.GET_DOC
+                                : Data.Id.GET_FIELD, obj.getValue());
                         return ASObjetConverter.fromJavaObjectOrJSON(response);
                     }
                 },

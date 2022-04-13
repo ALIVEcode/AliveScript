@@ -17,6 +17,7 @@ import javax.websocket.server.ServerEndpoint;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
@@ -40,6 +41,7 @@ public class AliveScriptExecutionEndpoint {
         this.session = session;
         this.tokenId = tokenId;
         this.executeur = new Executeur(Language.FR);
+        this.executeur.debug = true;
         ALIVE_SCRIPT_ENDPOINTS.add(this);
         if (TOKEN_MAP.containsKey(tokenId)) {
             try {
@@ -75,23 +77,37 @@ public class AliveScriptExecutionEndpoint {
             case COMPILE -> {
                 JSONArray result = executeur.compiler(((String) message.options().get("lines")).split("\n"), true);
                 if (!result.toString().equals("[]")) {
-                    session.getAsyncRemote().sendText(result.toString());
+                    send(result.toString());
                     return;
                 }
-                JSONArray resultExec = executeur.executerMain(false, true);
-                if (resultExec.getJSONObject(resultExec.length() - 1).getInt("id") != 0) {
-                    session.getAsyncRemote().sendText(new Data(Data.Id.ERREUR).addParam("ErreurIO").addParam("Les commandes d'IO sont interdites dans ce contexte").toString());
+                JSONArray resultExec = executeur.executerMain(false);
+                if (resultExec.getJSONObject(resultExec.length() - 1).getInt("id") == Data.Id.GET.getId()) {
+                    send(new Data(Data.Id.ERREUR).addParam("ErreurIO").addParam("Les commandes d'IO sont interdites dans ce contexte").toString());
                     return;
                 }
-                session.getAsyncRemote().sendText(resultExec.toString());
+
+                send(resultExec.toString());
+            }
+            case RESUME -> {
+                if (executeur.obtenirCoordCompileDict().isEmpty()) {
+                    // NON, PAS BIEN DU TOUT GRR GRR
+                    send(new ASErreur.ErreurAppelFonction("ErreurCompilation", "Le code n'est pas compil\u00E9")
+                            .getAsData(executeur).toString());
+                    return;
+                }
+                JSONArray responseData = (JSONArray) message.options().get("responseData");
+                for (int i = 0; i < responseData.length(); i++) {
+                    executeur.pushDataResponse(responseData.get(i));
+                }
+                var result = executeur.executerMain(true);
+                System.out.println("RESULT: " + result);
+                send(result.toString());
             }
             case EXEC_FUNC -> {
                 if (executeur.obtenirCoordCompileDict().isEmpty()) {
                     // NON, PAS BIEN DU TOUT GRR GRR
-                    session.getAsyncRemote().sendText(
-                            new ASErreur.ErreurAppelFonction("ErreurCompilation", "Le code n'est pas compil\u00E9")
-                                    .getAsData(executeur).toString()
-                    );
+                    send(new ASErreur.ErreurAppelFonction("ErreurCompilation", "Le code n'est pas compil\u00E9")
+                            .getAsData(executeur).toString());
                     return;
                 }
                 var funcName = (String) message.options().get("funcName");
@@ -101,12 +117,17 @@ public class AliveScriptExecutionEndpoint {
                 else
                     args = new ASListe();
 
-                executeur.executerFonction(funcName, args.getValue());
-                session.getAsyncRemote().sendText(executeur.consumeData().toString());
+                var datas = executeur.executerFonction(funcName, args.getValue());
+                send(datas);
             }
             default -> {
             }
         }
+    }
+
+    private void send(String text) {
+        System.out.println("Sending: " + text);
+        session.getAsyncRemote().sendText(text);
     }
 
     @OnClose

@@ -152,4 +152,13 @@ public class ASObjetConverter {
                                              "not an object ( " + object + " ) of type "
                                              + object.getClass());
     }
+
+    public static ASObjet<?> fromJavaObjectOrJSON(Object object) throws ASObjetConversionException {
+        if (object instanceof JSONObject jsonObject) {
+            return fromJSON(jsonObject);
+        } else if (object instanceof JSONArray jsonArray) {
+            return fromJSON(jsonArray);
+        }
+        return fromJavaObject(object);
+    }
 }

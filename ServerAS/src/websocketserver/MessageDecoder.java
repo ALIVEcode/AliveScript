@@ -26,6 +26,7 @@ public class MessageDecoder implements Decoder.Text<Message> {
         }
         Hashtable<String, Object> messageOptions = switch (messageType) {
             case COMPILE -> new Hashtable<>(Map.ofEntries(Map.entry("lines", jsonObject.getString("lines"))));
+            case RESUME -> new Hashtable<>(Map.ofEntries(Map.entry("responseData", jsonObject.getJSONArray("responseData"))));
             case EXEC_FUNC -> new Hashtable<>(Map.ofEntries(
                     Map.entry("funcName", jsonObject.getString("funcName")),
                     Map.entry("args", jsonObject.getJSONArray("args"))

@@ -91,6 +91,11 @@ public abstract class ASFonctionModule implements ASFonctionInterface {
         return this.parametres_appel.get(nomParametre);
     }
 
+    @Override
+    public Coordonnee getStartingCoord() {
+        return new Coordonnee(null);
+    }
+
     /**
      * @return true -> si les parametres sont initialisees <br> false -> s'il n'y a pas de parametres
      * @throws Error une erreur si un des tests n'est pas passe

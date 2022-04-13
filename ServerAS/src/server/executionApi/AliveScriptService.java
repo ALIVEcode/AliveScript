@@ -122,7 +122,7 @@ public class AliveScriptService {
 
     public String execute() {
         JSONObject returnData = new JSONObject();
-        JSONArray result = executeur.executerMain(resume, true);
+        JSONArray result = executeur.executerMain(resume);
 
         // if the method was to be called later, resume would be true
         if (!resume) resume = true;

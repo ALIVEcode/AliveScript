@@ -19,6 +19,11 @@ public enum MessageTypes {
     COMPILE(format -> true),
 
     /**
+     * responseData: any[]
+     */
+    RESUME(format -> true),
+
+    /**
      * Utilisé pour dire à alivescript d'exécuter une fonction en particulier
      * Format:
      * <pre>

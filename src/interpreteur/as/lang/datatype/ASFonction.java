@@ -6,6 +6,7 @@ import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASType;
 import interpreteur.as.lang.managers.ASFonctionManager;
 import interpreteur.ast.buildingBlocs.programmes.Boucle;
+import interpreteur.data_manager.Data;
 import interpreteur.executeur.Coordonnee;
 import interpreteur.executeur.Executeur;
 
@@ -91,6 +92,11 @@ public class ASFonction implements ASFonctionInterface {
 
     public void setScope(ASScope scope) {
         this.scope = scope;
+    }
+
+    @Override
+    public Coordonnee getStartingCoord() {
+        return new Coordonnee("<0>" + this.coordBlocName + this.signature);
     }
 
     //private void declarerParams() {
