@@ -5,6 +5,7 @@ import interpreteur.as.ASLexer;
 import interpreteur.as.lang.ASFonctionInterface;
 import interpreteur.as.lang.ASFonctionModule;
 import interpreteur.as.lang.datatype.ASFonction;
+import interpreteur.as.lang.datatype.ASNul;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.managers.ASFonctionManager;
 import interpreteur.as.lang.ASScope;
@@ -12,6 +13,7 @@ import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.erreurs.ASErreur.*;
 import interpreteur.as.modules.core.ASModuleManager;
 import interpreteur.ast.buildingBlocs.Programme;
+import interpreteur.ast.buildingBlocs.expressions.AppelFonc;
 import interpreteur.ast.buildingBlocs.programmes.Declarer;
 import interpreteur.data_manager.Data;
 import interpreteur.data_manager.DataVoiture;
@@ -649,45 +651,22 @@ public class Executeur {
 
     public String executerFonction(String nomFonction, ArrayList<ASObjet<?>> args) {
         executionActive = true;
-        String result;
-        try {
-            executeurState.load();
-
-            var var = ASScope.getCurrentScopeInstance().getVariable(nomFonction);
-            if (var == null) {
-                return null;
+        this.coordCompileDict.put("remote_func", new Hashtable<>(Map.of("<0>remote_func", new Programme() {
+            @Override
+            public Object execute() {
+                var var = ASScope.getCurrentScopeInstance().getVariable(nomFonction);
+                if (var == null) {
+                    return new ASNul();
+                }
+                var valeur = var.getValeurApresGetter();
+                if (valeur instanceof ASFonctionInterface fonction) {
+                    return fonction.apply(args);
+                }
+                throw new ASErreur.ErreurTypePasAppelable("Un \u00E9l\u00E9ment de type '" + valeur.obtenirNomType() + "' ne peut pas \u00EAtre appel\u00E9");
             }
-            var valeur = var.getValeurApresGetter();
-            if (valeur instanceof ASFonctionInterface fonction) {
-                this.setCoordRunTime(fonction.getStartingCoord().toString());
-                fonction.apply(args);
-            }
-        } catch (StopSendData e) {
-            datas.clear();
-            return e.getDataString();
-
-        } catch (AskForDataResponse e) {
-            datas.add(e.getData());
-
-        } catch (ErreurAliveScript e) {
-            // si l'erreur lancee est de type ASErreur.ErreurExecution (Voir ASErreur.java),
-            // on l'affiche et on arrete l'execution du programme
-            datas.add(e.getAsData(this));
-
-        } catch (RuntimeException e) {
-            // s'il y a une erreur, mais que ce n'est pas une erreur se trouvant dans ASErreur, c'est une
-            // erreur de syntaxe, comme l'autre type d'erreur, on l'affiche et on arrete l'execution du programme
-            e.printStackTrace();
-            datas.add(new ErreurSyntaxe("Une erreur interne inconnue est survenue lors de l'ex\u00E9cution de la ligne, v\u00E9rifiez que la syntaxe est valide")
-                    .getAsData(this));
-            if (debug) System.out.println(coordRunTime);
-        } finally {
-            executeurState.save();
-            arreterExecution();
-            result = datas.toString();
-            datas.clear();
-        }
-        return result;
+        })));
+        setCoordRunTime("<0>remote_func");
+        return executerMain(true).toString();
     }
 
     private Object resumeExecution() {
