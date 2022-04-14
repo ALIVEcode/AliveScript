@@ -175,7 +175,8 @@ public class ModuleBuiltins {
                 }, new ASType("tout")) {
                     @Override
                     public ASObjet<?> executer() {
-                        return this.getParamsValeursDict().get("element");
+                        ASObjet<?> element = this.getParamsValeursDict().get("element");
+                        return new ASTexte(element.info());
                     }
                 },
                 // getVar
@@ -190,6 +191,30 @@ public class ModuleBuiltins {
                             throw new ASErreur.ErreurVariableInconnue("La variable '" + nomVar + "' n'est pas d\u00E9clar\u00E9e dans ce scope.");
                         }
                         return var.getValeurApresGetter();
+                    }
+                },
+
+                // notif
+                new ASFonctionModule("modules.builtins.functions.notif", new ASParametre[]{
+                        ASParametre.obligatoire("message", ASTypeBuiltin.tout.asType())
+                }, ASTypeBuiltin.entier.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        var msg = getValeurParam("message").toString();
+                        executeurInstance.addData(new Data(Data.Id.NOTIF_INFO).addParam(msg));
+                        return new ASNul();
+                    }
+                },
+
+                // notif
+                new ASFonctionModule("modules.builtins.functions.notif_err", new ASParametre[]{
+                        ASParametre.obligatoire("message", ASTypeBuiltin.tout.asType())
+                }, ASTypeBuiltin.entier.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        var msg = getValeurParam("message").toString();
+                        executeurInstance.addData(new Data(Data.Id.NOTIF_ERR).addParam(msg));
+                        return new ASNul();
                     }
                 },
 

@@ -36,7 +36,7 @@ public class CreerSetter extends Programme {
     }
 
     public void addSetter() {
-        ASVariable v =  ASScope.getCurrentScope().getVariable(var.getNom());
+        ASVariable v = ASScope.getCurrentScope().getVariable(var.getNom());
 
         if (v == null) {
             Declarer.addWaitingSetter(this);
@@ -46,15 +46,16 @@ public class CreerSetter extends Programme {
         v.setSetter((valeur) -> {
             ASScope scope = new ASScope(this.scope);
             scope.setParent(ASScope.getCurrentScopeInstance());
-
-            ASFonction set = new ASFonction(this.var.getNom(), new ASParametre[]{
+            String scopeName = executeurInstance.obtenirCoordRunTime().getScope();
+            String signature = ASFonctionManager.makeFunctionNameSignature(scopeName, this.var.getNom());
+            ASFonction set = new ASFonction(this.var.getNom(), signature, new ASParametre[]{
                     new ASParametre(this.nomArg.getNom(), this.type, null)
             }, this.type, executeurInstance);
 
             scope.declarerVariable(new ASVariable(this.nomArg.getNom(), null, this.type));
 
             set.setScope(scope);
-            set.setCoordBlocName("set_");
+            set.setCoordBlocName(ASFonctionManager.SETTER_SCOPE_START);
 
             return set.makeInstance().executer(new ArrayList<>(Collections.singletonList(valeur)));
         });
@@ -67,7 +68,9 @@ public class CreerSetter extends Programme {
 
     @Override
     public Coordonnee prochaineCoord(Coordonnee coord, List<Token> ligne) {
-        return new Coordonnee(executeurInstance.nouveauScope("set_" +
-                                                             (ASFonctionManager.obtenirStructure().isBlank() ? "" : ASFonctionManager.obtenirStructure() + ".") + ligne.get(1).obtenirValeur()));
+        String currentScope = coord.getScope();
+        String newScope = ASFonctionManager.SETTER_SCOPE_START
+                          + ASFonctionManager.makeFunctionNameSignature(currentScope, ASFonctionManager.ajouterDansStructure(this.var.getNom()));
+        return new Coordonnee(executeurInstance.nouveauScope(newScope));
     }
 }

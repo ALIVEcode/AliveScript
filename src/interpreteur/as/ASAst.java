@@ -114,8 +114,7 @@ public class ASAst extends AstGenerator {
                          + "VAR expression {assignements} expression~"
                          + "VAR expression DEUX_POINTS expression {assignements} expression~"
                          + "VAR expression DEUX_POINTS expression~"
-                         + "expression {assignements} expression~"
-                         + "expression DEUX_POINTS expression {assignements} expression",
+                         + "expression {assignements} expression",
                 (p, variante) -> {
                     /*
                      * TODO erreur si c'est pas une Var qui est passé comme expression à gauche de l'assignement
@@ -569,7 +568,11 @@ public class ASAst extends AstGenerator {
                           + "!expression CROCHET_OUV CROCHET_FERM~"
                           + "!expression CROCHET_OUV #expression CROCHET_FERM",
                 (p, variante) -> {
-                    if (variante != 1 && variante != 4) return new CreerListe();
+                    if (variante == 0) {
+                        return new CreerDict();
+                    } else if (variante == 2 || variante == 3) {
+                        return new CreerListe();
+                    }
                     Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
                     if (contenu instanceof CreerListe.Enumeration enumeration)
                         return enumeration.buildCreerListe();
@@ -628,7 +631,7 @@ public class ASAst extends AstGenerator {
 
         ajouterExpression("expression DANS expression~" +
                           "expression PAS DANS expression",
-                (p, variante) -> variante == 1 ?
+                (p, variante) -> variante == 0 ?
                         new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.DANS, (Expression<?>) p.get(2))
                         :
                         new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.PAS_DANS, (Expression<?>) p.get(3)));

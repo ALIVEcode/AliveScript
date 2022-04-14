@@ -29,8 +29,15 @@
         "listVar": "listVar"
       },
       "functions": {
+        "notif": "notif",
+        "notif_err": "notif_err",
         "print": "print",
         "wait": "wait",
+        "forward": "forward",
+        "backward": "backward",
+        "left": "left",
+        "right": "right",
+        "stop": "stop",
         "random": "random",
         "typeOf": "typeOf",
         "boolean": "boolean",

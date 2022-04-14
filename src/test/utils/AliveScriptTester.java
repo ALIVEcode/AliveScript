@@ -2,6 +2,7 @@ package test.utils;
 
 
 import interpreteur.executeur.Executeur;
+import language.Language;
 import org.json.JSONArray;
 
 import static org.junit.Assert.*;
@@ -9,8 +10,8 @@ import static org.junit.Assert.*;
 public class AliveScriptTester {
     private static Executeur executeur = null;
 
-    public static void resetExecuteur(boolean debug) {
-        executeur = new Executeur();
+    public static void resetExecuteur(boolean debug, Language language) {
+        executeur = new Executeur(language);
         executeur.debug = debug;
     }
 

@@ -1,15 +1,16 @@
 package interpreteur.as.lang;
 
+import utils.Pair;
+
 import java.util.Stack;
 
 public class ASScope {
     // static fields
     private final static Stack<ASScope> scopeStack = new Stack<>();
     private final static Stack<ScopeInstance> scopeInstanceStack = new Stack<>();
-
+    private final Stack<ASVariable> variablesDeclarees = new Stack<>();
     // non static fields
     private ScopeInstance parent;
-    private final Stack<ASVariable> variablesDeclarees = new Stack<>();
 
     public ASScope() {
         this.parent = null;
@@ -24,11 +25,11 @@ public class ASScope {
         this.parent = parent;
     }
 
-    public void setParent(ScopeInstance parent) {
-        this.parent = parent;
+    public static void loadFromPair(Pair<Stack<ASScope>, Stack<ASScope.ScopeInstance>> scopePair) {
+        resetAllScope();
+        scopeStack.addAll(scopePair.first());
+        scopeInstanceStack.addAll(scopePair.second());
     }
-
-    //#region --------- static stuff ---------
 
     /**
      * Crée un nouveau scope puis le met comme <code>currentScope</code>
@@ -40,6 +41,8 @@ public class ASScope {
         updateCurrentScope(scope);
         return scope;
     }
+
+    //#region --------- static stuff ---------
 
     public static Stack<ASScope> getScopeStack() {
         return scopeStack;
@@ -57,7 +60,6 @@ public class ASScope {
         scopeStack.pop();
     }
 
-
     public static Stack<ScopeInstance> getScopeInstanceStack() {
         return scopeInstanceStack;
     }
@@ -74,12 +76,15 @@ public class ASScope {
         scopeInstanceStack.pop();
     }
 
-
     public static void resetAllScope() {
         //Executeur.printCompiledCode(scopeStack.toString());
         //Executeur.printCompiledCode(scopeInstanceStack.toString());
         scopeInstanceStack.clear();
         scopeStack.clear();
+    }
+
+    public void setParent(ScopeInstance parent) {
+        this.parent = parent;
     }
 
     //#endregion
@@ -128,8 +133,8 @@ public class ASScope {
     @Override
     public String toString() {
         return "Scope{" +
-                "variablesDeclarees=" + variablesDeclarees +
-                '}';
+               "variablesDeclarees=" + variablesDeclarees +
+               '}';
     }
 
     //#endregion
@@ -171,9 +176,9 @@ public class ASScope {
         @Override
         public String toString() {
             return "ScopeInstance{" +
-                    "variableStack=" + variableStack +
-                    ", parent=" + parent +
-                    '}';
+                   "variableStack=" + variableStack +
+                   ", parent=" + parent +
+                   '}';
         }
     }
 

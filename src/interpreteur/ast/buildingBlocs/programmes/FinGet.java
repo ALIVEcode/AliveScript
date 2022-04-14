@@ -3,6 +3,7 @@ package interpreteur.ast.buildingBlocs.programmes;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.datatype.ASNul;
+import interpreteur.as.lang.managers.ASFonctionManager;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.executeur.Coordonnee;
 import interpreteur.executeur.Executeur;
@@ -24,8 +25,7 @@ public class FinGet extends Programme {
 
     @Override
     public Coordonnee prochaineCoord(Coordonnee coord, List<Token> ligne) {
-        String nomFermeture = "get_";
-        if (!coord.getScope().startsWith(nomFermeture))
+        if (!coord.getScope().startsWith(ASFonctionManager.GETTER_SCOPE_START))
             throw new ASErreur.ErreurFermeture(coord.getScope(), "fin get");
         return new Coordonnee(executeurInstance.finScope());
     }

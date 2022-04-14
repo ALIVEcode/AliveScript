@@ -2,23 +2,33 @@ package interpreteur.executeur;
 
 import interpreteur.as.ASAst;
 import interpreteur.as.ASLexer;
+import interpreteur.as.lang.ASFonctionInterface;
+import interpreteur.as.lang.ASFonctionModule;
+import interpreteur.as.lang.datatype.ASFonction;
+import interpreteur.as.lang.datatype.ASNul;
+import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.managers.ASFonctionManager;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.erreurs.ASErreur.*;
 import interpreteur.as.modules.core.ASModuleManager;
 import interpreteur.ast.buildingBlocs.Programme;
+import interpreteur.ast.buildingBlocs.expressions.AppelFonc;
 import interpreteur.ast.buildingBlocs.programmes.Declarer;
 import interpreteur.data_manager.Data;
 import interpreteur.data_manager.DataVoiture;
+import interpreteur.tokens.Token;
 import io.github.cdimascio.dotenv.Dotenv;
 import language.Language;
 import language.Translator;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import utils.Pair;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 
@@ -76,6 +86,8 @@ public class Executeur {
     private final Stack<Object> dataResponse = new Stack<>();
     // ast
     private final ASAst ast;
+    private final Translator translator;
+    private final ExecuteurState executeurState;
     //debug mode
     public boolean debug = false;
     private JSONObject context = null;
@@ -84,22 +96,19 @@ public class Executeur {
     private boolean compilationActive = false;
     private boolean executionActive = false;
     private boolean canExecute = false;
-    private final Translator translator;
+    private Optional<Pair<Stack<ASScope>, Stack<ASScope.ScopeInstance>>> scope = Optional.empty();
 
     public Executeur(Language language) {
         translator = new Translator(language);
         lexer = new ASLexer(language.getASLexerPath()); // utiliser translator pour passer bon yaml
         asModuleManager = new ASModuleManager(this);
         ast = new ASAst(this);
+        this.executeurState = new ExecuteurState(this);
     }
 
     @Deprecated(since = "now")
     public Executeur() {
         this(Language.FR);
-    }
-
-    public Translator getTranslator() {
-        return translator;
     }
 
     public static void printCompiledCode(String code) {
@@ -137,6 +146,10 @@ public class Executeur {
             }
         }
         System.out.println();
+    }
+
+    public Translator getTranslator() {
+        return translator;
     }
 
     /**
@@ -184,9 +197,9 @@ public class Executeur {
         return this.dataResponse;
     }
 
-    public Object getDataResponseOrAsk(String dataName, Object... additionalParams) {
+    public Object getDataResponseOrAsk(Data.Id id, Object... additionalParams) {
         if (this.dataResponse.isEmpty()) {
-            Data dataToGet = new Data(Data.Id.GET).addParam(dataName);
+            Data dataToGet = new Data(id);
             for (var param : additionalParams)
                 dataToGet.addParam(param);
             throw new AskForDataResponse(dataToGet);
@@ -285,6 +298,12 @@ public class Executeur {
         }
         coordCompileTime.remove(coordCompileTime.size() - 1);
         return coordCompileTime.get(coordCompileTime.size() - 1).toString();
+    }
+
+    public ArrayList<Data> consumeData() {
+        var data = new ArrayList<>(this.datas);
+        this.datas.clear();
+        return data;
     }
 
     /**
@@ -543,6 +562,7 @@ public class Executeur {
                     }
                 }
             } catch (StopSendData e) {
+                // data is already a Serialized JSONObject
                 return e.getDataString();
 
             } catch (AskForDataResponse e) {
@@ -584,9 +604,10 @@ public class Executeur {
     public JSONArray executerMain(boolean resume) {
         executionActive = true;
         // sert au calcul du temps qu'a pris le code pour etre execute
-        LocalDateTime before = LocalDateTime.now();
+        LocalDateTime before = debug ? LocalDateTime.now() : null;
 
         if (obtenirCoordCompileDict().get("main").isEmpty()) {
+            arreterExecution();
             return new JSONArray();
         }
 
@@ -596,18 +617,28 @@ public class Executeur {
             // créer scopeInstance globale
             ASScope.pushCurrentScopeInstance(ASScope.getCurrentScope().makeScopeInstance(null));
             resultat = executerScope("main", null, null);
-        } else resultat = resumeExecution();
+        } else {
+            executeurState.load();
+            resultat = resumeExecution();
+        }
 
-        var returnData = new JSONArray(resultat.toString());
+        JSONArray returnData;
+        try {
+            returnData = new JSONArray(resultat.toString());
+        } catch (JSONException err) {
+            returnData = new JSONArray(datas);
+        }
         /*
          * affiche si l'execution s'est deroulee sans probleme ou si elle a ete interrompue par une erreur
          * affiche le temps qu'a pris l'execution du programme (au complet ou jusqu'a l'interruption)
          */
+        executeurState.save();
         if (coordRunTime.toString() == null || !executionActive) {
-            if (debug)
+            if (debug && before != null) {
                 System.out.println("execution " + (executionActive ? "done" : "interruped") + " in " +
-                                   (LocalDateTime.now().toLocalTime().toNanoOfDay() - before.toLocalTime().toNanoOfDay()) / Math.pow(10, 9) + " seconds\n");
-            //System.out.println(datas);
+                                   (LocalDateTime.now().toLocalTime().toNanoOfDay() - before.toLocalTime().toNanoOfDay()) / 10e9 + " seconds\n");
+                System.out.println(datas);
+            }
             // boolean servant a indique que l'execution est terminee
             executionActive = false;
             reset();
@@ -618,7 +649,27 @@ public class Executeur {
         return returnData;
     }
 
-    public Object resumeExecution() {
+    public String executerFonction(String nomFonction, ArrayList<ASObjet<?>> args) {
+        executionActive = true;
+        this.coordCompileDict.put("remote_func", new Hashtable<>(Map.of("<0>remote_func", new Programme() {
+            @Override
+            public Object execute() {
+                var var = ASScope.getCurrentScopeInstance().getVariable(nomFonction);
+                if (var == null) {
+                    return new ASNul();
+                }
+                var valeur = var.getValeurApresGetter();
+                if (valeur instanceof ASFonctionInterface fonction) {
+                    return fonction.apply(args);
+                }
+                throw new ASErreur.ErreurTypePasAppelable("Un \u00E9l\u00E9ment de type '" + valeur.obtenirNomType() + "' ne peut pas \u00EAtre appel\u00E9");
+            }
+        })));
+        setCoordRunTime("<0>remote_func");
+        return executerMain(true).toString();
+    }
+
+    private Object resumeExecution() {
         Coordonnee coordActuel = obtenirCoordRunTime();
         return executerScope(coordActuel.getScope(), null, coordActuel.toString());
     }
@@ -646,10 +697,23 @@ public class Executeur {
         DataVoiture.reset();
 
         // remet la coordonnee d'execution au debut du programme
-        coordRunTime.setCoord(debutCoord.toString());
+//        coordRunTime.setCoord(debutCoord.toString());
         //if (ast instanceof ASAstExperimental) {
         //    ast = new ASAst();
         //}
+    }
+
+    @Override
+    public String toString() {
+        return "Executeur{" +
+               "lexer=" + lexer + "\n" +
+               ", coordRunTime=" + coordRunTime + "\n" +
+               ", datas=" + datas + "\n" +
+               ", dataResponse=" + dataResponse + "\n" +
+               ", context=" + context + "\n" +
+               ", anciennesLignes=" + Arrays.toString(anciennesLignes) + "\n" +
+               ", scope=" + scope + "\n" +
+               '}';
     }
 }
 

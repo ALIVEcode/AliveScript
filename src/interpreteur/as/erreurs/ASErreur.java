@@ -24,7 +24,12 @@ public interface ASErreur {
         }
 
         public Data getAsData(Executeur executeurInstance) {
-            int ligne = executeurInstance.getLineFromCoord(executeurInstance.obtenirCoordRunTime()) + 1;
+            int ligne;
+            try {
+                ligne = executeurInstance.getLineFromCoord(executeurInstance.obtenirCoordRunTime()) + 1;
+            } catch (NullPointerException e) {
+                ligne = 0;
+            }
             var nomErreur = executeurInstance.getTranslator().translate(this.nomErreur);
             return new Data(Data.Id.ERREUR).addParam(nomErreur).addParam(super.getMessage()).addParam(ligne);
         }
@@ -35,18 +40,23 @@ public interface ASErreur {
         }
 
         public void afficher(Executeur executeurInstance) {
-            int ligne = executeurInstance.getLineFromCoord(executeurInstance.obtenirCoordRunTime()) + 1;
+            int ligne;
+            try {
+                ligne = executeurInstance.getLineFromCoord(executeurInstance.obtenirCoordRunTime()) + 1;
+            } catch (NullPointerException e) {
+                ligne = 0;
+            }
             var nomErreur = executeurInstance.getTranslator().translate(this.nomErreur);
 
             executeurInstance.ecrire(nomErreur + " (à la ligne " + ligne
-                    + ") -> " + super.getMessage());
+                                     + ") -> " + super.getMessage());
         }
 
         public void afficher(Executeur executeurInstance, int ligne) {
             var nomErreur = executeurInstance.getTranslator().translate(this.nomErreur);
 
             executeurInstance.ecrire(nomErreur + " (à la ligne " + ligne
-                    + ") -> " + super.getMessage());
+                                     + ") -> " + super.getMessage());
         }
 
         public String getNomErreur() {
@@ -103,12 +113,12 @@ public interface ASErreur {
 
         public ErreurFermeture(String blocActuel, String mauvaiseFermeture) {
             super("le bloc: '" + blocActuel + "' a été fermé avec '"
-                    + mauvaiseFermeture + "' alors qu'il ne peut pas être fermé.", "error.Closure");
+                  + mauvaiseFermeture + "' alors qu'il ne peut pas être fermé.", "error.Closure");
         }
 
         public ErreurFermeture(String blocActuel, String mauvaiseFermeture, String bonneFermeture) {
             super("le bloc: '" + blocActuel + "' a été fermé avec '"
-                    + mauvaiseFermeture + "' alors qu'il doit être fermé avec '" + bonneFermeture + "'.", "error.Closure");
+                  + mauvaiseFermeture + "' alors qu'il doit être fermé avec '" + bonneFermeture + "'.", "error.Closure");
         }
     }
 
@@ -264,7 +274,7 @@ public interface ASErreur {
         public void afficher(Executeur executeurInstance) {
             int ligne = executeurInstance.getLineFromCoord(executeurInstance.obtenirCoordRunTime()) + 1;
             executeurInstance.ecrire("Durant l'execution à la ligne " + ligne
-                    + " -> " + this.getClass().getSimpleName() + " : " + this.message);
+                                     + " -> " + this.getClass().getSimpleName() + " : " + this.message);
         }
     }
 
