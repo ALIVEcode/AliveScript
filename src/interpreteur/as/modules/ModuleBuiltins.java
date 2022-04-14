@@ -196,11 +196,11 @@ public class ModuleBuiltins {
 
                 // notif
                 new ASFonctionModule("modules.builtins.functions.notif", new ASParametre[]{
-                        ASParametre.obligatoire("message", ASTypeBuiltin.texte.asType())
+                        ASParametre.obligatoire("message", ASTypeBuiltin.tout.asType())
                 }, ASTypeBuiltin.entier.asType()) {
                     @Override
                     public ASObjet<?> executer() {
-                        var msg = getValeurParam("message").getValue();
+                        var msg = getValeurParam("message").toString();
                         executeurInstance.addData(new Data(Data.Id.NOTIF_INFO).addParam(msg));
                         return new ASNul();
                     }
@@ -208,11 +208,11 @@ public class ModuleBuiltins {
 
                 // notif
                 new ASFonctionModule("modules.builtins.functions.notif_err", new ASParametre[]{
-                        ASParametre.obligatoire("message", ASTypeBuiltin.texte.asType())
+                        ASParametre.obligatoire("message", ASTypeBuiltin.tout.asType())
                 }, ASTypeBuiltin.entier.asType()) {
                     @Override
                     public ASObjet<?> executer() {
-                        var msg = getValeurParam("message").getValue();
+                        var msg = getValeurParam("message").toString();
                         executeurInstance.addData(new Data(Data.Id.NOTIF_ERR).addParam(msg));
                         return new ASNul();
                     }

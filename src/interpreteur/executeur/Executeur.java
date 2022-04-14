@@ -630,6 +630,7 @@ public class Executeur {
          * affiche si l'execution s'est deroulee sans probleme ou si elle a ete interrompue par une erreur
          * affiche le temps qu'a pris l'execution du programme (au complet ou jusqu'a l'interruption)
          */
+        executeurState.save();
         if (coordRunTime.toString() == null || !executionActive) {
             if (debug && before != null) {
                 System.out.println("execution " + (executionActive ? "done" : "interruped") + " in " +
@@ -638,7 +639,6 @@ public class Executeur {
             }
             // boolean servant a indique que l'execution est terminee
             executionActive = false;
-            executeurState.save();
             reset();
             returnData.put(Data.endOfExecution());
         }

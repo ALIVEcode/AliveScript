@@ -12,6 +12,7 @@ import interpreteur.executeur.Executeur;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Stack;
 import java.util.function.Function;
 
 public class ASFonction implements ASFonctionInterface {
@@ -23,6 +24,7 @@ public class ASFonction implements ASFonctionInterface {
     private final String signature;
     private ASScope scope;
     private String coordBlocName;
+    private Stack<ASFonction.FonctionInstance> instancesNotDone = new Stack<>();
 
     /**
      * @param nom        <li>
@@ -142,7 +144,7 @@ public class ASFonction implements ASFonctionInterface {
     }
 
     public FonctionInstance makeInstance() {
-        return new FonctionInstance(this);
+        return instancesNotDone.isEmpty() ? new FonctionInstance(this) : instancesNotDone.pop();
     }
 
     public FonctionInstance makeJavaInstance(Function<ArrayList<ASObjet<?>>, ASObjet<?>> executer) {
@@ -195,45 +197,46 @@ public class ASFonction implements ASFonctionInterface {
         }
 
         public ASObjet<?> executer(ArrayList<ASObjet<?>> paramsValeurs) {
-            if (fonction.testParams(paramsValeurs)) {
+            if (coordReprise == null) {
+                if (fonction.testParams(paramsValeurs)) {
 
-                for (int i = 0; i < fonction.parametres.length; i++) {
-                    ASParametre param = fonction.parametres[i];
-                    if (i < paramsValeurs.size()) {
-                        scopeInstance.getVariable(param.getNom()).changerValeur(paramsValeurs.get(i));
+                    for (int i = 0; i < fonction.parametres.length; i++) {
+                        ASParametre param = fonction.parametres[i];
+                        if (i < paramsValeurs.size()) {
+                            scopeInstance.getVariable(param.getNom()).changerValeur(paramsValeurs.get(i));
 
-                    } else {
-                        if (param.getValeurParDefaut() == null) {
-                            throw new ASErreur.ErreurAppelFonction(fonction.nom, "L'argument: " + param.getNom() + " n'a pas reçu de valeur" +
-                                                                                 "et ne poss\u00E8de aucune valeur par d\u00E9faut.");
+                        } else {
+                            if (param.getValeurParDefaut() == null) {
+                                throw new ASErreur.ErreurAppelFonction(fonction.nom, "L'argument: " + param.getNom() + " n'a pas reçu de valeur" +
+                                                                                     "et ne poss\u00E8de aucune valeur par d\u00E9faut.");
+                            }
                         }
                     }
+                    //for (Fonction.Parametre param : fonction.parametres) {
+                    //    this.parametres_appel.computeIfAbsent(param.getNom(), (val) -> {
+                    //        if (param.getValeurParDefaut() == null) {
+                    //            throw new ASErreur.ErreurAppelFonction(fonction.nom, "L'argument: " + param.getNom() + " n'a pas reçu de valeur" +
+                    //                    "et ne poss\u00E8de aucune valeur par d\u00E9faut.");
+                    //        }
+                    //        return param.getValeurParDefaut();
+                    //    });
+                    //}
                 }
-                //for (Fonction.Parametre param : fonction.parametres) {
-                //    this.parametres_appel.computeIfAbsent(param.getNom(), (val) -> {
-                //        if (param.getValeurParDefaut() == null) {
-                //            throw new ASErreur.ErreurAppelFonction(fonction.nom, "L'argument: " + param.getNom() + " n'a pas reçu de valeur" +
-                //                    "et ne poss\u00E8de aucune valeur par d\u00E9faut.");
-                //        }
-                //        return param.getValeurParDefaut();
-                //    });
-                //}
             }
             ASScope.pushCurrentScopeInstance(scopeInstance);
-
             Object valeur;
             ASObjet<?> asValeur;
             Coordonnee ancienneCoord = fonction.executeurInstance.obtenirCoordRunTime().copy();
             valeur = fonction.executeurInstance.executerScope(fonction.coordBlocName + fonction.signature, null, coordReprise == null ? null : coordReprise.toString());
             if (valeur instanceof String s) {
 //                System.out.println("valeur: " + valeur);
+                fonction.instancesNotDone.push(this);
                 coordReprise = fonction.executeurInstance.obtenirCoordRunTime().copy();
                 fonction.executeurInstance.setCoordRunTime(ancienneCoord.toString());
+                ASScope.popCurrentScopeInstance();
                 throw new ASErreur.StopSendData(s);
-
-            } else {
-                asValeur = (ASObjet<?>) valeur;
             }
+            asValeur = (ASObjet<?>) valeur;
 
             coordReprise = null;
 
