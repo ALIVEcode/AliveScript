@@ -1,6 +1,7 @@
 package interpreteur.ast.buildingBlocs.programmes;
 
 import interpreteur.as.lang.ASVariable;
+import interpreteur.as.lang.datatype.ASIterable;
 import interpreteur.as.lang.datatype.ASListe;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.ASScope;
@@ -56,13 +57,13 @@ public class Assigner extends Programme {
             // si l'assignement est de forme
             // var[debut:fin] = valeur
             if (expr instanceof CreerListe.SousSection.CreerSousSection sousSection) {
-                if (!(valeur instanceof ASListe)) {
+                if (!(valeur instanceof ASIterable<?>)) {
                     // TODO ERREUR peut pas assigner une sous liste à autre chose qu'à une liste
                     throw new ASErreur.ErreurAssignement("un interval de valeur doit \u00EAtre assign\u00E9 \u00E0 une liste");
                 }
                 int fin = sousSection.getFin();
                 int debut = sousSection.getDebut();
-                valeur = listeInitial.remplacerRange(debut, fin, (ASListe) valeur);
+                valeur = listeInitial.remplacerRange(debut, fin, (ASIterable<?>) valeur);
             }
             // si l'assignement est de forme
             // var[idxOrKey] = valeur

@@ -114,8 +114,7 @@ public class ASAst extends AstGenerator {
                          + "VAR expression {assignements} expression~"
                          + "VAR expression DEUX_POINTS expression {assignements} expression~"
                          + "VAR expression DEUX_POINTS expression~"
-                         + "expression {assignements} expression~"
-                         + "expression DEUX_POINTS expression {assignements} expression",
+                         + "expression {assignements} expression",
                 (p, variante) -> {
                     /*
                      * TODO erreur si c'est pas une Var qui est passé comme expression à gauche de l'assignement
@@ -632,7 +631,7 @@ public class ASAst extends AstGenerator {
 
         ajouterExpression("expression DANS expression~" +
                           "expression PAS DANS expression",
-                (p, variante) -> variante == 1 ?
+                (p, variante) -> variante == 0 ?
                         new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.DANS, (Expression<?>) p.get(2))
                         :
                         new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.PAS_DANS, (Expression<?>) p.get(3)));
