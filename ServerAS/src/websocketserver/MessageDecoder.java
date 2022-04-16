@@ -1,8 +1,8 @@
 package websocketserver;
 
+import org.json.JSONException;
 import org.json.JSONObject;
-import websocketserver.model.Message;
-import websocketserver.model.MessageTypes;
+import websocketserver.model.*;
 
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
@@ -24,22 +24,30 @@ public class MessageDecoder implements Decoder.Text<Message> {
         } catch (IllegalArgumentException e) {
             throw new DecodeException(s, "Unknown message type: " + type);
         }
-        Hashtable<String, Object> messageOptions = switch (messageType) {
-            case COMPILE -> new Hashtable<>(Map.ofEntries(Map.entry("lines", jsonObject.getString("lines"))));
-            case RESUME -> new Hashtable<>(Map.ofEntries(Map.entry("responseData", jsonObject.getJSONArray("responseData"))));
-            case EXEC_FUNC -> new Hashtable<>(Map.ofEntries(
-                    Map.entry("funcName", jsonObject.getString("funcName")),
-                    Map.entry("args", jsonObject.getJSONArray("args"))
-            ));
-            default -> new Hashtable<>();
+        if (!messageType.matchesFormat(jsonObject)) {
+            throw new DecodeException(s, "The object " + jsonObject
+                                         + " doesn't match the format for the message type: "
+                                         + messageType + ". "
+                                         + "The valid format is " + messageType.getFormatToRespect());
+        }
+        Message message = switch (messageType) {
+            case COMPILE -> new MessageCompile(jsonObject.getString("lines"), jsonObject.optJSONObject("context"));
+            case RESUME -> new MessageResume(jsonObject.optJSONArray("responseData"));
+            case EXEC_FUNC -> new MessageExecFunc(jsonObject.getString("funcName"), jsonObject.optJSONArray("args"));
+            default -> throw new DecodeException(s, "The type: " + messageType + " is not supported yet.");
         };
-        logger.info("Decoded options: " + messageOptions.toString().replace("\n", "\\n"));
-        return new Message(messageType, messageOptions);
+        logger.info("Decoded options: " + message);
+        return message;
     }
 
     @Override
     public boolean willDecode(String s) {
-        return true;
+        try {
+            JSONObject jsonObject = new JSONObject(s);
+            return jsonObject.get("type") instanceof String;
+        } catch (JSONException err) {
+            return false;
+        }
     }
 
     @Override

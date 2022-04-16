@@ -122,6 +122,12 @@ public interface ASErreur {
         }
     }
 
+    class ErreurScopeInexistant extends ErreurAliveScript {
+        public ErreurScopeInexistant(String message) {
+            super(message, "error.MissingScope");
+        }
+    }
+
     class ErreurContexteAbsent extends ErreurAliveScript {
         public ErreurContexteAbsent(String message) {
             super(message, "error.MissingContext");

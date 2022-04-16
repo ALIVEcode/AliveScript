@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import static websocketserver.ASWebSocketServer.logger;
 
 @ServerEndpoint(
         value = "/execute/{tokenId}",
@@ -57,6 +58,11 @@ public class AliveScriptExecutionEndpoint {
     @OnMessage
     public void onMessage(Session session, Message message) {
         int time = LocalDateTime.now().getSecond();
+        if (!executorAvailable(session, time)) return;
+        send(message.handle(executeur));
+    }
+
+    private boolean executorAvailable(Session session, int time) {
         while (executeur == null) {
             if (LocalDateTime.now().getSecond() - time > 5) {
                 try {
@@ -64,7 +70,7 @@ public class AliveScriptExecutionEndpoint {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                return;
+                return false;
             }
             try {
                 Thread.sleep(100);
@@ -72,67 +78,17 @@ public class AliveScriptExecutionEndpoint {
                 e.printStackTrace();
             }
         }
-
-        switch (message.type()) {
-            case COMPILE -> {
-                JSONArray result = executeur.compiler(((String) message.options().get("lines")).split("\n"), true);
-                if (!result.toString().equals("[]")) {
-                    send(result.toString());
-                    return;
-                }
-                JSONArray resultExec = executeur.executerMain(false);
-                if (resultExec.getJSONObject(resultExec.length() - 1).getInt("id") == Data.Id.GET.getId()) {
-                    send(new Data(Data.Id.ERREUR).addParam("ErreurIO").addParam("Les commandes d'IO sont interdites dans ce contexte").toString());
-                    return;
-                }
-
-                send(resultExec.toString());
-            }
-            case RESUME -> {
-                if (executeur.obtenirCoordCompileDict().isEmpty()) {
-                    // NON, PAS BIEN DU TOUT GRR GRR
-                    send(new ASErreur.ErreurAppelFonction("ErreurCompilation", "Le code n'est pas compil\u00E9")
-                            .getAsData(executeur).toString());
-                    return;
-                }
-                JSONArray responseData = (JSONArray) message.options().get("responseData");
-                for (int i = 0; i < responseData.length(); i++) {
-                    executeur.pushDataResponse(responseData.get(i));
-                }
-                var result = executeur.executerMain(true);
-                System.out.println("RESULT: " + result);
-                send(result.toString());
-            }
-            case EXEC_FUNC -> {
-                if (executeur.obtenirCoordCompileDict().isEmpty()) {
-                    // NON, PAS BIEN DU TOUT GRR GRR
-                    send(new ASErreur.ErreurAppelFonction("ErreurCompilation", "Le code n'est pas compil\u00E9")
-                            .getAsData(executeur).toString());
-                    return;
-                }
-                var funcName = (String) message.options().get("funcName");
-                ASListe args;
-                if (message.options().containsKey("args"))
-                    args = ASObjetConverter.fromJSON((JSONArray) message.options().get("args"));
-                else
-                    args = new ASListe();
-
-                var datas = executeur.executerFonction(funcName, args.getValue());
-                send(datas);
-            }
-            default -> {
-            }
-        }
+        return true;
     }
 
     private void send(String text) {
-        System.out.println("Sending: " + text);
+        logger.info("Sending: " + text);
         session.getAsyncRemote().sendText(text);
     }
 
     @OnClose
     public void onClose(Session session) {
-        System.out.println("Close: " + this.tokenId);
+        logger.info("Close: " + this.tokenId);
         ALIVE_SCRIPT_ENDPOINTS.remove(this);  // remove from the list
         TOKEN_MAP.remove(this.tokenId); // remove tokenId from map
     }
@@ -140,6 +96,7 @@ public class AliveScriptExecutionEndpoint {
     @OnError
     public void onError(Session session, Throwable t) {
         t.printStackTrace();
-        System.out.println("Error: " + t.getMessage());
+        logger.severe("Error: " + t.getMessage());
+        onClose(session);
     }
 }

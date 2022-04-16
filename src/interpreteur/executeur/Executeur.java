@@ -15,6 +15,7 @@ import interpreteur.as.modules.core.ASModuleManager;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.ast.buildingBlocs.expressions.AppelFonc;
 import interpreteur.ast.buildingBlocs.programmes.Declarer;
+import interpreteur.converter.ASObjetConverter;
 import interpreteur.data_manager.Data;
 import interpreteur.data_manager.DataVoiture;
 import interpreteur.tokens.Token;
@@ -96,7 +97,6 @@ public class Executeur {
     private boolean compilationActive = false;
     private boolean executionActive = false;
     private boolean canExecute = false;
-    private Optional<Pair<Stack<ASScope>, Stack<ASScope.ScopeInstance>>> scope = Optional.empty();
 
     public Executeur(Language language) {
         translator = new Translator(language);
@@ -526,6 +526,17 @@ public class Executeur {
         if (coordCompileDict == null) coordCompileDict = this.coordCompileDict;
         if (startCoord == null) startCoord = "<0>" + scope;
 
+
+        if (!coordCompileDict.containsKey(scope) || !coordCompileDict.get(scope).containsKey(startCoord)) {
+            String messageErreur = scope.equals("main")
+                    ? "Le code n'a pas \u00E9t\u00E9 compil\u00E9 avant l'ex\u00E9cution"
+                    : "Le scope " + scope + " n'existe pas.";
+            var err = new ASErreur.ErreurScopeInexistant(messageErreur);
+            datas.add(err.getAsData(this));
+            arreterExecution();
+            err.afficher(this);
+            return datas.toString();
+        }
         // set la coordonne au debut du scope
         coordRunTime.setCoord(startCoord);
 
@@ -608,7 +619,14 @@ public class Executeur {
 
         if (obtenirCoordCompileDict().get("main").isEmpty()) {
             arreterExecution();
-            return new JSONArray();
+            String messageErreur = "Le code n'a pas \u00E9t\u00E9 compil\u00E9 avant l'ex\u00E9cution";
+            var err = new ASErreur.ErreurScopeInexistant(messageErreur);
+            datas.add(err.getAsData(this));
+            arreterExecution();
+            err.afficher(this);
+            var result = new JSONArray(datas);
+            datas.clear();
+            return result;
         }
 
         Object resultat;
@@ -669,6 +687,10 @@ public class Executeur {
         return executerMain(true).toString();
     }
 
+    public String executerFonction(String nomFonction, JSONArray args) {
+        return executerFonction(nomFonction, ASObjetConverter.fromJSON(args).getValue());
+    }
+
     private Object resumeExecution() {
         Coordonnee coordActuel = obtenirCoordRunTime();
         return executerScope(coordActuel.getScope(), null, coordActuel.toString());
@@ -712,7 +734,6 @@ public class Executeur {
                ", dataResponse=" + dataResponse + "\n" +
                ", context=" + context + "\n" +
                ", anciennesLignes=" + Arrays.toString(anciennesLignes) + "\n" +
-               ", scope=" + scope + "\n" +
                '}';
     }
 }
