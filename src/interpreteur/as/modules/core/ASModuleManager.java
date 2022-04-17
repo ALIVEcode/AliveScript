@@ -46,6 +46,27 @@ public record ASModuleManager(Executeur executeurInstance) {
 
     }
 
+    public void utiliserModuleAvecAlias(String nomModule, String nomAlias) {
+        if (nomModule.equals("builtins")) {
+            new ASErreur.AlerteUtiliserBuiltins("Il est inutile d'utiliser builtins, puisqu'il est utilise par defaut");
+            return;
+        }
+
+        // module vide servant à charger les fonctionnalitées expérimentales
+        if (nomModule.equals("experimental")) {
+            return;
+        }
+        ASModule module = getModule(nomModule);
+
+        module.utiliser(nomAlias);
+        ASScope.getCurrentScope().declarerVariable(new ASConstante(nomModule, new ASListe(module
+                .getNomsConstantesEtFonctions()
+                .stream()
+                .map(e -> nomModule + "." + e)
+                .map(ASTexte::new)
+                .toArray(ASTexte[]::new))));
+    }
+
     public void utiliserModule(String nomModule) {
         if (nomModule.equals("builtins")) {
             new ASErreur.AlerteUtiliserBuiltins("Il est inutile d'utiliser builtins, puisqu'il est utilise par defaut");
@@ -86,8 +107,8 @@ public record ASModuleManager(Executeur executeurInstance) {
 
         if (fctEtConstPasDansModule.size() > 0)
             throw new ASErreur.ErreurModule("Le module '" + nomModule + "' ne contient pas les fonctions ou les constantes: "
-                    + fctEtConstPasDansModule.toString()
-                    .replaceAll("\\[|]", ""));
+                                            + fctEtConstPasDansModule.toString()
+                                                    .replaceAll("[\\[\\]]", ""));
 
         module.utiliser(nomsFctEtConstDemandees);
         ASScope.getCurrentScope().declarerVariable(new ASConstante(nomModule, new ASListe(nomsFctEtConstDemandees

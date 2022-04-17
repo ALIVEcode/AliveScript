@@ -17,7 +17,7 @@ public class Utiliser extends Programme {
     public Utiliser(Var module, Var[] sous_modules, Executeur executeurInstance) {
         super(executeurInstance);
         this.module = module;
-        this.sous_modules = Arrays.asList(sous_modules);
+        this.sous_modules = sous_modules == null ? null : Arrays.asList(sous_modules);
         this.loadModule();
     }
 
@@ -29,7 +29,9 @@ public class Utiliser extends Programme {
     }
 
     private void loadModule() {
-        if (sous_modules.isEmpty()) {
+        if (sous_modules == null) {
+            executeurInstance.getAsModuleManager().utiliserModuleAvecAlias(module.getNom(), "");
+        } else if (sous_modules.isEmpty()) {
             executeurInstance.getAsModuleManager().utiliserModule(module.getNom());
         } else {
             executeurInstance.getAsModuleManager().utiliserModule(module.getNom(), sous_modules.stream().map(Var::getNom).toArray(String[]::new));
@@ -44,8 +46,8 @@ public class Utiliser extends Programme {
     @Override
     public String toString() {
         return "Utiliser{" +
-                "module=" + module +
-                ", sous_modules?=" + sous_modules +
-                '}';
+               "module=" + module +
+               ", sous_modules?=" + sous_modules +
+               '}';
     }
 }

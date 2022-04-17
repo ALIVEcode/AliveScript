@@ -44,6 +44,7 @@ public class ASAst extends AstGenerator {
         ajouterProgramme("", (p) -> null);
 
         ajouterProgramme("UTILISER expression~"
+                         + "UTILISER expression BRACES_OUV MUL BRACES_FERM~"
                          + "UTILISER expression BRACES_OUV expression BRACES_FERM",
                 (p, variante) -> {
                     if (p.get(1) instanceof ValeurConstante valeurConstante && valeurConstante.eval() instanceof ASTexte texte) {
@@ -57,6 +58,9 @@ public class ASAst extends AstGenerator {
                     }
 
                     if (variante == 1) {
+                        return new Utiliser((Var) p.get(1), null, executeurInstance);
+
+                    } else if (variante == 2) {
                         Var[] sous_modules;
                         if (p.get(3) instanceof CreerListe.Enumeration enumeration) {
                             sous_modules = enumeration.getExprs().toArray(Var[]::new);
@@ -65,6 +69,7 @@ public class ASAst extends AstGenerator {
                         }
                         return new Utiliser((Var) p.get(1), sous_modules, executeurInstance);
                     }
+
                     return new Utiliser((Var) p.get(1), executeurInstance);
                 });
         /*
