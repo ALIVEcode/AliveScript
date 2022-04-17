@@ -25,7 +25,8 @@ public enum Language {
     }
 
     public static boolean isSupportedLanguage(String codeISO639_1) {
-        return Stream.of(Language.values()).anyMatch(language -> language.codeISO639_1.equals(codeISO639_1));
+        if (codeISO639_1 == null) return false;
+        return Stream.of(Language.values()).anyMatch(language -> language.codeISO639_1.equalsIgnoreCase(codeISO639_1));
     }
 
     /**

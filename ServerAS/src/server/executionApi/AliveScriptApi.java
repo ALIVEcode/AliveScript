@@ -1,6 +1,7 @@
 package server.executionApi;
 
 import com.sun.net.httpserver.HttpExchange;
+import language.Language;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import server.BaseApi;
@@ -10,6 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
+
+import static server.utils.QueryUtils.getValueOfQuery;
 
 
 /**
@@ -54,9 +57,11 @@ public class AliveScriptApi extends BaseApi {
         return true;
     }
 
+
     private String handlePostRequest(HttpExchange httpExchange) throws IOException {
         JSONObject data = byteArrayToJson(httpExchange.getRequestBody().readAllBytes());
-
+        String lang = getValueOfQuery(httpExchange.getRequestURI().getQuery(), "lang", "FR").toUpperCase();
+        logger.info("Lang is " + lang);
 
         AliveScriptService aliveScriptService;
 
@@ -68,8 +73,10 @@ public class AliveScriptApi extends BaseApi {
                         .put("status", AliveScriptService.ResponseStatus.FAILED)
                         .put("message", "the id passed in the field idToken is not a valid UUID").toString();
             }
-        else
-            aliveScriptService = AliveScriptService.create();
+        else {
+            Language language = Language.isSupportedLanguage(lang) ? Language.valueOf(lang.toUpperCase()) : Language.FR;
+            aliveScriptService = AliveScriptService.create(language);
+        }
 
 
         if (aliveScriptService == null) {

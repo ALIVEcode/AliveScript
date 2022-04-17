@@ -147,7 +147,7 @@ public class Executeur {
     }
 
 
-    // methode utilisee a chaque fois qu'une info doit etre afficher par le langage
+    // methode utilisée à chaque fois qu'une info doit être affiché par le langage
     public void ecrire(String texte) {
         if (debug) System.out.println(texte);
     }
@@ -184,10 +184,10 @@ public class Executeur {
         return this.dataResponse;
     }
 
-    public Object getDataResponseOrAsk(String dataName, Object... additionnalParams) {
+    public Object getDataResponseOrAsk(String dataName, Object... additionalParams) {
         if (this.dataResponse.isEmpty()) {
             Data dataToGet = new Data(Data.Id.GET).addParam(dataName);
-            for (var param : additionnalParams)
+            for (var param : additionalParams)
                 dataToGet.addParam(param);
             throw new AskForDataResponse(dataToGet);
         } else

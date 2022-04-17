@@ -1,7 +1,7 @@
 package test.utilstest;
 
-import interpreteur.utils.Range;
-import interpreteur.utils.StringUtils;
+import utils.Range;
+import utils.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -2,6 +2,7 @@ package server.executionApi;
 
 import interpreteur.executeur.Executeur;
 import interpreteur.data_manager.Data;
+import language.Language;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,9 +27,9 @@ public class AliveScriptService {
     private double sinceUpdate = 0;
     private int nbOfUpdates = 0;
 
-    private AliveScriptService(UUID idToken) {
+    private AliveScriptService(UUID idToken, Language language) {
         this.idToken = idToken;
-        this.executeur = new Executeur();
+        this.executeur = new Executeur(language);
     }
 
     public static void setMaxServiceLifeSpan(double maxServiceLifeSpan) {
@@ -63,10 +64,10 @@ public class AliveScriptService {
         return runningServices.get(idToken);
     }
 
-    public static AliveScriptService create() {
+    public static AliveScriptService create(Language language) {
         UUID idToken = UUID.randomUUID();
         logger.info("New session: " + idToken);
-        AliveScriptService aliveScriptService = new AliveScriptService(idToken);
+        AliveScriptService aliveScriptService = new AliveScriptService(idToken, language);
         runningServices.put(idToken, aliveScriptService);
         return aliveScriptService;
     }
