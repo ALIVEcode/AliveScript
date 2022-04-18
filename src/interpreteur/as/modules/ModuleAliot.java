@@ -114,14 +114,14 @@ public class ModuleAliot {
                         var actionId = getValeurParam("actionId");
                         var target = getValeurParam("targetId");
                         if (target instanceof ASNul) {
-                            executeurInstance.addData(new Data(Data.Id.SEND_ACTION)
-                                    .addParam(actionId.getValue())
-                                    .addParam(ASObjetConverter.toJSON(data)));
+                            executeurInstance.getDataResponseOrAsk(Data.Id.SEND_ACTION,
+                                    actionId.getValue(),
+                                    ASObjetConverter.toJSON(data));
                         } else {
-                            executeurInstance.addData(new Data(Data.Id.SEND_ACTION)
-                                    .addParam(actionId.getValue())
-                                    .addParam(ASObjetConverter.toJSON(data))
-                                    .addParam(target.getValue()));
+                            executeurInstance.getDataResponseOrAsk(Data.Id.SEND_ACTION,
+                                    actionId.getValue(),
+                                    ASObjetConverter.toJSON(data),
+                                    target.getValue());
                         }
                         return new ASNul();
                     }
