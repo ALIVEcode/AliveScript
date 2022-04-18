@@ -302,7 +302,10 @@ public class AstGenerator {
 
     public static Matcher memeStructureProgramme(String line, String structurePotentielle) {
         //System.out.println(structurePotentielle.replaceAll("( ?)(#?)expression ?", Matcher.quoteReplacement("\\b.+")));
-        Pattern structurePattern = Pattern.compile(structurePotentielle.replaceAll("( ?)(#?)expression ?", Matcher.quoteReplacement("\\b.+")));
+//        Pattern structurePattern = Pattern.compile(structurePotentielle.replaceAll("( ?)(#?)expression ?", Matcher.quoteReplacement("\\b.+")));
+        // FIXME Maybe a catastrophic change idk
+        Pattern structurePattern = Pattern.compile(structurePotentielle.replaceAll("( ?)(#?)expression ?", Matcher.quoteReplacement("\\b *([A-Z_] ?)+ *")));
+
         return structurePattern.matcher(line);
     }
 
@@ -557,7 +560,7 @@ public class AstGenerator {
         listToken.forEach(e -> structureLine.add(e.obtenirNom()));
 
         ArrayList<String> structureProgramme = new ArrayList<>(Arrays.asList(programme.split(" ")));
-        structureProgramme.removeIf(e -> e.equals("expression") || e.equals("#expression"));
+        // structureProgramme.removeIf(e -> e.equals("expression") || e.equals("#expression"));
         Iterator<String> iterProgramme = structureProgramme.iterator();
 
         ArrayList<ArrayList<Token>> expressionsList = new ArrayList<>();
@@ -569,7 +572,13 @@ public class AstGenerator {
             ArrayList<Token> expressionList = new ArrayList<>();
 
             for (int i = 0; i < structureLine.size(); ++i) {
-                if (structureLine.get(i).matches(clef)) {
+                // FIXME Maybe a catastrophic change idk part 2
+                if (clef.equals("expression") || clef.equals("#expression")) {
+                    expressionList.add(listToken.get(i));
+                    clef = iterProgramme.hasNext() ? iterProgramme.next() : "";
+                    continue;
+                }
+                if (!clef.isBlank() && structureLine.get(i).matches(clef)) {
                     clef = iterProgramme.hasNext() ? iterProgramme.next() : "";
 
                     programmeList.add(listToken.get(i));

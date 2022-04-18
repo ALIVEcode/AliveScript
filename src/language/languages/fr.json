@@ -73,8 +73,8 @@
     },
     "math": {
       "constants": {
-        "pi": "pi",
-        "e": "e"
+        "pi": "PI",
+        "e": "E"
       },
       "functions": {
         "rad": "rad",

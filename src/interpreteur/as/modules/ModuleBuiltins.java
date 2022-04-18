@@ -290,10 +290,6 @@ public class ModuleBuiltins {
         fonctionsBuiltins.addAll(List.of(BuiltinsTexteUtils.fonctions));
         fonctionsBuiltins.addAll(List.of(BuiltinsNombreUtils.fonctions));
 
-        Translator translator = executeurInstance.getTranslator();
-        fonctionsBuiltins.forEach(f -> f.setNom(translator.translate(f.getNom())));
-        Arrays.stream(variables).forEach(v -> v.setNom(translator.translate(v.obtenirNom())));
-
         return new ASModule(fonctionsBuiltins.toArray(ASFonctionModule[]::new), variables);
     }
 }

@@ -30,7 +30,7 @@ public class ASFonctionManager {
     }
 
     public static void ajouterStructure(String nomStruct) {
-        if (nomStruct == null) return;
+        if (nomStruct == null || nomStruct.isBlank()) return;
         structure += (structure.isBlank() ? "" : ".") + nomStruct;
     }
 

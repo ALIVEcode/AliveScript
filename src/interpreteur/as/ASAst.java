@@ -45,7 +45,9 @@ public class ASAst extends AstGenerator {
 
         ajouterProgramme("UTILISER expression~"
                          + "UTILISER expression BRACES_OUV MUL BRACES_FERM~"
-                         + "UTILISER expression BRACES_OUV expression BRACES_FERM",
+                         + "UTILISER expression BRACES_OUV expression BRACES_FERM~"
+                         + "UTILISER expression NOM_VARIABLE BRACES_OUV MUL BRACES_FERM~"
+                         + "UTILISER expression NOM_VARIABLE BRACES_OUV expression BRACES_FERM",
                 (p, variante) -> {
                     if (p.get(1) instanceof ValeurConstante valeurConstante && valeurConstante.eval() instanceof ASTexte texte) {
                         String msg = texte.getValue();
@@ -57,17 +59,27 @@ public class ASAst extends AstGenerator {
                         }
                     }
 
-                    if (variante == 1) {
-                        return new Utiliser((Var) p.get(1), null, executeurInstance);
+                    String nomPrefix = "";
+                    if (variante == 3 || variante == 4) {
+                        nomPrefix = ((Token) p.get(2)).obtenirValeur();
+                        if (!nomPrefix.endsWith(".")) {
+                            throw new ASErreur.ErreurSyntaxe("Le pr\u00E9fix du module doit finir par '.'");
+                        }
+                        nomPrefix = nomPrefix.substring(0, nomPrefix.length() - 1);
+                    }
 
-                    } else if (variante == 2) {
+                    if (variante == 1 || variante == 3) {
+                        return new Utiliser((Var) p.get(1), executeurInstance, nomPrefix);
+
+                    } else if (variante == 2 || variante == 4) {
+                        int idxEnumeration = variante == 2 ? 3 : 4;
                         Var[] sous_modules;
-                        if (p.get(3) instanceof CreerListe.Enumeration enumeration) {
+                        if (p.get(idxEnumeration) instanceof CreerListe.Enumeration enumeration) {
                             sous_modules = enumeration.getExprs().toArray(Var[]::new);
                         } else {
-                            sous_modules = new Var[]{(Var) p.get(3)};
+                            sous_modules = new Var[]{(Var) p.get(idxEnumeration)};
                         }
-                        return new Utiliser((Var) p.get(1), sous_modules, executeurInstance);
+                        return new Utiliser((Var) p.get(1), sous_modules, executeurInstance, nomPrefix);
                     }
 
                     return new Utiliser((Var) p.get(1), executeurInstance);
