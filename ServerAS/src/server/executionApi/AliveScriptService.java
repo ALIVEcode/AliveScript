@@ -95,6 +95,7 @@ public class AliveScriptService {
             Files.createDirectory(Path.of("./log/"));
         }
         FileHandler fileHandler = new FileHandler("./log/executionLogger.log", true);
+        logger.setUseParentHandlers(false);
         logger.addHandler(fileHandler);
         fileHandler.setFormatter(new SimpleFormatter());
         executionLogger = logger;
