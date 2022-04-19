@@ -581,30 +581,9 @@ public class ASAst extends AstGenerator {
                     }
                 });
 
-
         ajouterExpression("BRACES_OUV BRACES_FERM~"
-                          + "BRACES_OUV #expression BRACES_FERM",
-                (p, variante) -> {
-                    if (variante == 1) {
-                        Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)),
-                                new Hashtable<>(Map.ofEntries(
-                                        Map.entry("expression DEUX_POINTS expression", new Ast<>(24) {
-                                            @Override
-                                            public Paire apply(List<Object> p, Integer idxVariante) {
-                                                return new Paire((Expression<?>) p.get(0), (Expression<?>) p.get(2));
-                                            }
-                                        }))
-                                )
-                        );
-
-                    }
-                    return null;
-                }
-        );
-
-//        "BRACES_OUV BRACES_FERM~"
-//        + "BRACES_OUV #expression BRACES_FERM~"
-        ajouterExpression("CROCHET_OUV CROCHET_FERM~"
+                          + "BRACES_OUV #expression BRACES_FERM~"
+                          + "CROCHET_OUV CROCHET_FERM~"
                           + "!expression CROCHET_OUV CROCHET_FERM~"
                           + "!expression CROCHET_OUV #expression CROCHET_FERM",
                 (p, variante) -> {
@@ -697,6 +676,8 @@ public class ASAst extends AstGenerator {
         ajouterExpression("expression SI expression SINON expression",
                 p -> new Ternary((Expression<?>) p.get(2), (Expression<?>) p.get(0), (Expression<?>) p.get(4)));
 
+        ajouterExpression("expression DEUX_POINTS expression",
+                p -> new Paire((Expression<?>) p.get(0), (Expression<?>) p.get(2)));
 
         ajouterExpression("expression VIRGULE expression~",
                 p -> {
