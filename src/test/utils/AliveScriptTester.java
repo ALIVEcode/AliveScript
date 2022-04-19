@@ -34,15 +34,15 @@ public class AliveScriptTester {
     }
 
     public static AliveScriptExecutionTester assertExecution() {
-        return new AliveScriptExecutionTester(execute(null));
+        return new AliveScriptExecutionTester(execute(null), executeur.getTranslator());
     }
 
     public static AliveScriptExecutionTester assertExecution(Object responseData) {
-        return new AliveScriptExecutionTester(execute(new Object[]{responseData}));
+        return new AliveScriptExecutionTester(execute(new Object[]{responseData}), executeur.getTranslator());
     }
 
     public static AliveScriptExecutionTester assertExecution(Object[] responseData) {
-        return new AliveScriptExecutionTester(execute(responseData));
+        return new AliveScriptExecutionTester(execute(responseData), executeur.getTranslator());
     }
 
     private static JSONArray execute(Object[] responseData) {

@@ -2,6 +2,7 @@ package test.utils;
 
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.data_manager.Data;
+import language.Translator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,10 +12,12 @@ import static org.junit.Assert.*;
 
 public class AliveScriptExecutionTester {
     private final JSONArray executionResult;
+    private final Translator translator;
     private int currentIdx = 0;
 
-    public AliveScriptExecutionTester(JSONArray executionResult) {
+    public AliveScriptExecutionTester(JSONArray executionResult, Translator translator) {
         this.executionResult = executionResult;
+        this.translator = translator;
     }
 
     //----------------- utils -----------------//
@@ -54,7 +57,8 @@ public class AliveScriptExecutionTester {
         );
         var action = getNextAction();
         assertEquals(400, action.getInt("id"));
-        assertEquals(erreur.getNomErreur(), action.getJSONArray("p").getString(0));
+        var nomErreur = translator.translate(erreur.getNomErreur());
+        assertEquals(nomErreur, action.getJSONArray("p").getString(0));
         currentIdx++;
         return this;
     }

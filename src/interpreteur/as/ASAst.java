@@ -275,7 +275,9 @@ public class ASAst extends AstGenerator {
         //<-----------------------------------Les fonctions----------------------------------------->//
 
         ajouterProgramme("FONCTION expression PARENT_OUV expression PARENT_FERM FLECHE expression~" +
-                         "FONCTION expression PARENT_OUV expression PARENT_FERM",
+                         "FONCTION expression PARENT_OUV expression PARENT_FERM~" +
+                         "FONCTION expression PARENT_OUV PARENT_FERM FLECHE expression~" +
+                         "FONCTION expression PARENT_OUV PARENT_FERM",
                 new Ast<CreerFonction>(
                         Map.entry(
                                 "expression DEUX_POINTS expression ASSIGNEMENT expression~"
