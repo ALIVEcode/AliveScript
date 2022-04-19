@@ -2,9 +2,8 @@ package interpreteur.executeur;
 
 import interpreteur.as.ASAst;
 import interpreteur.as.ASLexer;
+import interpreteur.as.experimental.ASAstExperimental;
 import interpreteur.as.lang.ASFonctionInterface;
-import interpreteur.as.lang.ASFonctionModule;
-import interpreteur.as.lang.datatype.ASFonction;
 import interpreteur.as.lang.datatype.ASNul;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.managers.ASFonctionManager;
@@ -13,23 +12,19 @@ import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.erreurs.ASErreur.*;
 import interpreteur.as.modules.core.ASModuleManager;
 import interpreteur.ast.buildingBlocs.Programme;
-import interpreteur.ast.buildingBlocs.expressions.AppelFonc;
 import interpreteur.ast.buildingBlocs.programmes.Declarer;
 import interpreteur.converter.ASObjetConverter;
 import interpreteur.data_manager.Data;
 import interpreteur.data_manager.DataVoiture;
-import interpreteur.tokens.Token;
 import io.github.cdimascio.dotenv.Dotenv;
 import language.Language;
 import language.Translator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import utils.Pair;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 
@@ -85,12 +80,14 @@ public class Executeur {
     private final ArrayList<Data> datas = new ArrayList<>();
     // data stack used when the program asks the site for information
     private final Stack<Object> dataResponse = new Stack<>();
-    // ast
-    private final ASAst ast;
     private final Translator translator;
     private final ExecuteurState executeurState;
+    // ast
+    private final ASAst ast;
+    private final ASAstExperimental astExperimental;
     //debug mode
     public boolean debug = false;
+    private ASAst currentAst;
     private JSONObject context = null;
     private String[] anciennesLignes = null;
     // failsafe
@@ -103,6 +100,8 @@ public class Executeur {
         lexer = new ASLexer(language.getASLexerPath()); // utiliser translator pour passer bon yaml
         asModuleManager = new ASModuleManager(this);
         ast = new ASAst(this);
+        astExperimental = new ASAstExperimental(this);
+        currentAst = ast;
         this.executeurState = new ExecuteurState(this);
     }
 
@@ -257,8 +256,8 @@ public class Executeur {
     /**
      * @return le parser utilise par l'interpreteur (voir ASAst)
      */
-    public ASAst getAst() {
-        return ast;
+    public ASAst getCurrentAst() {
+        return currentAst;
     }
 
     public ASModuleManager getAsModuleManager() {
@@ -384,6 +383,7 @@ public class Executeur {
      *               </li>
      */
     private JSONArray compiler(String[] lignes) {
+        currentAst = PreCompiler.isExperimental(lignes) ? astExperimental : ast;
 
         // sert au calcul du temps qu'a pris le code pour etre compile
         LocalDateTime before = LocalDateTime.now();
@@ -453,7 +453,7 @@ public class Executeur {
                         }
                     };
                 } else {
-                    ligneParsed = ast.parse(lineToken);
+                    ligneParsed = currentAst.parse(lineToken);
                 }
 
                 ligneParsed.setNumLigne(i);
