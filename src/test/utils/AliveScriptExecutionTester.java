@@ -63,6 +63,25 @@ public class AliveScriptExecutionTester {
         return this;
     }
 
+    public AliveScriptExecutionTester does(Data.Id id) {
+        var action = getNextAction();
+        assertEquals(id.getId(), action.getInt("id"));
+        currentIdx++;
+        return this;
+    }
+
+    public AliveScriptExecutionTester does(Data.Id id, Object... params) {
+        var action = getNextAction();
+        assertEquals(id.getId(), action.getInt("id"));
+        var actualParams = action.getJSONArray("p");
+        assertEquals(params.length, actualParams.length());
+        for (int i = 0; i < params.length; i++) {
+            assertEquals(params[i], actualParams.get(i));
+        }
+        currentIdx++;
+        return this;
+    }
+
     public AliveScriptExecutionTester ends() {
         var action = getNextAction();
         assertEquals(0, action.getInt("id"));
@@ -86,22 +105,13 @@ public class AliveScriptExecutionTester {
     }
 
     public AliveScriptExecutionTester asksForDataResponse(Data.Id id) {
-        var action = getNextAction();
-        assertEquals(id.getId(), action.getInt("id"));
-        currentIdx++;
+        this.does(id);
         assertEquals(executionResult.length(), currentIdx);
         return this;
     }
 
     public AliveScriptExecutionTester asksForDataResponse(Data.Id id, Object... params) {
-        var action = getNextAction();
-        assertEquals(id.getId(), action.getInt("id"));
-        var actualParams = action.getJSONArray("p");
-        assertEquals(params.length, actualParams.length());
-        for (int i = 0; i < params.length; i++) {
-            assertEquals(params[i], actualParams.get(i));
-        }
-        currentIdx++;
+        this.does(id, params);
         assertEquals(executionResult.length(), currentIdx);
         return this;
     }

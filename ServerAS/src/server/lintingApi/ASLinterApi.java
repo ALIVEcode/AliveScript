@@ -20,7 +20,6 @@ import static server.utils.QueryUtils.getValueOfQuery;
 public class ASLinterApi extends BaseApi {
     private final static Hashtable<Language, JSONObject> LINTER_INFO;
     private final static Hashtable<Language, String> LINTER_INFO_STRINGIFY;
-    private static ArrayList<Regle> REGLES;
     private static Logger logger;
 
     static {
@@ -40,7 +39,7 @@ public class ASLinterApi extends BaseApi {
 
     private static JSONObject loadLanguage(Language language) {
         var executor = new Executeur(language);
-        REGLES = executor.getLexer().getReglesAjoutees();
+        var regles = executor.getLexer().getReglesAjoutees();
         var translator = executor.getTranslator();
         var functionAsCommands = List.of(
                 translator.translate("modules.builtins.functions.print"),       // afficher
@@ -67,33 +66,33 @@ public class ASLinterApi extends BaseApi {
                 .collect(Collectors.toList());
         modules.add("\\b\"experimental\"\\b");
 
-        List<String> commands = getPatternsOfCategory("commandes");
+        List<String> commands = getPatternsOfCategory("commandes", regles);
         // adds the functions related to the motor to the commands
         functionAsCommands.forEach(func -> commands.add("\\b" + func + "\\b"));
 
-        List<String> operators = getPatternsOfCategory("arithmetique");
-        operators.addAll(getPatternsOfCategory("assignements"));
-        operators.add(getReglePattern("FLECHE"));
-        operators.add(getReglePattern("DEUX_POINTS"));
-        operators.addAll(getPatternsOfCategory("comparaison"));
+        List<String> operators = getPatternsOfCategory("arithmetique", regles);
+        operators.addAll(getPatternsOfCategory("assignements", regles));
+        operators.add(getReglePattern("FLECHE", regles));
+        operators.add(getReglePattern("DEUX_POINTS", regles));
+        operators.addAll(getPatternsOfCategory("comparaison", regles));
 
         return new JSONObject()
-                .put("datatype", Map.ofEntries(getMembersOfCategory("type_de_donnees")
+                .put("datatype", Map.ofEntries(getMembersOfCategory("type_de_donnees", regles)
                         .map(regle -> Map.entry(regle.getNom().toLowerCase(), regle.getPattern()))
                         .toArray(Map.Entry[]::new))
                 )
-                .put("datatypes_names", getPatternsOfCategory("nom_type_de_donnees"))
+                .put("datatypes_names", getPatternsOfCategory("nom_type_de_donnees", regles))
                 .put("modules", modules)
-                .put("blocs", getPatternsOfCategory("blocs"))
+                .put("blocs", getPatternsOfCategory("blocs", regles))
                 .put("commands", commands)
-                .put("logiques", new JSONArray(getPatternsOfCategory("porte_logique"))
-                        .put(getReglePattern("PAS"))
+                .put("logiques", new JSONArray(getPatternsOfCategory("porte_logique", regles))
+                        .put(getReglePattern("PAS", regles))
                 )
-                .put("fonctions", getPatternsOfCategory("fonctions"))
-                .put("fin", getReglePattern("FIN"))
+                .put("fonctions", getPatternsOfCategory("fonctions", regles))
+                .put("fin", getReglePattern("FIN", regles))
                 .put("fonctions_builtin", fonctionsBuiltins)
-                .put("control_flow", new JSONArray(getPatternsOfCategory("control_flow")))
-                .put("const", getReglePattern("CONSTANTE"))
+                .put("control_flow", new JSONArray(getPatternsOfCategory("control_flow", regles)))
+                .put("const", getReglePattern("CONSTANTE", regles))
                 .put("variable", "[a-zA-Z_\\u00a1-\\uffff][a-zA-Z\\d_\\u00a1-\\uffff]*")
                 .put("operators", operators);
     }
@@ -107,20 +106,20 @@ public class ASLinterApi extends BaseApi {
         return linterLanguageDict;
     }
 
-    private static List<String> getPatternsOfCategory(String nomCategorie) {
-        return getMembersOfCategory(nomCategorie).map(Regle::getPattern).collect(Collectors.toList());
+    private static List<String> getPatternsOfCategory(String nomCategorie, ArrayList<Regle> regles) {
+        return getMembersOfCategory(nomCategorie, regles).map(Regle::getPattern).collect(Collectors.toList());
     }
 
-    private static List<String> getNamesOfCategory(String nomCategorie) {
-        return getMembersOfCategory(nomCategorie).map(regle -> regle.getNom().toLowerCase()).collect(Collectors.toList());
+    private static List<String> getNamesOfCategory(String nomCategorie, ArrayList<Regle> regles) {
+        return getMembersOfCategory(nomCategorie, regles).map(regle -> regle.getNom().toLowerCase()).collect(Collectors.toList());
     }
 
-    private static Stream<Regle> getMembersOfCategory(String nomCategorie) {
-        return REGLES.stream().filter(regle -> regle.getCategorie().equals(nomCategorie));
+    private static Stream<Regle> getMembersOfCategory(String nomCategorie, ArrayList<Regle> regles) {
+        return regles.stream().filter(regle -> regle.getCategorie().equals(nomCategorie));
     }
 
-    private static String getReglePattern(String regleName) {
-        return REGLES.stream().filter(regle -> regle.getNom().equals(regleName)).findFirst().orElseThrow().getPattern();
+    private static String getReglePattern(String regleName, ArrayList<Regle> regles) {
+        return regles.stream().filter(regle -> regle.getNom().equals(regleName)).findFirst().orElseThrow().getPattern();
     }
 
     @Override

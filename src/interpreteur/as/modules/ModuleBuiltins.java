@@ -217,6 +217,13 @@ public class ModuleBuiltins {
                         return new ASNul();
                     }
                 },
+                new ASFonctionModule("modules.builtins.functions.quit", ASTypeBuiltin.rien.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        executeurInstance.arreterExecution();
+                        return new ASNul();
+                    }
+                },
 
 
                 //----------------- Voiture -----------------//

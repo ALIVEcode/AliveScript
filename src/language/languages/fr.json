@@ -29,6 +29,7 @@
         "listVar": "varListe"
       },
       "functions": {
+        "quit": "quitter",
         "notif": "notif",
         "notif_err": "notif_err",
         "print": "afficher",

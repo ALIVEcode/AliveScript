@@ -37,6 +37,27 @@ public class TestAliveScript extends AbstractTestAliveScript {
     }
 
     @Test
+    public void testFin() {
+        assertCompiles("""
+                afficher "bonjour"
+                afficher 12
+                afficher (-333)
+                afficher (-23.11)
+                quitter
+                afficher {1, 2, 3, 4}
+                afficher vrai
+                afficher ([5, 6, 7])
+                """);
+
+        assertExecution()
+                .prints("bonjour")
+                .prints("12")
+                .prints("-333")
+                .prints("-23.11")
+                .ends();
+    }
+
+    @Test
     public void testAfficherSansParentheses() {
         assertCompiles("""
                 afficher [1, 2, 3]
@@ -55,6 +76,10 @@ public class TestAliveScript extends AbstractTestAliveScript {
                 var abc
                 lire abc
                 afficher abc
+                var num: entier
+                lire entier dans num
+                afficher num
+                afficher typeDe(num)
                 """);
 
         assertExecution()
@@ -63,6 +88,11 @@ public class TestAliveScript extends AbstractTestAliveScript {
 
         assertExecution("bonjour")
                 .prints("bonjour")
+                .asksForDataResponse(Data.Id.GET, "read", "Entrez un input");
+
+        assertExecution("288")
+                .prints("288")
+                .prints("entier")
                 .ends();
     }
 
@@ -125,6 +155,49 @@ public class TestAliveScript extends AbstractTestAliveScript {
                 .prints("o")
                 .ends();
 
+    }
+
+    @Test
+    public void lire() {
+        assertCompiles("""
+                var temps
+                var direction
+                                
+                tant que vrai
+                    lire nombre dans temps, "Entrez le temps"
+                    avancer temps
+                    lire direction, "Entrez une direction"
+                    si direction == "g" alors
+                        gauche
+                    sinon si direction == "d" alors
+                        droite
+                    sinon si direction == "q" alors
+                        sortir
+                    fin si
+                    
+                fin tant que
+                """);
+
+        assertExecution()
+                .asksForDataResponse(Data.Id.GET, "read", "Entrez le temps");
+        assertExecution("1")
+                .does(Data.Id.AVANCER, 1)
+                .asksForDataResponse(Data.Id.GET, "read", "Entrez une direction");
+        assertExecution("g")
+                .does(Data.Id.TOURNER, 90)
+                .asksForDataResponse(Data.Id.GET, "read", "Entrez le temps");
+
+        assertExecution("3.2")
+                .does(Data.Id.AVANCER, 3.2)
+                .asksForDataResponse(Data.Id.GET, "read", "Entrez une direction");
+        assertExecution("d")
+                .does(Data.Id.TOURNER, -90)
+                .asksForDataResponse(Data.Id.GET, "read", "Entrez le temps");
+
+        assertExecution("0")
+                .does(Data.Id.AVANCER, 0)
+                .asksForDataResponse(Data.Id.GET, "read", "Entrez une direction");
+        assertExecution("q").ends();
     }
 }
 

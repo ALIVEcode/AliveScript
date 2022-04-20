@@ -29,6 +29,7 @@
         "listVar": "listVar"
       },
       "functions": {
+        "quit": "quit",
         "notif": "notif",
         "notif_err": "notif_err",
         "print": "print",
