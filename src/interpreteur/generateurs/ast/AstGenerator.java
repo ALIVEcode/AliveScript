@@ -27,11 +27,11 @@ import utils.Range;
 
 
 public class AstGenerator {
-    Hashtable<String, Ast<?>> programmesDict = new Hashtable<>();
-    ArrayList<String> ordreProgrammes = new ArrayList<>();
+    protected Hashtable<String, Ast<?>> programmesDict = new Hashtable<>();
+    protected ArrayList<String> ordreProgrammes = new ArrayList<>();
 
-    Hashtable<String, Ast<?>> expressionsDict = new Hashtable<>();
-    ArrayList<String> ordreExpressions = new ArrayList<>();
+    protected Hashtable<String, Ast<?>> expressionsDict = new Hashtable<>();
+    protected ArrayList<String> ordreExpressions = new ArrayList<>();
     private int cptrExpr = 0;
     private int cptrProg = 0;
 
@@ -334,7 +334,7 @@ public class AstGenerator {
         return ordreProgrammes;
     }
 
-    private String remplacerCategoriesParMembre(String pattern) {
+    protected String remplacerCategoriesParMembre(String pattern) {
         String nouveauPattern = pattern;
         for (String option : pattern.split("~")) {
             for (String motClef : option.split(" ")) {  // on divise le pattern en mot clef afin d'evaluer ceux qui sont des categories (une categorie est entouree par des {})
@@ -375,12 +375,7 @@ public class AstGenerator {
     }
 
     protected void ajouterProgramme(String pattern, Function<List<Object>, ? extends Programme> fonction) {
-        var ast = new Ast<Programme>() {
-            @Override
-            public Programme apply(List<Object> p, Integer idxVariante) {
-                return fonction.apply(p);
-            }
-        };
+        var ast = Ast.from(fonction);
         //for (String programme : pattern.split("~")) {
         ast.setImportance(cptrProg++);
         String nouveauPattern = remplacerCategoriesParMembre(pattern);
@@ -392,12 +387,7 @@ public class AstGenerator {
     }
 
     protected void ajouterProgramme(String pattern, BiFunction<List<Object>, Integer, ? extends Programme> fonction) {
-        var ast = new Ast<Programme>() {
-            @Override
-            public Programme apply(List<Object> p, Integer idxVariante) {
-                return fonction.apply(p, idxVariante);
-            }
-        };
+        var ast = Ast.from(fonction);
         //for (String programme : pattern.split("~")) {
         ast.setImportance(cptrProg++);
         String nouveauPattern = remplacerCategoriesParMembre(pattern);
@@ -419,12 +409,7 @@ public class AstGenerator {
     }
 
     protected void ajouterExpression(String pattern, Function<List<Object>, ? extends Expression<?>> fonction) {
-        var ast = new Ast<Expression<?>>() {
-            @Override
-            public Expression<?> apply(List<Object> p, Integer idxVariante) {
-                return fonction.apply(p);
-            }
-        };
+        var ast = Ast.from(fonction);
         String nouveauPattern = remplacerCategoriesParMembre(pattern);
         ast.setImportance(cptrExpr++);
         var previous = expressionsDict.put(nouveauPattern, ast);
@@ -434,12 +419,7 @@ public class AstGenerator {
     }
 
     protected void ajouterExpression(String pattern, BiFunction<List<Object>, Integer, ? extends Expression<?>> fonction) {
-        var ast = new Ast<Expression<?>>() {
-            @Override
-            public Expression<?> apply(List<Object> p, Integer idxVariante) {
-                return fonction.apply(p, idxVariante);
-            }
-        };
+        var ast = Ast.from(fonction);
         String nouveauPattern = remplacerCategoriesParMembre(pattern);
         ast.setImportance(cptrExpr++);
         var previous = expressionsDict.put(nouveauPattern, ast);
