@@ -15,7 +15,7 @@ public class AliveScriptTester {
         executeur.debug = debug;
     }
 
-    public static AliveScriptExecutionTester assertCompilesAndExecution(String code) {
+    public static AliveScriptExecutionTester assertCompilesAndExecutes(String code) {
         assertCompiles(code);
         return assertExecution();
     }

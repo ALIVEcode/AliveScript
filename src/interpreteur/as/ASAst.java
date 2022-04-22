@@ -192,6 +192,10 @@ public class ASAst extends AstGenerator {
                         type = _type;
                     }
 
+                    if (variante == 5) {
+                        return new Declarer((Expression<?>) p.get(1), null, type, false);
+                    }
+
                     // si la précision du type est présente
                     if (variante == 1 || variante == 4) {
                         idxValeur = 5;

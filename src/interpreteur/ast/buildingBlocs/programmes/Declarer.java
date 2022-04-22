@@ -26,7 +26,7 @@ public class Declarer extends Programme {
         if (expr instanceof Var) {
             var = (Var) expr;
         } else {
-            throw new ASErreur.ErreurSyntaxe("Il est impossible d'assigner \u00E0 autre chose qu'une variable");
+            throw new ASErreur.ErreurSyntaxe("Il est de d\u00E9clarer autre chose qu'une variable");
         }
 
         this.valeur = valeur;
@@ -93,10 +93,10 @@ public class Declarer extends Programme {
     @Override
     public String toString() {
         return "Declarer{" +
-                "valeur=" + valeur +
-                ", constante=" + constante +
-                ", type=" + type +
-                ", var=" + var +
-                '}';
+               "valeur=" + valeur +
+               ", constante=" + constante +
+               ", type=" + type +
+               ", var=" + var +
+               '}';
     }
 }

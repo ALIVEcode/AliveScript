@@ -44,14 +44,14 @@ public class Assigner extends Programme {
         ASObjet<?> valeur = this.valeur.eval();
         if (variable == null) {
             throw new ASErreur.ErreurVariableInconnue("La variable " + var.getNom() + " n'a pas \u00E9t\u00E9 initialis\u00E9e." +
-                    "\nAvez-vous oubli\u00E9 de mettre 'var' devant la d\u00E9claration de la variable?");
+                                                      "\nAvez-vous oubli\u00E9 de mettre 'var' devant la d\u00E9claration de la variable?");
         }
 
         if (expr instanceof CreerListe.SousSection) {
             ASObjet<?> valeurVariable = variable.getValeurApresGetter();
             if (!(valeurVariable instanceof ASListe listeInitial)) {
                 throw new ASErreur.ErreurType("L'assignement d'index ou de sous-section n'est pas d\u00E9finie pour " +
-                        "un \u00E9l\u00E9ment de type '" + valeurVariable.obtenirNomType() + "'.");
+                                              "un \u00E9l\u00E9ment de type '" + valeurVariable.obtenirNomType() + "'.");
             }
 
             // si l'assignement est de forme
@@ -78,7 +78,7 @@ public class Assigner extends Programme {
             }
         }
 
-        if (variable.pasInitialisee()) {
+        if (op != null && variable.pasInitialisee()) {
             throw new ASErreur.ErreurAssignement("La variable '" + var.getNom() + "' est utilis\u00E9e avant d'\u00EAtre d\u00E9clar\u00E9e");
         }
 
@@ -94,9 +94,9 @@ public class Assigner extends Programme {
     @Override
     public String toString() {
         return "Assigner{" +
-                "expr=" + expr +
-                ", valeur=" + valeur +
-                '}';
+               "expr=" + expr +
+               ", valeur=" + valeur +
+               '}';
     }
 
     /*

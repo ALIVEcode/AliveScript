@@ -4,8 +4,6 @@ import interpreteur.as.erreurs.ASErreur;
 import interpreteur.data_manager.Data;
 import language.Language;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static test.utils.AliveScriptTester.*;
 
@@ -37,7 +35,7 @@ public class TestAliveScript extends AbstractTestAliveScript {
     }
 
     @Test
-    public void testFin() {
+    public void testQuitter() {
         assertCompiles("""
                 afficher "bonjour"
                 afficher 12
@@ -94,6 +92,39 @@ public class TestAliveScript extends AbstractTestAliveScript {
                 .prints("288")
                 .prints("entier")
                 .ends();
+    }
+
+    @Test
+    public void variablesNonDeclarer1() {
+        assertCompiles("""
+                var num: entier
+                afficher num
+                """);
+
+        assertExecution()
+                .throwsASErreur(ASErreur.ErreurAssignement.class);
+    }
+
+    @Test
+    public void variablesNonDeclarer2() {
+        assertCompiles("""
+                var abc: liste
+                abc += 2
+                """);
+
+        assertExecution()
+                .throwsASErreur(ASErreur.ErreurAssignement.class);
+    }
+
+    @Test
+    public void variablesNonDeclarer3() {
+        assertCompiles("""
+                var abc: liste
+                abc[2:1] = [2]
+                """);
+
+        assertExecution()
+                .throwsASErreur(ASErreur.ErreurAssignement.class);
     }
 
 
