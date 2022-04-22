@@ -9,15 +9,21 @@ import static org.junit.Assert.*;
 
 public class AliveScriptTester {
     private static Executeur executeur = null;
+    private static AliveScriptExecutionTester executionTester = null;
 
     public static void resetExecuteur(boolean debug, Language language) {
         executeur = new Executeur(language);
         executeur.debug = debug;
+        executionTester = null;
     }
 
     public static AliveScriptExecutionTester assertCompilesAndExecutes(String code) {
         assertCompiles(code);
         return assertExecution();
+    }
+
+    public static boolean isDone() {
+        return executionTester == null || executionTester.isDone();
     }
 
     public static void assertCompiles(String code) {
@@ -34,15 +40,21 @@ public class AliveScriptTester {
     }
 
     public static AliveScriptExecutionTester assertExecution() {
-        return new AliveScriptExecutionTester(execute(null), executeur.getTranslator());
+        var aliveScriptExecutionTester = new AliveScriptExecutionTester(execute(null), executeur.getTranslator());
+        executionTester = aliveScriptExecutionTester;
+        return aliveScriptExecutionTester;
     }
 
     public static AliveScriptExecutionTester assertExecution(Object responseData) {
-        return new AliveScriptExecutionTester(execute(new Object[]{responseData}), executeur.getTranslator());
+        var aliveScriptExecutionTester = new AliveScriptExecutionTester(execute(new Object[]{responseData}), executeur.getTranslator());
+        executionTester = aliveScriptExecutionTester;
+        return aliveScriptExecutionTester;
     }
 
     public static AliveScriptExecutionTester assertExecution(Object[] responseData) {
-        return new AliveScriptExecutionTester(execute(responseData), executeur.getTranslator());
+        var aliveScriptExecutionTester = new AliveScriptExecutionTester(execute(responseData), executeur.getTranslator());
+        executionTester = aliveScriptExecutionTester;
+        return aliveScriptExecutionTester;
     }
 
     private static JSONArray execute(Object[] responseData) {

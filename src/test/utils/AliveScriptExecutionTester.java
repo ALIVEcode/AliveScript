@@ -34,6 +34,10 @@ public class AliveScriptExecutionTester {
         return executionResult.getJSONObject(currentIdx);
     }
 
+    public boolean isDone() {
+        return executionResult.length() <= currentIdx;
+    }
+
     //----------------- tests -----------------//
 
     public AliveScriptExecutionTester prints(Object message) {

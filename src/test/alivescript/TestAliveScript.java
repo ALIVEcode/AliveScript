@@ -31,7 +31,8 @@ public class TestAliveScript extends AbstractTestAliveScript {
                 .prints("-23.11")
                 .prints("[1, 2, 3, 4]")
                 .prints("vrai")
-                .prints("[5, 6, 7]");
+                .prints("[5, 6, 7]")
+                .ends();
     }
 
     @Test
