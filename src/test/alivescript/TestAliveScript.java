@@ -102,7 +102,8 @@ public class TestAliveScript extends AbstractTestAliveScript {
                 """);
 
         assertExecution()
-                .throwsASErreur(ASErreur.ErreurAssignement.class);
+                .throwsASErreur(ASErreur.ErreurAssignement.class)
+                .ends();
     }
 
     @Test
@@ -113,7 +114,8 @@ public class TestAliveScript extends AbstractTestAliveScript {
                 """);
 
         assertExecution()
-                .throwsASErreur(ASErreur.ErreurAssignement.class);
+                .throwsASErreur(ASErreur.ErreurAssignement.class)
+                .ends();
     }
 
     @Test
@@ -124,7 +126,8 @@ public class TestAliveScript extends AbstractTestAliveScript {
                 """);
 
         assertExecution()
-                .throwsASErreur(ASErreur.ErreurAssignement.class);
+                .throwsASErreur(ASErreur.ErreurAssignement.class)
+                .ends();
     }
 
 
