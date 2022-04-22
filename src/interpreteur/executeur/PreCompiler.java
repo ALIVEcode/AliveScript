@@ -87,6 +87,9 @@ public class PreCompiler {
                 .toArray(String[]::new);
     }
 
+    public static boolean isExperimental(String[] lines) {
+        return lines[0].trim().matches("^[\"']experimental[\"']$");
+    }
 }
 
 

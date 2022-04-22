@@ -30,7 +30,9 @@ public class CreerFonction extends Programme {
         this.args = Arrays.asList(args);
         this.typeRetour = typeRetour;
         // declare fonction
-        ASScope.getCurrentScope().declarerVariable(new ASVariable(var.getNom(), null, new ASType("fonctionType")));
+        var varFonction = new ASVariable(var.getNom(), null, new ASType("fonctionType"));
+        var.setNom(varFonction.obtenirNom());
+        ASScope.getCurrentScope().declarerVariable(varFonction);
         this.scope = ASScope.makeNewCurrentScope();
     }
 
@@ -62,7 +64,7 @@ public class CreerFonction extends Programme {
     public Coordonnee prochaineCoord(Coordonnee coord, List<Token> ligne) {
         String currentScope = coord.getScope();
         String newScope = ASFonctionManager.FONCTION_SCOPE_START
-                          + ASFonctionManager.makeFunctionNameSignature(currentScope, ASFonctionManager.ajouterDansStructure(this.var.getNom()));
+                          + ASFonctionManager.makeFunctionNameSignature(currentScope, this.var.getNom());
         return new Coordonnee(executeurInstance.nouveauScope(newScope));
     }
 

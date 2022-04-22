@@ -118,8 +118,7 @@ public class ASListe implements ASIterable<Object> {
         return new SousListe(this, debut, idxRelatif(this.valeur, fin));
     }
 
-    @Override
-    public String toString() {
+    public String toString(char openingSymbol, char closingSymbol) {
         AtomicInteger nbPair = new AtomicInteger(0);
 
         String toString = String.join(", ", this.valeur
@@ -131,10 +130,12 @@ public class ASListe implements ASIterable<Object> {
                 })
                 .toArray(String[]::new));
 
-        final char openingSymbol = nbPair.get() != taille() ? '[' : '{';
-        final char closingSymbol = nbPair.get() != taille() ? ']' : '}';
-
         return openingSymbol + toString + closingSymbol;
+    }
+
+    @Override
+    public String toString() {
+        return toString('[', ']');
     }
 
     @Override
