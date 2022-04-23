@@ -4,23 +4,7 @@ import language.Language;
 public class Main {
 
     static final String[] CODE = """
-            fonction abc(a = 3, b = 10)
-                attendre 1
-                afficher a
-                var y
-                b += a
-                lire y
-                si a > 1
-                    afficher b
-                    abc(a-1)
-                    afficher "------"
-                fin si
-                afficher b
-                afficher a
-                afficher y
-            fin fonction
-                        
-            abc
+            
             """.split("\n");
 
     public static void main(String[] args) {

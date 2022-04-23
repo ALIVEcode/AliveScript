@@ -693,6 +693,9 @@ public class Executeur {
 
     private Object resumeExecution() {
         Coordonnee coordActuel = obtenirCoordRunTime();
+        if (coordActuel.toString() == null) {
+            return "";
+        }
         return executerScope(coordActuel.getScope(), null, coordActuel.toString());
     }
 
