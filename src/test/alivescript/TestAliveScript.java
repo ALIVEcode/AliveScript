@@ -36,6 +36,38 @@ public class TestAliveScript extends AbstractTestAliveScript {
     }
 
     @Test
+    public void testerTypeDe() {
+        assertCompiles("""
+                var a = 12
+                var b = "salut"
+                var c = vrai
+                var d = -22.99
+                var e = nul
+                var f = {}
+                var g = []
+                                
+                fonction h()
+                                
+                fin fonction
+                                
+                pour var i dans [a, b, c, d, e, f, g, h]
+                    afficher typeDe(i)
+                fin pour
+                """);
+
+        assertExecution()
+                .prints("entier")
+                .prints("texte")
+                .prints("booleen")
+                .prints("decimal")
+                .prints("nulType")
+                .prints("dict")
+                .prints("liste")
+                .prints("fonctionType")
+                .ends();
+    }
+
+    @Test
     public void testQuitter() {
         assertCompiles("""
                 afficher "bonjour"
