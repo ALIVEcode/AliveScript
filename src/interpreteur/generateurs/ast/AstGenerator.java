@@ -27,39 +27,13 @@ import utils.Range;
 
 
 public class AstGenerator {
-    static Hashtable<String, Ast<?>> programmesDict = new Hashtable<>();
-    static ArrayList<String> ordreProgrammes = new ArrayList<>();
+    protected Hashtable<String, Ast<?>> programmesDict = new Hashtable<>();
+    protected ArrayList<String> ordreProgrammes = new ArrayList<>();
 
-    static Hashtable<String, Ast<?>> expressionsDict = new Hashtable<>();
-    static ArrayList<String> ordreExpressions = new ArrayList<>();
+    protected Hashtable<String, Ast<?>> expressionsDict = new Hashtable<>();
+    protected ArrayList<String> ordreExpressions = new ArrayList<>();
     private int cptrExpr = 0;
     private int cptrProg = 0;
-
-    private static ArrayList<String> ajouterSousAstOrdre(Hashtable<String, Ast<?>> sous_ast) {
-        ArrayList<String> nouvelOrdre = new ArrayList<>(ordreExpressions);
-
-        if (sous_ast.size() > 0) {
-            for (String pattern : sous_ast.keySet()) {
-                if (ordreExpressions.contains(pattern)) {
-                    nouvelOrdre.remove(pattern);
-                }
-                int importance = sous_ast.get(pattern).getImportance();
-                if (importance == -1) {
-                    nouvelOrdre.add(pattern);
-                } else {
-                    if (nouvelOrdre.size() > importance && nouvelOrdre.get(importance) == null) {
-                        nouvelOrdre.set(importance, pattern);
-                    } else {
-                        if (nouvelOrdre.size() < importance) nouvelOrdre.add(pattern);
-                        else nouvelOrdre.add(importance, pattern);
-                    }
-                }
-            }
-            ordreExpressions.removeIf(Objects::isNull);
-            //System.out.println(this.ordreExpressions);
-        }
-        return nouvelOrdre;
-    }
 
     public static void hasSafeSyntax(Token[] expressionArray) {
         int parentheses = 0;
@@ -102,7 +76,52 @@ public class AstGenerator {
 
     }
 
-    public static Expression<?> evalOneExpr(ArrayList<Object> expressions, Hashtable<String, Ast<?>> sous_ast) {
+    public static Matcher memeStructureProgramme(String line, String structurePotentielle) {
+        //System.out.println(structurePotentielle.replaceAll("( ?)(#?)expression ?", Matcher.quoteReplacement("\\b.+")));
+        //Pattern structurePattern = Pattern.compile(structurePotentielle.replaceAll("( ?)(#?)expression ?", Matcher.quoteReplacement("\\b.+")));
+        // FIXME Maybe a catastrophic change idk
+        Pattern structurePattern = Pattern.compile(structurePotentielle.replaceAll("( ?)(#?)expression ?", Matcher.quoteReplacement("\\b *([A-Z_] ?)+ *")));
+
+        return structurePattern.matcher(line);
+    }
+
+    // TODO TEST!!!!!!
+    public static Matcher memeStructureExpression(String line, String structurePotentielle) {
+        Pattern structurePattern = Pattern.compile(structurePotentielle
+                .replaceAll("#expression", Matcher.quoteReplacement("\\b.+"))
+                .replaceAll("!expression *", Matcher.quoteReplacement("(?<!expression )"))
+        );
+        //System.out.println(line + " matcher:" + structurePattern.matcher(line));
+        return structurePattern.matcher(line);
+    }
+
+    private ArrayList<String> ajouterSousAstOrdre(Hashtable<String, Ast<?>> sous_ast) {
+        ArrayList<String> nouvelOrdre = new ArrayList<>(ordreExpressions);
+
+        if (sous_ast.size() > 0) {
+            for (String pattern : sous_ast.keySet()) {
+                if (ordreExpressions.contains(pattern)) {
+                    nouvelOrdre.remove(pattern);
+                }
+                int importance = sous_ast.get(pattern).getImportance();
+                if (importance == -1) {
+                    nouvelOrdre.add(pattern);
+                } else {
+                    if (nouvelOrdre.size() > importance && nouvelOrdre.get(importance) == null) {
+                        nouvelOrdre.set(importance, pattern);
+                    } else {
+                        if (nouvelOrdre.size() < importance) nouvelOrdre.add(pattern);
+                        else nouvelOrdre.add(importance, pattern);
+                    }
+                }
+            }
+            ordreExpressions.removeIf(Objects::isNull);
+            //System.out.println(this.ordreExpressions);
+        }
+        return nouvelOrdre;
+    }
+
+    public Expression<?> evalOneExpr(ArrayList<Object> expressions, Hashtable<String, Ast<?>> sous_ast) {
         var result = eval(expressions, sous_ast);
         if (result.size() != 1) {
             throw new ASErreur.ErreurSyntaxe("Erreur ligne 106 dans AstGenerator");
@@ -111,7 +130,7 @@ public class AstGenerator {
         }
     }
 
-    public static ArrayList<Expression<?>> eval(ArrayList<Object> expressions, Hashtable<String, Ast<?>> sous_ast) {
+    public ArrayList<Expression<?>> eval(ArrayList<Object> expressions, Hashtable<String, Ast<?>> sous_ast) {
 
         var regleSyntaxeDispo = new Hashtable<>(expressionsDict);
         var ordreRegleSyntaxe = new ArrayList<>(ordreExpressions);
@@ -300,38 +319,22 @@ public class AstGenerator {
         return ((ArrayList<?>) expressionArray).stream().map(e -> (Expression<?>) e).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public static Matcher memeStructureProgramme(String line, String structurePotentielle) {
-        //System.out.println(structurePotentielle.replaceAll("( ?)(#?)expression ?", Matcher.quoteReplacement("\\b.+")));
-        Pattern structurePattern = Pattern.compile(structurePotentielle.replaceAll("( ?)(#?)expression ?", Matcher.quoteReplacement("\\b.+")));
-        return structurePattern.matcher(line);
-    }
-
-    // TODO TEST!!!!!!
-    public static Matcher memeStructureExpression(String line, String structurePotentielle) {
-        Pattern structurePattern = Pattern.compile(structurePotentielle
-                .replaceAll("#expression", Matcher.quoteReplacement("\\b.+"))
-                .replaceAll("!expression *", Matcher.quoteReplacement("(?<!expression )"))
-        );
-        //System.out.println(line + " matcher:" + structurePattern.matcher(line));
-        return structurePattern.matcher(line);
-    }
-
-    static protected void reset() {
+    protected void reset() {
         expressionsDict.clear();
         programmesDict.clear();
         ordreExpressions.clear();
         ordreProgrammes.clear();
     }
 
-    public static ArrayList<String> getOrdreExpressions() {
+    public ArrayList<String> getOrdreExpressions() {
         return ordreExpressions;
     }
 
-    public static ArrayList<String> getOrdreProgrammes() {
+    public ArrayList<String> getOrdreProgrammes() {
         return ordreProgrammes;
     }
 
-    private String remplacerCategoriesParMembre(String pattern) {
+    protected String remplacerCategoriesParMembre(String pattern) {
         String nouveauPattern = pattern;
         for (String option : pattern.split("~")) {
             for (String motClef : option.split(" ")) {  // on divise le pattern en mot clef afin d'evaluer ceux qui sont des categories (une categorie est entouree par des {})
@@ -361,74 +364,68 @@ public class AstGenerator {
             fonction.getSousAst().remove(p);
             fonction.getSousAst().put(remplacerCategoriesParMembre(p), sousAstCopy.get(p));
         }
-        fonction.setImportance(cptrProg++);
+        if (fonction.getImportance() == -1)
+            fonction.setImportance(cptrProg++);
         String nouveauPattern = remplacerCategoriesParMembre(pattern);
-        programmesDict.put(nouveauPattern, fonction); // remplace les categories par ses membres, s'il n'y a pas de categorie, ne modifie pas le pattern
-        ordreProgrammes.add(nouveauPattern);
+        var previous = programmesDict.put(nouveauPattern, fonction); // remplace les categories par ses membres, s'il n'y a pas de categorie, ne modifie pas le pattern
+        if (previous == null) {
+            ordreProgrammes.add(fonction.getImportance(), nouveauPattern);
+        }
         //}
     }
 
     protected void ajouterProgramme(String pattern, Function<List<Object>, ? extends Programme> fonction) {
-        var ast = new Ast<Programme>() {
-            @Override
-            public Programme apply(List<Object> p, Integer idxVariante) {
-                return fonction.apply(p);
-            }
-        };
+        var ast = Ast.from(fonction);
         //for (String programme : pattern.split("~")) {
         ast.setImportance(cptrProg++);
         String nouveauPattern = remplacerCategoriesParMembre(pattern);
-        programmesDict.put(nouveauPattern, ast); // remplace les categories par ses membres, s'il n'y a pas de categorie, ne modifie pas le pattern
-        ordreProgrammes.add(nouveauPattern);
+        var previous = programmesDict.put(nouveauPattern, ast); // remplace les categories par ses membres, s'il n'y a pas de categorie, ne modifie pas le pattern
+        if (previous == null) {
+            ordreProgrammes.add(nouveauPattern);
+        }
         //}
     }
 
     protected void ajouterProgramme(String pattern, BiFunction<List<Object>, Integer, ? extends Programme> fonction) {
-        var ast = new Ast<Programme>() {
-            @Override
-            public Programme apply(List<Object> p, Integer idxVariante) {
-                return fonction.apply(p, idxVariante);
-            }
-        };
+        var ast = Ast.from(fonction);
         //for (String programme : pattern.split("~")) {
         ast.setImportance(cptrProg++);
         String nouveauPattern = remplacerCategoriesParMembre(pattern);
-        programmesDict.put(nouveauPattern, ast); // remplace les categories par ses membres, s'il n'y a pas de categorie, ne modifie pas le pattern
-        ordreProgrammes.add(nouveauPattern);
+        var previous = programmesDict.put(nouveauPattern, ast); // remplace les categories par ses membres, s'il n'y a pas de categorie, ne modifie pas le pattern
+        if (previous == null) {
+            ordreProgrammes.add(nouveauPattern);
+        }
         //}
     }
 
     protected void ajouterExpression(String pattern, Ast<? extends Expression<?>> fonction) {
         String nouveauPattern = remplacerCategoriesParMembre(pattern);
-        fonction.setImportance(cptrExpr++);
-        expressionsDict.put(nouveauPattern, fonction);
-        ordreExpressions.add(nouveauPattern);
+        if (fonction.getImportance() == -1)
+            fonction.setImportance(cptrExpr++);
+        var previous = expressionsDict.put(nouveauPattern, fonction);
+        if (previous == null) {
+            ordreExpressions.add(fonction.getImportance(), nouveauPattern);
+        }
     }
 
     protected void ajouterExpression(String pattern, Function<List<Object>, ? extends Expression<?>> fonction) {
-        var ast = new Ast<Expression<?>>() {
-            @Override
-            public Expression<?> apply(List<Object> p, Integer idxVariante) {
-                return fonction.apply(p);
-            }
-        };
+        var ast = Ast.from(fonction);
         String nouveauPattern = remplacerCategoriesParMembre(pattern);
         ast.setImportance(cptrExpr++);
-        expressionsDict.put(nouveauPattern, ast);
-        ordreExpressions.add(nouveauPattern);
+        var previous = expressionsDict.put(nouveauPattern, ast);
+        if (previous == null) {
+            ordreExpressions.add(nouveauPattern);
+        }
     }
 
     protected void ajouterExpression(String pattern, BiFunction<List<Object>, Integer, ? extends Expression<?>> fonction) {
-        var ast = new Ast<Expression<?>>() {
-            @Override
-            public Expression<?> apply(List<Object> p, Integer idxVariante) {
-                return fonction.apply(p, idxVariante);
-            }
-        };
+        var ast = Ast.from(fonction);
         String nouveauPattern = remplacerCategoriesParMembre(pattern);
         ast.setImportance(cptrExpr++);
-        expressionsDict.put(nouveauPattern, ast);
-        ordreExpressions.add(nouveauPattern);
+        var previous = expressionsDict.put(nouveauPattern, ast);
+        if (previous == null) {
+            ordreExpressions.add(nouveauPattern);
+        }
     }
 
     protected void setOrdreProgramme() {
@@ -557,7 +554,7 @@ public class AstGenerator {
         listToken.forEach(e -> structureLine.add(e.obtenirNom()));
 
         ArrayList<String> structureProgramme = new ArrayList<>(Arrays.asList(programme.split(" ")));
-        structureProgramme.removeIf(e -> e.equals("expression") || e.equals("#expression"));
+        // structureProgramme.removeIf(e -> e.equals("expression") || e.equals("#expression"));
         Iterator<String> iterProgramme = structureProgramme.iterator();
 
         ArrayList<ArrayList<Token>> expressionsList = new ArrayList<>();
@@ -569,7 +566,13 @@ public class AstGenerator {
             ArrayList<Token> expressionList = new ArrayList<>();
 
             for (int i = 0; i < structureLine.size(); ++i) {
-                if (structureLine.get(i).matches(clef)) {
+                // FIXME Maybe a catastrophic change idk part 2
+                if (clef.equals("expression") || clef.equals("#expression")) {
+                    expressionList.add(listToken.get(i));
+                    clef = iterProgramme.hasNext() ? iterProgramme.next() : "";
+                    continue;
+                }
+                if (!clef.isBlank() && structureLine.get(i).matches(clef)) {
                     clef = iterProgramme.hasNext() ? iterProgramme.next() : "";
 
                     programmeList.add(listToken.get(i));

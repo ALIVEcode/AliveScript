@@ -13,26 +13,34 @@ import java.util.List;
 public class Utiliser extends Programme {
     private final Var module;
     private final List<Var> sous_modules;
+    private final String prefix;
 
-    public Utiliser(Var module, Var[] sous_modules, Executeur executeurInstance) {
+
+    public Utiliser(Var module, Var[] sous_modules, Executeur executeurInstance, String prefix) {
         super(executeurInstance);
         this.module = module;
-        this.sous_modules = Arrays.asList(sous_modules);
+        this.sous_modules = sous_modules == null ? null : Arrays.asList(sous_modules);
+        this.prefix = prefix;
         this.loadModule();
     }
 
+    public Utiliser(Var module, Executeur executeurInstance, String prefix) {
+        this(module, new Var[]{}, executeurInstance, prefix);
+    }
+
+    public Utiliser(Var module, Var[] sous_modules, Executeur executeurInstance) {
+        this(module, sous_modules, executeurInstance, "");
+    }
+
     public Utiliser(Var module, Executeur executeurInstance) {
-        super(executeurInstance);
-        this.module = module;
-        this.sous_modules = new ArrayList<>();
-        this.loadModule();
+        this(module, executeurInstance, module.getNom());
     }
 
     private void loadModule() {
         if (sous_modules.isEmpty()) {
-            executeurInstance.getAsModuleManager().utiliserModule(module.getNom());
+            executeurInstance.getAsModuleManager().utiliserModuleAvecPrefix(module.getNom(), prefix);
         } else {
-            executeurInstance.getAsModuleManager().utiliserModule(module.getNom(), sous_modules.stream().map(Var::getNom).toArray(String[]::new));
+            executeurInstance.getAsModuleManager().utiliserModuleAvecPrefix(module.getNom(), sous_modules.stream().map(Var::getNom).toArray(String[]::new), prefix);
         }
     }
 
@@ -44,8 +52,8 @@ public class Utiliser extends Programme {
     @Override
     public String toString() {
         return "Utiliser{" +
-                "module=" + module +
-                ", sous_modules?=" + sous_modules +
-                '}';
+               "module=" + module +
+               ", sous_modules?=" + sous_modules +
+               '}';
     }
 }

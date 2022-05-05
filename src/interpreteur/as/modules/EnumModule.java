@@ -11,7 +11,8 @@ public enum EnumModule {
     Dict(ModuleDict::charger),
     Test(ModuleTest::charger),
     Ai(ModuleAI::charger),
-    Iot(ModuleIoT::charger)
+    Iot(ModuleIoT::charger),
+    Aliot(ModuleAliot::charger),
     ;
 
     EnumModule(ASModuleFactory moduleFactory) {

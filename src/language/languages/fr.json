@@ -29,8 +29,16 @@
         "listVar": "varListe"
       },
       "functions": {
+        "quit": "quitter",
+        "notif": "notif",
+        "notif_err": "notif_err",
         "print": "afficher",
         "wait": "attendre",
+        "forward": "avancer",
+        "backward": "reculer",
+        "left": "gauche",
+        "right": "droite",
+        "stop": "arreter",
         "random": "aleatoire",
         "typeOf": "typeDe",
         "boolean": "booleen",
@@ -66,8 +74,8 @@
     },
     "math": {
       "constants": {
-        "pi": "pi",
-        "e": "e"
+        "pi": "PI",
+        "e": "E"
       },
       "functions": {
         "rad": "rad",

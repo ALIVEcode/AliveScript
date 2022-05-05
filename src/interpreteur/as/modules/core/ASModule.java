@@ -5,6 +5,7 @@ import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.managers.ASFonctionManager;
 import interpreteur.as.lang.ASType;
+import language.Translator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
 
 
 public record ASModule(ASFonctionModule[] fonctions,
-                             ASVariable[] variables) {
+                       ASVariable[] variables) {
 
     public ASModule(ASFonctionModule[] fonctions) {
         this(fonctions, new ASVariable[]{});
@@ -22,6 +23,12 @@ public record ASModule(ASFonctionModule[] fonctions,
 
     public ASModule(ASVariable[] variables) {
         this(new ASFonctionModule[]{}, variables);
+    }
+
+    public ASModule traduire(Translator translator) {
+        Arrays.stream(fonctions).forEach(f -> f.setNom(translator.translate(f.getNom())));
+        Arrays.stream(variables).forEach(v -> v.setNom(translator.translate(v.obtenirNom())));
+        return this;
     }
 
     public void utiliser(String prefix) {
@@ -35,16 +42,18 @@ public record ASModule(ASFonctionModule[] fonctions,
         ASFonctionManager.retirerStructure();
     }
 
-    public void utiliser(List<String> nomMethodes) {
+    public void utiliser(List<String> nomMethodes, String prefix) {
+        ASFonctionManager.ajouterStructure(prefix);
         for (ASFonctionModule fonction : fonctions) {
             if (nomMethodes.contains(fonction.getNom()))
                 ASFonctionManager.ajouterFonction(fonction);
         }
         for (ASVariable variable : variables) {
             if (nomMethodes.contains(variable.obtenirNom())) {
-                ASScope.getCurrentScope().declarerVariable(variable);
+                ASScope.getCurrentScope().declarerVariable(variable.clone());
             }
         }
+        ASFonctionManager.retirerStructure();
     }
 
     /**
@@ -89,9 +98,9 @@ public record ASModule(ASFonctionModule[] fonctions,
     @Override
     public String toString() {
         return "Module{\n" +
-                "fonctions=" + Arrays.toString(fonctions) + "\n" +
-                ", variables=" + Arrays.toString(variables) + "\n" +
-                '}';
+               "fonctions=" + Arrays.toString(fonctions) + "\n" +
+               ", variables=" + Arrays.toString(variables) + "\n" +
+               '}';
     }
 }
 

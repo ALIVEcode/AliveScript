@@ -2,13 +2,11 @@ package interpreteur.as.lang.datatype;
 
 import interpreteur.as.erreurs.ASErreur;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ASListe implements ASIterable<Object> {
     private ArrayList<ASObjet<?>> valeur = new ArrayList<>();
@@ -33,7 +31,7 @@ public class ASListe implements ASIterable<Object> {
     }
 
     public boolean estDict() {
-        return valeur.stream().allMatch(ASPaire.class::isInstance);
+        return !valeur.isEmpty() && valeur.stream().allMatch(ASPaire.class::isInstance);
     }
 
     public void clefValideOrThrow(ASObjet<?> nouvelElement) {
@@ -69,10 +67,13 @@ public class ASListe implements ASIterable<Object> {
         return this;
     }
 
-    public ASListe remplacerRange(int debut, int fin, ASListe remplacement) {
+    public ASListe remplacerRange(int debut, int fin, ASIterable<?> remplacement) {
         debut = idxRelatif(valeur, debut);
         fin = idxRelatif(valeur, fin);
-        this.valeur = this.sousSection(0, debut).ajouterTout(remplacement).ajouterTout(this.sousSection(fin, this.taille())).getValue();
+        var valeur = this.sousSection(0, debut);
+        remplacement.iter().forEachRemaining(valeur::ajouterElement);
+        valeur.ajouterTout(this.sousSection(fin, this.taille()));
+        this.valeur = valeur.getValue();
         aucuneClefDuplique();
         return this;
     }
@@ -117,8 +118,7 @@ public class ASListe implements ASIterable<Object> {
         return new SousListe(this, debut, idxRelatif(this.valeur, fin));
     }
 
-    @Override
-    public String toString() {
+    public String toString(char openingSymbol, char closingSymbol) {
         AtomicInteger nbPair = new AtomicInteger(0);
 
         String toString = String.join(", ", this.valeur
@@ -130,10 +130,12 @@ public class ASListe implements ASIterable<Object> {
                 })
                 .toArray(String[]::new));
 
-        final char openingSymbol = nbPair.get() != taille() ? '[' : '{';
-        final char closingSymbol = nbPair.get() != taille() ? ']' : '}';
-
         return openingSymbol + toString + closingSymbol;
+    }
+
+    @Override
+    public String toString() {
+        return toString('[', ']');
     }
 
     @Override

@@ -1,12 +1,9 @@
 package interpreteur.as.modules.builtins;
 
-import interpreteur.as.lang.ASConstante;
-import interpreteur.as.lang.ASFonctionModule;
+import interpreteur.as.lang.*;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur;
-import interpreteur.as.lang.ASTypeBuiltin;
 import interpreteur.as.modules.core.ASModule;
-import interpreteur.as.lang.ASType;
 import interpreteur.executeur.Executeur;
 
 import java.util.*;
@@ -86,20 +83,10 @@ public class BuiltinsListeUtils {
                 @Override
                 public ASObjet<?> executer() {
                     ASListe liste = (ASListe) this.getParamsValeursDict().get("lst");
-                    ASListe nouvelleListe;
                     ASObjet<?> f = this.getParamsValeursDict().get("f");
-                    if (f instanceof ASFonction fonction) {
-                        nouvelleListe = new ASListe(liste.getValue().stream().map(element -> fonction
-                                        .makeInstance()
-                                        .executer(new ArrayList<>(List.of((ASObjet<?>) element))))
-                                .toArray(ASObjet[]::new));
-
-                    } else {
-                        nouvelleListe = new ASListe(liste.getValue().stream().map(element -> ((ASFonctionModule) f)
-                                        .setParamPuisExecute(new ArrayList<>(List.of((ASObjet<?>) element))))
-                                .toArray(ASObjet[]::new));
-                    }
-                    return nouvelleListe;
+                    return new ASListe(liste.getValue().stream().map(element -> ((ASFonctionInterface) f)
+                                    .apply(new ArrayList<>(List.of((ASObjet<?>) element))))
+                            .toArray(ASObjet[]::new));
                 }
             },
 
@@ -125,23 +112,11 @@ public class BuiltinsListeUtils {
                 @Override
                 public ASObjet<?> executer() {
                     ASListe liste = (ASListe) this.getParamsValeursDict().get("lst");
-                    ASListe nouvelleListe;
                     ASObjet<?> f = this.getParamsValeursDict().get("f");
-
-                    if (f instanceof ASFonction fonction) {
-                        nouvelleListe = new ASListe(liste.getValue().stream().filter(element -> fonction
-                                        .makeInstance()
-                                        .executer(new ArrayList<>(List.of((ASObjet<?>) element)))
-                                        .boolValue())
-                                .toArray(ASObjet[]::new));
-
-                    } else {
-                        nouvelleListe = new ASListe(liste.getValue().stream().filter(element -> ((ASFonctionModule) f)
-                                        .setParamPuisExecute(new ArrayList<>(List.of((ASObjet<?>) element)))
-                                        .boolValue())
-                                .toArray(ASObjet[]::new));
-                    }
-                    return nouvelleListe;
+                    return new ASListe(liste.getValue().stream().filter(element -> ((ASFonctionInterface) f)
+                                    .apply(new ArrayList<>(List.of((ASObjet<?>) element)))
+                                    .boolValue())
+                            .toArray(ASObjet[]::new));
                 }
             },
 
@@ -253,7 +228,7 @@ public class BuiltinsListeUtils {
                         idx = lst.getValue().indexOf(val);
                     } else {
                         throw new ASErreur.ErreurType("La valeur doit \u00EAtre de type texte lorsque l'on recherche " +
-                                "l'index d'un \u00E9l\u00E9ment de type texte");
+                                                      "l'index d'un \u00E9l\u00E9ment de type texte");
                     }
                     return idx != -1 ? new ASEntier(idx) : new ASNul();
                 }

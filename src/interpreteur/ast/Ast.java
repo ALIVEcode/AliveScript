@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * @author Mathis Laroche
@@ -35,6 +36,43 @@ public abstract class Ast<T> implements BiFunction<List<Object>, Integer, T> {
             this.sous_asts.put(sous_ast.getKey(), sous_ast.getValue());
         }
     }
+
+    public static <T> Ast<T> from(int importance, BiFunction<List<Object>, Integer, T> function) {
+        return new Ast<>(importance) {
+            @Override
+            public T apply(List<Object> p, Integer idxVariante) {
+                return function.apply(p, idxVariante);
+            }
+        };
+    }
+
+    public static <T> Ast<T> from(int importance, Function<List<Object>, T> function) {
+        return new Ast<>(importance) {
+            @Override
+            public T apply(List<Object> p, Integer idxVariante) {
+                return function.apply(p);
+            }
+        };
+    }
+
+    public static <T> Ast<T> from(BiFunction<List<Object>, Integer, T> function) {
+        return new Ast<>() {
+            @Override
+            public T apply(List<Object> p, Integer idxVariante) {
+                return function.apply(p, idxVariante);
+            }
+        };
+    }
+
+    public static <T> Ast<T> from(Function<List<Object>, T> function) {
+        return new Ast<>() {
+            @Override
+            public T apply(List<Object> p, Integer idxVariante) {
+                return function.apply(p);
+            }
+        };
+    }
+
 
     public Hashtable<String, Ast<?>> getSousAst() {
         return this.sous_asts;

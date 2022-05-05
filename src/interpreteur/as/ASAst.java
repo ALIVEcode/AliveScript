@@ -12,6 +12,7 @@ import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.ast.buildingBlocs.expressions.*;
 import interpreteur.ast.buildingBlocs.programmes.*;
+import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
 import interpreteur.generateurs.ast.AstGenerator;
 import interpreteur.tokens.Token;
@@ -44,7 +45,10 @@ public class ASAst extends AstGenerator {
         ajouterProgramme("", (p) -> null);
 
         ajouterProgramme("UTILISER expression~"
-                         + "UTILISER expression BRACES_OUV expression BRACES_FERM",
+                         + "UTILISER expression BRACES_OUV MUL BRACES_FERM~"
+                         + "UTILISER expression BRACES_OUV expression BRACES_FERM~"
+                         + "UTILISER expression NOM_VARIABLE BRACES_OUV MUL BRACES_FERM~"
+                         + "UTILISER expression NOM_VARIABLE BRACES_OUV expression BRACES_FERM",
                 (p, variante) -> {
                     if (p.get(1) instanceof ValeurConstante valeurConstante && valeurConstante.eval() instanceof ASTexte texte) {
                         String msg = texte.getValue();
@@ -56,15 +60,29 @@ public class ASAst extends AstGenerator {
                         }
                     }
 
-                    if (variante == 1) {
+                    String nomPrefix = "";
+                    if (variante == 3 || variante == 4) {
+                        nomPrefix = ((Token) p.get(2)).obtenirValeur();
+                        if (!nomPrefix.endsWith(".")) {
+                            throw new ASErreur.ErreurSyntaxe("Le pr\u00E9fix du module doit finir par '.'");
+                        }
+                        nomPrefix = nomPrefix.substring(0, nomPrefix.length() - 1);
+                    }
+
+                    if (variante == 1 || variante == 3) {
+                        return new Utiliser((Var) p.get(1), executeurInstance, nomPrefix);
+
+                    } else if (variante == 2 || variante == 4) {
+                        int idxEnumeration = variante == 2 ? 3 : 4;
                         Var[] sous_modules;
-                        if (p.get(3) instanceof CreerListe.Enumeration enumeration) {
+                        if (p.get(idxEnumeration) instanceof CreerListe.Enumeration enumeration) {
                             sous_modules = enumeration.getExprs().toArray(Var[]::new);
                         } else {
-                            sous_modules = new Var[]{(Var) p.get(3)};
+                            sous_modules = new Var[]{(Var) p.get(idxEnumeration)};
                         }
-                        return new Utiliser((Var) p.get(1), sous_modules, executeurInstance);
+                        return new Utiliser((Var) p.get(1), sous_modules, executeurInstance, nomPrefix);
                     }
+
                     return new Utiliser((Var) p.get(1), executeurInstance);
                 });
         /*
@@ -114,8 +132,7 @@ public class ASAst extends AstGenerator {
                          + "VAR expression {assignements} expression~"
                          + "VAR expression DEUX_POINTS expression {assignements} expression~"
                          + "VAR expression DEUX_POINTS expression~"
-                         + "expression {assignements} expression~"
-                         + "expression DEUX_POINTS expression {assignements} expression",
+                         + "expression {assignements} expression",
                 (p, variante) -> {
                     /*
                      * TODO erreur si c'est pas une Var qui est passé comme expression à gauche de l'assignement
@@ -173,6 +190,10 @@ public class ASAst extends AstGenerator {
                                                  (estConst ? "constante" : "variable") +
                                                  ", les deux points doivent \u00EAtre suivi d'un type valide");
                         type = _type;
+                    }
+
+                    if (variante == 5) {
+                        return new Declarer((Expression<?>) p.get(1), null, type, false);
                     }
 
                     // si la précision du type est présente
@@ -259,7 +280,9 @@ public class ASAst extends AstGenerator {
         //<-----------------------------------Les fonctions----------------------------------------->//
 
         ajouterProgramme("FONCTION expression PARENT_OUV expression PARENT_FERM FLECHE expression~" +
-                         "FONCTION expression PARENT_OUV expression PARENT_FERM",
+                         "FONCTION expression PARENT_OUV expression PARENT_FERM~" +
+                         "FONCTION expression PARENT_OUV PARENT_FERM FLECHE expression~" +
+                         "FONCTION expression PARENT_OUV PARENT_FERM",
                 new Ast<CreerFonction>(
                         Map.entry(
                                 "expression DEUX_POINTS expression ASSIGNEMENT expression~"
@@ -569,7 +592,11 @@ public class ASAst extends AstGenerator {
                           + "!expression CROCHET_OUV CROCHET_FERM~"
                           + "!expression CROCHET_OUV #expression CROCHET_FERM",
                 (p, variante) -> {
-                    if (variante != 1 && variante != 4) return new CreerListe();
+                    if (variante == 0) {
+                        return new CreerDict();
+                    } else if (variante == 2 || variante == 3) {
+                        return new CreerListe();
+                    }
                     Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
                     if (contenu instanceof CreerListe.Enumeration enumeration)
                         return enumeration.buildCreerListe();
@@ -628,7 +655,7 @@ public class ASAst extends AstGenerator {
 
         ajouterExpression("expression DANS expression~" +
                           "expression PAS DANS expression",
-                (p, variante) -> variante == 1 ?
+                (p, variante) -> variante == 0 ?
                         new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.DANS, (Expression<?>) p.get(2))
                         :
                         new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.PAS_DANS, (Expression<?>) p.get(3)));

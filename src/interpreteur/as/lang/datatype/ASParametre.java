@@ -24,15 +24,19 @@ public record ASParametre(String nom, ASType type,
      *                        Mettre <b>null</b> si le parametre n'a pas de type forcee
      *                        </li>
      * @param valeurParDefaut <li>
- *                        Valeur de type ASObjet qui sera assigne au parametre s'il ne recoit aucune valeur lors de l'appel de la fonction
- *                        </li>
- *                        <li>
- *                        Mettre <b>null</b> pour rendre ce parametre obligatoire lors de l'appel de la fonction
+     *                        Valeur de type ASObjet qui sera assigne au parametre s'il ne recoit aucune valeur lors de l'appel de la fonction
+     *                        </li>
+     *                        <li>
+     *                        Mettre <b>null</b> pour rendre ce parametre obligatoire lors de l'appel de la fonction
      */
     public ASParametre(String nom, ASType type, ASObjet<?> valeurParDefaut) {
         this.nom = nom;
         this.type = type == null ? ASTypeBuiltin.tout.asType() : type;
         this.valeurParDefaut = valeurParDefaut;
+    }
+
+    public static ASParametre obligatoire(String nom, ASType type) {
+        return new ASParametre(nom, type, null);
     }
 
     public String getNom() {

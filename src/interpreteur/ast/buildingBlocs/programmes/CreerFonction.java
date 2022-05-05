@@ -30,14 +30,18 @@ public class CreerFonction extends Programme {
         this.args = Arrays.asList(args);
         this.typeRetour = typeRetour;
         // declare fonction
-        ASScope.getCurrentScope().declarerVariable(new ASVariable(var.getNom(), null, new ASType("fonctionType")));
+        var varFonction = new ASVariable(var.getNom(), null, new ASType("fonctionType"));
+        var.setNom(varFonction.obtenirNom());
+        ASScope.getCurrentScope().declarerVariable(varFonction);
         this.scope = ASScope.makeNewCurrentScope();
     }
 
     @Override
     public NullType execute() {
         ASScope scope = new ASScope(this.scope);
-        ASFonction fonction = new ASFonction(var.getNom(), this.args.stream().map(Argument::eval).toArray(ASParametre[]::new), this.typeRetour, executeurInstance);
+        String currentScope = executeurInstance.obtenirCoordRunTime().getScope();
+        String signature = ASFonctionManager.makeFunctionNameSignature(currentScope, this.var.getNom());
+        ASFonction fonction = new ASFonction(var.getNom(), signature, this.args.stream().map(Argument::eval).toArray(ASParametre[]::new), this.typeRetour, executeurInstance);
 
         ASScope.getCurrentScopeInstance().getVariable(fonction.getNom()).changerValeur(fonction);
         // declare fonction
@@ -58,15 +62,18 @@ public class CreerFonction extends Programme {
 
     @Override
     public Coordonnee prochaineCoord(Coordonnee coord, List<Token> ligne) {
-        return new Coordonnee(executeurInstance.nouveauScope("fonc_" + ASFonctionManager.ajouterDansStructure(this.var.getNom())));
+        String currentScope = coord.getScope();
+        String newScope = ASFonctionManager.FONCTION_SCOPE_START
+                          + ASFonctionManager.makeFunctionNameSignature(currentScope, this.var.getNom());
+        return new Coordonnee(executeurInstance.nouveauScope(newScope));
     }
 
     @Override
     public String toString() {
         return "CreerFonction{" +
-                "nom=" + var +
-                ", args=" + args +
-                ", typeRetour?=" + typeRetour +
-                '}';
+               "nom=" + var +
+               ", args=" + args +
+               ", typeRetour?=" + typeRetour +
+               '}';
     }
 }

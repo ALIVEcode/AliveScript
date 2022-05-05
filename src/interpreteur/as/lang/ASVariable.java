@@ -20,7 +20,7 @@ public class ASVariable implements ASObjet<Object> {
     public ASVariable(String nom, ASObjet<?> valeur, ASType type) {
         this.type = type == null ? new ASType("tout") : type;
         this.nom = ASFonctionManager.ajouterDansStructure(nom);
-        this.valeur = valeur instanceof interpreteur.as.lang.ASVariable var ? var.getValeurApresGetter() : valeur;
+        this.valeur = valeur instanceof ASVariable var ? var.getValeurApresGetter() : valeur;
     }
 
     private boolean nouvelleValeurValide(ASObjet<?> nouvelleValeur) {
@@ -52,7 +52,7 @@ public class ASVariable implements ASObjet<Object> {
     }
 
     @Override
-    public interpreteur.as.lang.ASVariable clone() {
+    public ASVariable clone() {
         return new ASVariable(nom, this.valeur, this.type).setGetter(this.getter).setSetter(this.setter);
     }
 
@@ -72,17 +72,17 @@ public class ASVariable implements ASObjet<Object> {
         return this.valeur == null;
     }
 
-    public interpreteur.as.lang.ASVariable setGetter(Supplier<ASObjet<?>> getter) {
+    public ASVariable setGetter(Supplier<ASObjet<?>> getter) {
         this.getter = getter;
         return this;
     }
 
-    public interpreteur.as.lang.ASVariable setSetter(Function<ASObjet<?>, ASObjet<?>> setter) {
+    public ASVariable setSetter(Function<ASObjet<?>, ASObjet<?>> setter) {
         this.setter = setter;
         return this;
     }
 
-    public interpreteur.as.lang.ASVariable setReadOnly() {
+    public ASVariable setReadOnly() {
         this.setter = (valeur) -> {
             throw new ASErreur.ErreurAssignement("Cette variable est en lecture seule: elle ne peut pas \u00EAtre modifi\u00E9e");
         };
