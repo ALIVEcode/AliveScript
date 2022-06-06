@@ -75,6 +75,8 @@ public class Data extends JSONObject {
         GET_EVALUER(Categorie.AI),          // 3
         FONCTION_COUT(Categorie.AI),        // 4
         TEST_RESEAU_NEURONES(Categorie.AI), // 5
+        VALEUR_COLONNE(Categorie.AI),       // 6
+        CREER_MODELE(Categorie.AI),         // 7
 
         // IoT Data Ids
         // document related

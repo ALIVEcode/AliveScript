@@ -342,38 +342,6 @@ public class ModuleAI {
                 },
 
                 /*
-                  Returns the values of the specified column. (ONLY TAKES THE SAME DATASET FOR NOW, WILL BE CHANGED)
-                */
-                new ASFonctionModule("valeursColonne", new ASParametre[]{
-                        new ASParametre(
-                                "col", ASTypeBuiltin.texte.asType(),
-                                null
-                        )
-                }, ASTypeBuiltin.liste.asType()) {
-                    @Override
-                    public ASObjet<?> executer() {
-                        String col = this.getValeurParam("col").getValue().toString();
-                        ASListe liste = new ASListe();
-
-                        if (!(col.equalsIgnoreCase("x") || col.equalsIgnoreCase("y"))) {
-                            throw new ASErreur.ErreurInputOutput("La fonction valeursColonne() prend en param\u00E8tre le caract\u00E8re \"x\" ou \"y\" seulement.");
-                        }
-                        System.out.println(col);
-                        if (col.contains("x")) {
-                            for (Double el : DATA_X) {
-                                liste.ajouterElement(new ASDecimal(el));
-                            }
-                        } else {
-                            for (Double el : DATA_Y) {
-                                liste.ajouterElement(new ASDecimal(el));
-                            }
-                        }
-                        return liste;
-
-                        //  A TERMINER
-                    }
-                },
-                /*
                     Shows the data on the graph as a scatter plot.
                  */
                 new ASFonctionModule("afficherNuage", new ASParametre[]{
@@ -472,7 +440,58 @@ public class ModuleAI {
                         executeurInstance.addData(new Data(Data.Id.TEST_RESEAU_NEURONES));
                         return null;
                     }
-                }
+                },
+
+                new ASFonctionModule("valeursColonne", new ASParametre[]{
+                        new ASParametre(
+                                "colonne", ASTypeBuiltin.texte.asType(), null )
+                }, ASTypeBuiltin.liste.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Converting the parameter into an AS object
+                        String col = this.getValeurParam("colonne").getValue().toString();
+
+                        //Tell the linter to shut up
+                        assert executeurInstance != null;
+
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.VALEUR_COLONNE).addParam(col));
+                        }
+
+                        //Get the response
+                        ASListe liste = new ASListe();
+                        if(!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list")) {
+                            try {
+                                //Create a list of number
+                                do {
+                                    ASDecimal element = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().pop().toString()));
+                                    liste.ajouterElement(element);
+                                } while (!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list"));
+                            } catch (Exception e) {
+                               //Create a list of string
+                                do {
+                                    ASTexte element = new ASTexte(executeurInstance.getDataResponse().pop().toString());
+                                    liste.ajouterElement(element);
+                                } while (!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list"));
+                            }
+                            System.out.println("Final list" + liste);
+                            return liste;
+                        }else{
+                            throw new ASErreur.ErreurInputOutput("Le nom de la colonne entrée en paramètre est inexistante");
+                        }
+                    }
+                },
+
+                new ASFonctionModule("creerModele", new ASParametre[]{
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        executeurInstance.addData(new Data(Data.Id.CREER_MODELE));
+                        return null;
+                    }
+                },
+
         });
     }
 
