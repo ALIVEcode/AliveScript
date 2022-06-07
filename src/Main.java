@@ -4,6 +4,7 @@ import language.Language;
 public class Main {
 
     static final String[] CODE = """
+            afficher "Hello World!"
             
             """.split("\n");
 
@@ -12,16 +13,7 @@ public class Main {
         executeur.debug = true;
         Object a;
         if (!(a = executeur.compiler(CODE, true)).equals("[]")) System.out.println(a);
-        // executeur.printCompileDict();
+        executeur.printCompileDict();
         System.out.println(executeur.executerMain(false));
-        executeur.pushDataResponse("h");
-        var r = executeur.executerMain(true);
-        System.out.println(r);
-        executeur.pushDataResponse("b");
-        r = executeur.executerMain(true);
-        System.out.println(r);
-        executeur.pushDataResponse("c");
-        r = executeur.executerMain(true);
-        System.out.println(r);
     }
 }

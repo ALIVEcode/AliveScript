@@ -515,6 +515,11 @@ public class Executeur {
                                + (LocalDateTime.now().toLocalTime().toNanoOfDay() - before.toLocalTime().toNanoOfDay()) / Math.pow(10, 9)
                                + " seconds\n");
 
+        if (String.join("", lignes).isBlank()) {
+            coordCompileDict.put(debutCoord.toString(), new Hashtable<>());
+            return new JSONArray();
+        }
+
         // set la valeur des anciennes lignes de code aux nouvelles lignes donnees en parametre
         anciennesLignes = lignes;
         compilationActive = false;
