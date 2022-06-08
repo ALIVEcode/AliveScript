@@ -474,6 +474,7 @@ public class ModuleAI {
                                     liste.ajouterElement(element);
                                 } while (!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list"));
                             }
+                            executeurInstance.getDataResponse().pop();
                             System.out.println("Final list" + liste);
                             return liste;
                         }else{
@@ -502,12 +503,23 @@ public class ModuleAI {
                     public ASObjet<?> executer() {
                         //Converting the parameter into an AS object
                         String col = this.getValeurParam("colonne").getValue().toString();
-
-                        //Ask for a response if it is empty
-                        if (executeurInstance.getDataResponse().isEmpty()) {
-                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.VALEUR_COLONNE).addParam(col));
-                        }
                         executeurInstance.addData(new Data(Data.Id.ONE_HOT).addParam(col));
+                        return null;
+                    }
+                },
+
+                /*
+                Nomalizes the data of a column
+                 */
+                new ASFonctionModule("normaliser", new ASParametre[]{
+                        new ASParametre(
+                                "colonne", ASTypeBuiltin.texte.asType(), null )
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Converting the parameter into an AS object
+                        String col = this.getValeurParam("colonne").getValue().toString();
+                        executeurInstance.addData(new Data(Data.Id.NORMALISER).addParam(col));
                         return null;
                     }
                 },
