@@ -2,14 +2,14 @@ package interpreteur.executeur;
 
 import interpreteur.as.ASAst;
 import interpreteur.as.ASLexer;
+import interpreteur.as.erreurs.ASErreur;
+import interpreteur.as.erreurs.ASErreur.*;
 import interpreteur.as.experimental.ASAstExperimental;
 import interpreteur.as.lang.ASFonctionInterface;
+import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.datatype.ASNul;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.managers.ASFonctionManager;
-import interpreteur.as.lang.ASScope;
-import interpreteur.as.erreurs.ASErreur;
-import interpreteur.as.erreurs.ASErreur.*;
 import interpreteur.as.modules.core.ASModuleManager;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.ast.buildingBlocs.programmes.Declarer;
@@ -145,6 +145,10 @@ public class Executeur {
             }
         }
         System.out.println();
+    }
+
+    public ExecuteurState getState() {
+        return executeurState;
     }
 
     public Translator getTranslator() {
@@ -496,8 +500,8 @@ public class Executeur {
             if (!coordRunTime.getBlocActuel().equals("main")) {
                 throw new ErreurFermeture(coordRunTime.getBlocActuel());
             }
-            if (!ASFonctionManager.obtenirStructure().isBlank()) {
-                throw new ErreurFermeture(ASFonctionManager.obtenirStructure());
+            if (!ASFonctionManager.obtenirNamespace().isBlank()) {
+                throw new ErreurFermeture(ASFonctionManager.obtenirNamespace());
             }
         } catch (ErreurAliveScript err) {
             canExecute = false;
@@ -512,8 +516,8 @@ public class Executeur {
          */
         if (debug)
             System.out.println("compilation done in "
-                               + (LocalDateTime.now().toLocalTime().toNanoOfDay() - before.toLocalTime().toNanoOfDay()) / Math.pow(10, 9)
-                               + " seconds\n");
+                    + (LocalDateTime.now().toLocalTime().toNanoOfDay() - before.toLocalTime().toNanoOfDay()) / Math.pow(10, 9)
+                    + " seconds\n");
 
         if (String.join("", lignes).isBlank()) {
             coordCompileDict.put(debutCoord.toString(), new Hashtable<>());
@@ -659,7 +663,7 @@ public class Executeur {
         if (coordRunTime.toString() == null || !executionActive) {
             if (debug && before != null) {
                 System.out.println("execution " + (executionActive ? "done" : "interruped") + " in " +
-                                   (LocalDateTime.now().toLocalTime().toNanoOfDay() - before.toLocalTime().toNanoOfDay()) / 10e9 + " seconds\n");
+                        (LocalDateTime.now().toLocalTime().toNanoOfDay() - before.toLocalTime().toNanoOfDay()) / 10e9 + " seconds\n");
                 System.out.println(datas);
             }
             // boolean servant a indique que l'execution est terminee
@@ -736,13 +740,13 @@ public class Executeur {
     @Override
     public String toString() {
         return "Executeur{" +
-               "lexer=" + lexer + "\n" +
-               ", coordRunTime=" + coordRunTime + "\n" +
-               ", datas=" + datas + "\n" +
-               ", dataResponse=" + dataResponse + "\n" +
-               ", context=" + context + "\n" +
-               ", anciennesLignes=" + Arrays.toString(anciennesLignes) + "\n" +
-               '}';
+                "lexer=" + lexer + "\n" +
+                ", coordRunTime=" + coordRunTime + "\n" +
+                ", datas=" + datas + "\n" +
+                ", dataResponse=" + dataResponse + "\n" +
+                ", context=" + context + "\n" +
+                ", anciennesLignes=" + Arrays.toString(anciennesLignes) + "\n" +
+                '}';
     }
 }
 

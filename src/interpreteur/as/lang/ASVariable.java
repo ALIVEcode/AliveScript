@@ -19,7 +19,7 @@ public class ASVariable implements ASObjet<Object> {
 
     public ASVariable(String nom, ASObjet<?> valeur, ASType type) {
         this.type = type == null ? new ASType("tout") : type;
-        this.nom = ASFonctionManager.ajouterDansStructure(nom);
+        this.nom = ASFonctionManager.ajouterDansNamespace(nom);
         this.valeur = valeur instanceof ASVariable var ? var.getValeurApresGetter() : valeur;
     }
 

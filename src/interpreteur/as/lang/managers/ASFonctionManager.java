@@ -21,20 +21,20 @@ public class ASFonctionManager {
         //fonction.nom = ajouterDansStructure(fonction.getNom());
     }
 
-    public static String obtenirStructure() {
+    public static String obtenirNamespace() {
         return structure;
     }
 
-    public static String ajouterDansStructure(String element) {
+    public static String ajouterDansNamespace(String element) {
         return (structure.isBlank() ? "" : structure + ".") + element;
     }
 
-    public static void ajouterStructure(String nomStruct) {
+    public static void ajouterNamespace(String nomStruct) {
         if (nomStruct == null || nomStruct.isBlank()) return;
         structure += (structure.isBlank() ? "" : ".") + nomStruct;
     }
 
-    public static void retirerStructure() {
+    public static void retirerNamespace() {
         structure = structure.contains(".") ? structure.substring(0, structure.lastIndexOf(".")) : "";
 
     }

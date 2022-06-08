@@ -70,7 +70,7 @@ public class CreerSetter extends Programme {
     public Coordonnee prochaineCoord(Coordonnee coord, List<Token> ligne) {
         String currentScope = coord.getScope();
         String newScope = ASFonctionManager.SETTER_SCOPE_START
-                          + ASFonctionManager.makeFunctionNameSignature(currentScope, ASFonctionManager.ajouterDansStructure(this.var.getNom()));
+                          + ASFonctionManager.makeFunctionNameSignature(currentScope, ASFonctionManager.ajouterDansNamespace(this.var.getNom()));
         return new Coordonnee(executeurInstance.nouveauScope(newScope));
     }
 }

@@ -6,7 +6,7 @@ import interpreteur.ast.buildingBlocs.Programme;
 public class FinStructure extends Programme {
 
     public FinStructure() {
-        ASFonctionManager.retirerStructure();
+        ASFonctionManager.retirerNamespace();
     }
 
     @Override

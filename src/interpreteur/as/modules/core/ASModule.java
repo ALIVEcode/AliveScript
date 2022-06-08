@@ -32,18 +32,18 @@ public record ASModule(ASFonctionModule[] fonctions,
     }
 
     public void utiliser(String prefix) {
-        ASFonctionManager.ajouterStructure(prefix);
+        ASFonctionManager.ajouterNamespace(prefix);
         for (ASFonctionModule fonction : fonctions) {
             ASScope.getCurrentScope().declarerVariable(new ASVariable(fonction.getNom(), fonction, new ASType(fonction.obtenirNomType())));
         }
         for (ASVariable variable : variables) {
             ASScope.getCurrentScope().declarerVariable(variable.clone());
         }
-        ASFonctionManager.retirerStructure();
+        ASFonctionManager.retirerNamespace();
     }
 
     public void utiliser(List<String> nomMethodes, String prefix) {
-        ASFonctionManager.ajouterStructure(prefix);
+        ASFonctionManager.ajouterNamespace(prefix);
         for (ASFonctionModule fonction : fonctions) {
             if (nomMethodes.contains(fonction.getNom()))
                 ASFonctionManager.ajouterFonction(fonction);
@@ -53,7 +53,7 @@ public record ASModule(ASFonctionModule[] fonctions,
                 ASScope.getCurrentScope().declarerVariable(variable.clone());
             }
         }
-        ASFonctionManager.retirerStructure();
+        ASFonctionManager.retirerNamespace();
     }
 
     /**
