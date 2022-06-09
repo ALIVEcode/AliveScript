@@ -8,7 +8,6 @@ import interpreteur.converter.ASObjetConverter;
 import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class ModuleAliot {
     /*
@@ -86,7 +85,7 @@ public class ModuleAliot {
                 // arreterEcoute
                 // TODO
                 new ASFonctionModule("enleverEcouteur", new ASParametre[]{
-                        ASParametre.obligatoire("ecouteur", new ASType("texte|fonctionType"))
+                        ASParametre.obligatoire("ecouteur", new ASTypeExpr("texte|fonctionType"))
                 }, ASTypeBuiltin.booleen.asType()) {
                     @Override
                     public ASObjet<?> executer() {

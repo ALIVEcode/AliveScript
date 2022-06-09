@@ -23,7 +23,7 @@ public class ASNul implements ASObjet<NullType> {
     }
 
     @Override
-    public String obtenirNomType() {
+    public String getNomType() {
         return "nulType";
     }
 

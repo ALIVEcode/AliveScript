@@ -125,7 +125,7 @@ public class ASScope {
 
     public ASVariable getVariable(String nom) {
         return variablesDeclarees.stream()
-                .filter(var -> var.obtenirNom().equals(nom))
+                .filter(var -> var.getNom().equals(nom))
                 .findFirst()
                 .orElse(null);
     }
@@ -161,7 +161,7 @@ public class ASScope {
 
         public ASVariable getVariable(String nom) {
             return variableStack.stream()
-                    .filter(var -> var.obtenirNom().equals(nom))
+                    .filter(var -> var.getNom().equals(nom))
                     .findFirst()
                     .orElse(parent == null ? null : parent.getVariable(nom));
         }

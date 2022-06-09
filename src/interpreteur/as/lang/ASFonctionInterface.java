@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public interface ASFonctionInterface extends ASObjet<Object> {
     String getNom();
 
-    ASType getTypeRetour();
+    ASTypeExpr getTypeRetour();
 
     ASParametre[] getParams();
 

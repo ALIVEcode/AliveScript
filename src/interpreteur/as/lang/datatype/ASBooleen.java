@@ -9,7 +9,7 @@ public class ASBooleen implements ASObjet<Boolean> {
     private final boolean valeur;
 
     public ASBooleen(Token valeur) {
-        this.valeur = valeur.obtenirValeur().equals("vrai");
+        this.valeur = valeur.getValeur().equals("vrai");
     }
 
     public ASBooleen(ASObjet<?> valeur) {
@@ -48,7 +48,7 @@ public class ASBooleen implements ASObjet<Boolean> {
     }
 
     @Override
-    public String obtenirNomType() {
+    public String getNomType() {
         return "booleen";
     }
 

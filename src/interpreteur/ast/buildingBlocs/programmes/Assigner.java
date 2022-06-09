@@ -51,7 +51,7 @@ public class Assigner extends Programme {
             ASObjet<?> valeurVariable = variable.getValeurApresGetter();
             if (!(valeurVariable instanceof ASListe listeInitial)) {
                 throw new ASErreur.ErreurType("L'assignement d'index ou de sous-section n'est pas d\u00E9finie pour " +
-                                              "un \u00E9l\u00E9ment de type '" + valeurVariable.obtenirNomType() + "'.");
+                                              "un \u00E9l\u00E9ment de type '" + valeurVariable.getNomType() + "'.");
             }
 
             // si l'assignement est de forme

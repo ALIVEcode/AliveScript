@@ -29,8 +29,8 @@ public enum ASTypeBuiltin {
         return aliases;
     }
 
-    public ASType asType() {
-        return new ASType(toString());
+    public ASTypeExpr asType() {
+        return new ASTypeExpr(toString());
     }
 
     /* previous toString

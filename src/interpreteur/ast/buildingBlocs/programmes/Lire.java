@@ -50,7 +50,7 @@ public class Lire extends Programme {
         } else {
             throw new ASErreur.ErreurInputOutput("Un \u00E9l\u00E9ment de type 'fonctionType' est attendue " +
                     "apr\u00E8s le deux points ':' dans la commande 'lire', mais '" +
-                    exprEval.obtenirNomType() + "' a \u00E9t\u00E9 trouv\u00E9.");
+                    exprEval.getNomType() + "' a \u00E9t\u00E9 trouv\u00E9.");
         }
         new Assigner(var, new ValeurConstante(valeur), null).execute();
 

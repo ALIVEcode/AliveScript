@@ -13,7 +13,7 @@ public class ASNamespace implements ASObjet<Object> {
     }
 
     @Override
-    public String obtenirNomType() {
+    public String getNomType() {
         return null;
     }
 }

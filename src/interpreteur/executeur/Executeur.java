@@ -689,7 +689,7 @@ public class Executeur {
                 if (valeur instanceof ASFonctionInterface fonction) {
                     return fonction.apply(args);
                 }
-                throw new ASErreur.ErreurTypePasAppelable("Un \u00E9l\u00E9ment de type '" + valeur.obtenirNomType() + "' ne peut pas \u00EAtre appel\u00E9");
+                throw new ASErreur.ErreurTypePasAppelable("Un \u00E9l\u00E9ment de type '" + valeur.getNomType() + "' ne peut pas \u00EAtre appel\u00E9");
             }
         })));
         setCoordRunTime("<0>remote_func");

@@ -8,7 +8,7 @@ import interpreteur.as.lang.datatype.ASEntier;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.datatype.ASParametre;
 import interpreteur.as.modules.core.ASModule;
-import interpreteur.as.lang.ASType;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.executeur.Executeur;
 
 
@@ -17,8 +17,8 @@ public class ModuleMath {
         return new ASModule(new ASFonctionModule[]{
                 // rad
                 new ASFonctionModule("modules.math.functions.rad", new ASParametre[]{
-                        new ASParametre("x", new ASType("nombre"), null)
-                }, new ASType("decimal")) {
+                        new ASParametre("x", new ASTypeExpr("nombre"), null)
+                }, new ASTypeExpr("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         double angle = ((Number) this.getValeurParam("x").getValue()).doubleValue();
@@ -27,8 +27,8 @@ public class ModuleMath {
                 },
                 // deg
                 new ASFonctionModule("modules.math.functions.deg", new ASParametre[]{
-                        new ASParametre("x", new ASType("nombre"), null)
-                }, new ASType("decimal")) {
+                        new ASParametre("x", new ASTypeExpr("nombre"), null)
+                }, new ASTypeExpr("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         double angle = ((Number) this.getValeurParam("x").getValue()).doubleValue();
@@ -37,8 +37,8 @@ public class ModuleMath {
                 },
                 // sin
                 new ASFonctionModule("modules.math.functions.sin", new ASParametre[]{
-                        new ASParametre("x", new ASType("nombre"), null)
-                }, new ASType("decimal")) {
+                        new ASParametre("x", new ASTypeExpr("nombre"), null)
+                }, new ASTypeExpr("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         double angle = ((Number) this.getValeurParam("x").getValue()).doubleValue();
@@ -47,8 +47,8 @@ public class ModuleMath {
                 },
                 // cos
                 new ASFonctionModule("modules.math.functions.cos", new ASParametre[]{
-                        new ASParametre("x", new ASType("nombre"), null)
-                }, new ASType("decimal")) {
+                        new ASParametre("x", new ASTypeExpr("nombre"), null)
+                }, new ASTypeExpr("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         double angle = ((Number) this.getValeurParam("x").getValue()).doubleValue();
@@ -57,8 +57,8 @@ public class ModuleMath {
                 },
                 // tan
                 new ASFonctionModule("modules.math.functions.tan", new ASParametre[]{
-                        new ASParametre("x", new ASType("nombre"), null)
-                }, new ASType("decimal")) {
+                        new ASParametre("x", new ASTypeExpr("nombre"), null)
+                }, new ASTypeExpr("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         double angle = ((Number) this.getValeurParam("x").getValue()).doubleValue();
@@ -67,9 +67,9 @@ public class ModuleMath {
                 },
                 // arrondir
                 new ASFonctionModule("modules.math.functions.round", new ASParametre[]{
-                        new ASParametre("n", new ASType("nombre"), null),
-                        new ASParametre("nbSignificatifs", new ASType("entier"), new ASEntier(0)),
-                }, new ASType("nombre")) {
+                        new ASParametre("n", new ASTypeExpr("nombre"), null),
+                        new ASParametre("nbSignificatifs", new ASTypeExpr("entier"), new ASEntier(0)),
+                }, new ASTypeExpr("nombre")) {
                     @Override
                     public ASObjet<?> executer() {
                         double n = ((Number) this.getValeurParam("n").getValue()).doubleValue();

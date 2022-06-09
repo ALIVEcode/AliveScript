@@ -15,7 +15,7 @@ public record ASPaire(ASTexte clef, ASObjet<?> valeur) implements ASObjet<Map.En
     }
 
     @Override
-    public String obtenirNomType() {
+    public String getNomType() {
         return "paire";
     }
 

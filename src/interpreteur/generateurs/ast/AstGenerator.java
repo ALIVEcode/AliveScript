@@ -41,7 +41,7 @@ public class AstGenerator {
         int crochets = 0;
 
         for (Token token : expressionArray) {
-            switch (token.obtenirNom()) {
+            switch (token.getNom()) {
                 case "PARENT_OUV" -> parentheses++;
                 case "PARENT_FERM" -> parentheses--;
 
@@ -173,7 +173,7 @@ public class AstGenerator {
                     List<String> expressionNom = new ArrayList<>();
 
                     for (Object expr : expressionArray) {
-                        expressionNom.add(expr instanceof Token token ? token.obtenirNom() : "expression");
+                        expressionNom.add(expr instanceof Token token ? token.getNom() : "expression");
                     }
                     //System.out.println("Nom " + expressionNom);
                     Matcher match = memeStructureExpression(String.join(" ", expressionNom.subList(i, expressionNom.size())), regleSyntaxe);
@@ -312,7 +312,7 @@ public class AstGenerator {
         Token[] token = expressionArray.stream().filter(e -> e instanceof Token).toArray(Token[]::new);
 
         if (token.length > 0) {
-            throw new ASErreur.ErreurSyntaxe("Expression ill\u00E9gale: " + String.join(" ", Arrays.stream(token).map(Token::obtenirValeur).toArray(String[]::new)));
+            throw new ASErreur.ErreurSyntaxe("Expression ill\u00E9gale: " + String.join(" ", Arrays.stream(token).map(Token::getValeur).toArray(String[]::new)));
         }
 
         //System.out.println(expressionArray);
@@ -513,7 +513,7 @@ public class AstGenerator {
     public Map.Entry<Integer, String> obtenirProgrammeOrThrow(List<Token> listToken) {
         String programmeTrouve = null;
         List<String> structureLine = new ArrayList<>();
-        listToken.forEach(e -> structureLine.add(e.obtenirNom()));
+        listToken.forEach(e -> structureLine.add(e.getNom()));
         int idxVariante = 0;
 
         int nbTokenProgrammeTrouvee = 0;
@@ -535,7 +535,7 @@ public class AstGenerator {
         if (programmeTrouve == null) {
             throw new ASErreur.ErreurSyntaxe("Syntaxe invalide: " + listToken
                     .stream()
-                    .map(Token::obtenirValeur)
+                    .map(Token::getValeur)
                     .toList()
             );
         }
@@ -551,7 +551,7 @@ public class AstGenerator {
     private Map.Entry<ArrayList<Token>, ArrayList<ArrayList<Token>>> obtenirDivisionExpressionsProgramme(List<Token> listToken, String programme, Integer idxVariante) {
         programme = programme.split("~")[idxVariante];
         ArrayList<String> structureLine = new ArrayList<>();
-        listToken.forEach(e -> structureLine.add(e.obtenirNom()));
+        listToken.forEach(e -> structureLine.add(e.getNom()));
 
         ArrayList<String> structureProgramme = new ArrayList<>(Arrays.asList(programme.split(" ")));
         // structureProgramme.removeIf(e -> e.equals("expression") || e.equals("#expression"));

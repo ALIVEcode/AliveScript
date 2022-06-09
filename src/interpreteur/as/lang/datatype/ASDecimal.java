@@ -9,7 +9,7 @@ public class ASDecimal implements ASNombre {
     private final double valeur;
 
     public ASDecimal(Token valeur) {
-        String val = valeur.obtenirValeur();
+        String val = valeur.getValeur();
         if (val.startsWith(".")) val = "0" + val;
         else if (val.endsWith(".")) val += "0";
         this.valeur = Double.parseDouble(val);
@@ -43,7 +43,7 @@ public class ASDecimal implements ASNombre {
     }
 
     @Override
-    public String obtenirNomType() {
+    public String getNomType() {
         return "decimal";
     }
 

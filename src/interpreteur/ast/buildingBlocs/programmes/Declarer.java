@@ -1,7 +1,7 @@
 package interpreteur.ast.buildingBlocs.programmes;
 
 import interpreteur.as.lang.ASConstante;
-import interpreteur.as.lang.ASType;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.ASScope;
@@ -18,10 +18,10 @@ public class Declarer extends Programme {
 
     private final Expression<?> valeur;
     private final boolean constante;
-    private final ASType type;
+    private final ASTypeExpr type;
     private final Var var;
 
-    public Declarer(Expression<?> expr, Expression<?> valeur, ASType type, boolean constante) {
+    public Declarer(Expression<?> expr, Expression<?> valeur, ASTypeExpr type, boolean constante) {
         // get la variable
         if (expr instanceof Var) {
             var = (Var) expr;
@@ -31,7 +31,7 @@ public class Declarer extends Programme {
 
         this.valeur = valeur;
         this.constante = constante;
-        this.type = type == null ? new ASType("tout") : type;
+        this.type = type == null ? new ASTypeExpr("tout") : type;
         addVariable();
     }
 
@@ -64,7 +64,7 @@ public class Declarer extends Programme {
 
         ASScope.getCurrentScope().declarerVariable(varObj);
 
-        var.setNom(varObj.obtenirNom());
+        var.setNom(varObj.getNom());
 
         // si des setters et des getters attendaient la déclaration de la variable pour pouvoir être attachée à celle-ci, on les attache
         CreerGetter getter = waitingGetters.stream().filter(waitingGetter -> waitingGetter.getVar().equals(var)).findFirst().orElse(null);

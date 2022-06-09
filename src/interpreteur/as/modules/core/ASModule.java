@@ -4,7 +4,7 @@ import interpreteur.as.lang.ASFonctionModule;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.managers.ASFonctionManager;
-import interpreteur.as.lang.ASType;
+import interpreteur.as.lang.ASTypeExpr;
 import language.Translator;
 
 import java.util.ArrayList;
@@ -27,14 +27,14 @@ public record ASModule(ASFonctionModule[] fonctions,
 
     public ASModule traduire(Translator translator) {
         Arrays.stream(fonctions).forEach(f -> f.setNom(translator.translate(f.getNom())));
-        Arrays.stream(variables).forEach(v -> v.setNom(translator.translate(v.obtenirNom())));
+        Arrays.stream(variables).forEach(v -> v.setNom(translator.translate(v.getNom())));
         return this;
     }
 
     public void utiliser(String prefix) {
         ASFonctionManager.ajouterNamespace(prefix);
         for (ASFonctionModule fonction : fonctions) {
-            ASScope.getCurrentScope().declarerVariable(new ASVariable(fonction.getNom(), fonction, new ASType(fonction.obtenirNomType())));
+            ASScope.getCurrentScope().declarerVariable(new ASVariable(fonction.getNom(), fonction, new ASTypeExpr(fonction.getNomType())));
         }
         for (ASVariable variable : variables) {
             ASScope.getCurrentScope().declarerVariable(variable.clone());
@@ -49,7 +49,7 @@ public record ASModule(ASFonctionModule[] fonctions,
                 ASFonctionManager.ajouterFonction(fonction);
         }
         for (ASVariable variable : variables) {
-            if (nomMethodes.contains(variable.obtenirNom())) {
+            if (nomMethodes.contains(variable.getNom())) {
                 ASScope.getCurrentScope().declarerVariable(variable.clone());
             }
         }
@@ -83,7 +83,7 @@ public record ASModule(ASFonctionModule[] fonctions,
      */
     public List<String> getNomsVariables() {
         if (variables.length == 0) return new ArrayList<>();
-        return Stream.of(variables).map(ASVariable::obtenirNom).collect(Collectors.toList());
+        return Stream.of(variables).map(ASVariable::getNom).collect(Collectors.toList());
     }
 
     /**

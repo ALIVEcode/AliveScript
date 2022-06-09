@@ -1,13 +1,6 @@
 package interpreteur.as.lang.datatype;
 
 
-import interpreteur.as.erreurs.ASErreur.*;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 //import interpreteur.ast.buildingBlocs.expressions.Type;
 
 
@@ -22,7 +15,7 @@ public interface ASObjet<T> {
 
     boolean boolValue();
 
-    String obtenirNomType();
+    String getNomType();
 
     // TODO override cette méthode dans tous les types de données pour que la fonction info soit actually utile à qq chose
 

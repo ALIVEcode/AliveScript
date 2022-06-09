@@ -3,10 +3,9 @@ package interpreteur.as.lang.datatype;
 import interpreteur.as.lang.ASFonctionInterface;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.erreurs.ASErreur;
-import interpreteur.as.lang.ASType;
-import interpreteur.as.lang.managers.ASFonctionManager;
+import interpreteur.as.lang.ASTypeExpr;
+import interpreteur.as.lang.managers.ASScopeManager;
 import interpreteur.ast.buildingBlocs.programmes.Boucle;
-import interpreteur.data_manager.Data;
 import interpreteur.executeur.Coordonnee;
 import interpreteur.executeur.Executeur;
 
@@ -17,14 +16,13 @@ import java.util.function.Function;
 
 public class ASFonction implements ASFonctionInterface {
 
-    private final ASType typeRetour;
+    private final ASTypeExpr typeRetour;
     private final ASParametre[] parametres;
     private final String nom;
     private final Executeur executeurInstance;
-    private final String signature;
+    private final String callingCoord;
     private ASScope scope;
-    private String coordBlocName;
-    private Stack<ASFonction.FonctionInstance> instancesNotDone = new Stack<>();
+    private final Stack<ASFonction.FonctionInstance> instancesNotDone = new Stack<>();
 
     /**
      * @param nom        <li>
@@ -42,8 +40,8 @@ public class ASFonction implements ASFonctionInterface {
      *                   Mettre <b>null</b> si le type du retour n'a pas de type forcee
      *                   </li>
      */
-    public ASFonction(String nom, String signature, ASType typeRetour, Executeur executeurInstance) {
-        this(nom, signature, new ASParametre[0], typeRetour, executeurInstance);
+    public ASFonction(String nom, String callingCoord, ASTypeExpr typeRetour, Executeur executeurInstance) {
+        this(nom, callingCoord, new ASParametre[0], typeRetour, executeurInstance);
     }
 
     /**
@@ -51,7 +49,7 @@ public class ASFonction implements ASFonctionInterface {
      *                   Nom de la fonction
      *                   </li>
      * @param parametres
-     * @param signature  &lt;scope_parent&gt;_nom
+     * @param callingCoord  &lt;scope_parent&gt;_nom
      * @param typeRetour <li>
      *                   Nom du type de retour de la fonction (ex: <i>entier</i>, <i>texte</i>, <i>liste</i>, ect.)
      *                   </li>
@@ -64,10 +62,9 @@ public class ASFonction implements ASFonctionInterface {
      *                   Mettre <b>null</b> si le type du retour n'a pas de type forcee
      *                   </li>
      */
-    public ASFonction(String nom, String signature, ASParametre[] parametres, ASType typeRetour, Executeur executeurInstance) {
+    public ASFonction(String nom, String callingCoord, ASParametre[] parametres, ASTypeExpr typeRetour, Executeur executeurInstance) {
         this.nom = nom;
-        this.signature = signature;
-        this.coordBlocName = ASFonctionManager.FONCTION_SCOPE_START;
+        this.callingCoord = callingCoord;
         this.parametres = parametres;
         this.typeRetour = typeRetour;
         this.executeurInstance = executeurInstance;
@@ -79,7 +76,7 @@ public class ASFonction implements ASFonctionInterface {
     }
 
     @Override
-    public ASType getTypeRetour() {
+    public ASTypeExpr getTypeRetour() {
         return this.typeRetour;
     }
 
@@ -98,7 +95,7 @@ public class ASFonction implements ASFonctionInterface {
 
     @Override
     public Coordonnee getStartingCoord() {
-        return new Coordonnee("<0>" + this.coordBlocName + this.signature);
+        return new Coordonnee("<0>" + this.callingCoord);
     }
 
     //private void declarerParams() {
@@ -131,16 +128,12 @@ public class ASFonction implements ASFonctionInterface {
         }
         for (int i = 0; i < paramsValeurs.size(); i++) {
             ASParametre parametre = this.parametres[i];
-            if (parametre.getType().noMatch(((ASObjet<?>) paramsValeurs.get(i)).obtenirNomType())) {
-                throw new ASErreur.ErreurType("Le param\u00E8tres '" + parametre.getNom() + "' est de type '" + parametre.getType().nom() +
-                                              "', mais l'argument pass\u00E9 est de type '" + ((ASObjet<?>) paramsValeurs.get(i)).obtenirNomType() + "'.");
+            if (parametre.getType().noMatch(((ASObjet<?>) paramsValeurs.get(i)).getNomType())) {
+                throw new ASErreur.ErreurType("Le param\u00E8tres '" + parametre.getNom() + "' est de type '" + parametre.getType().getNom() +
+                                              "', mais l'argument pass\u00E9 est de type '" + ((ASObjet<?>) paramsValeurs.get(i)).getNomType() + "'.");
             }
         }
         return true;
-    }
-
-    public void setCoordBlocName(String coordBlocName) {
-        this.coordBlocName = coordBlocName;
     }
 
     public FonctionInstance makeInstance() {
@@ -164,10 +157,10 @@ public class ASFonction implements ASFonctionInterface {
     @Override
     public String toString() {
         return this.nom + "(" +
-               String.join(", ", Arrays.stream(this.parametres).map(p -> p.getNom() + ": " + p.obtenirNomType())
+               String.join(", ", Arrays.stream(this.parametres).map(p -> p.getNom() + ": " + p.getNomType())
                        .toArray(String[]::new)) +
                ") " +
-               "\u2192 " + this.typeRetour.nom();
+               "\u2192 " + this.typeRetour.getNom();
     }
 
     @Override
@@ -181,7 +174,7 @@ public class ASFonction implements ASFonctionInterface {
     }
 
     @Override
-    public String obtenirNomType() {
+    public String getNomType() {
         return "fonctionType";
     }
 
@@ -227,7 +220,7 @@ public class ASFonction implements ASFonctionInterface {
             Object valeur;
             ASObjet<?> asValeur;
             Coordonnee ancienneCoord = fonction.executeurInstance.obtenirCoordRunTime().copy();
-            valeur = fonction.executeurInstance.executerScope(fonction.coordBlocName + fonction.signature, null, coordReprise == null ? null : coordReprise.toString());
+            valeur = fonction.executeurInstance.executerScope(fonction.callingCoord, null, coordReprise == null ? null : coordReprise.toString());
             if (valeur instanceof String s) {
 //                System.out.println("valeur: " + valeur);
                 fonction.instancesNotDone.push(this);
@@ -247,9 +240,9 @@ public class ASFonction implements ASFonctionInterface {
 
             //System.out.println(this.typeRetour);
             //System.out.println(valeur);
-            if (asValeur == null || fonction.typeRetour.noMatch(asValeur.obtenirNomType())) {
-                throw new ASErreur.ErreurType("Le type retourner ' " + (asValeur == null ? "vide" : asValeur.obtenirNomType()) + " ' ne correspond pas "
-                                              + "au type de retour pr\u00E9cis\u00E9 dans la d\u00E9claration de la fonction ' " + fonction.typeRetour.nom() + " '.");
+            if (asValeur == null || fonction.typeRetour.noMatch(asValeur.getNomType())) {
+                throw new ASErreur.ErreurType("Le type retourner ' " + (asValeur == null ? "vide" : asValeur.getNomType()) + " ' ne correspond pas "
+                                              + "au type de retour pr\u00E9cis\u00E9 dans la d\u00E9claration de la fonction ' " + fonction.typeRetour.getNom() + " '.");
 
             }
             return asValeur;
@@ -266,8 +259,8 @@ public class ASFonction implements ASFonctionInterface {
         }
 
         @Override
-        public String obtenirNomType() {
-            return fonction.obtenirNomType();
+        public String getNomType() {
+            return fonction.getNomType();
         }
 
         @Override

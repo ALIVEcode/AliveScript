@@ -5,7 +5,7 @@ import interpreteur.as.erreurs.ASErreur.ErreurAssignement;
 import interpreteur.as.erreurs.ASErreur.ErreurInputOutput;
 import interpreteur.as.erreurs.ASErreur.ErreurSyntaxe;
 import interpreteur.as.erreurs.ASErreur.ErreurType;
-import interpreteur.as.lang.ASType;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.ast.Ast;
 import interpreteur.ast.buildingBlocs.Expression;
@@ -61,7 +61,7 @@ public class ASAst extends AstGenerator {
 
                     String nomPrefix = "";
                     if (variante == 3 || variante == 4) {
-                        nomPrefix = ((Token) p.get(2)).obtenirValeur();
+                        nomPrefix = ((Token) p.get(2)).getValeur();
                         if (!nomPrefix.endsWith(".")) {
                             throw new ASErreur.ErreurSyntaxe("Le pr\u00E9fix du module doit finir par '.'");
                         }
@@ -151,7 +151,7 @@ public class ASAst extends AstGenerator {
                     // si le premier mot n'est ni "const" ni "var"
                     if (variante == 6) {
                         // si on tente d'assigner avec un opérateur spécial (ex: +=, *=, -=, etc.)
-                        String nomAssignement = ((Token) p.get(1)).obtenirNom();
+                        String nomAssignement = ((Token) p.get(1)).getNom();
                         if (!nomAssignement.equals("ASSIGNEMENT") && !(nomAssignement.equals("ASSIGNEMENT_FLECHE"))) {
                             // only keep the first part of the name (ex: PLUS_ASSIGNEMENT becomes PLUS)
                             op = BinOp.Operation.valueOf(nomAssignement.substring(
@@ -175,7 +175,7 @@ public class ASAst extends AstGenerator {
                     boolean estConst = variante < 2;
 
                     // le type de la variable déclarer (null signifie qu'il n'est pas mentionné dans la déclaration)
-                    ASType type = null;
+                    ASTypeExpr type = null;
 
                     /*
                      * Déclaration sous une des formes:
@@ -185,7 +185,7 @@ public class ASAst extends AstGenerator {
                      */
                     if (variante == 1 || variante == 4 || variante == 5) {
                         // si le type précisé n'est pas un type
-                        if (!(p.get(3) instanceof ASType _type))
+                        if (!(p.get(3) instanceof ASTypeExpr _type))
                             throw new ErreurType("Dans une d\u00E9claration de " +
                                     (estConst ? "constante" : "variable") +
                                     ", les deux points doivent \u00EAtre suivi d'un type valide");
@@ -208,7 +208,7 @@ public class ASAst extends AstGenerator {
                     }
 
                     // si on tente de déclarer une constante avec autre chose que = (ex: +=, *=, -=, etc.)
-                    String nomAssignement = ((Token) p.get(idxAssignement)).obtenirNom();
+                    String nomAssignement = ((Token) p.get(idxAssignement)).getNom();
                     if (!nomAssignement.equals("ASSIGNEMENT") && !(nomAssignement.equals("ASSIGNEMENT_FLECHE"))) {
                         if (estConst)
                             throw new ErreurAssignement("Impossible de modifier la valeur d'une constante");
@@ -236,7 +236,7 @@ public class ASAst extends AstGenerator {
                 });
         */
 
-        ajouterProgramme("STRUCTURE NOM_VARIABLE", p -> new CreerNamespace(((Token) p.get(1)).obtenirValeur()));
+        ajouterProgramme("STRUCTURE NOM_VARIABLE", p -> new CreerNamespace(((Token) p.get(1)).getValeur()));
 
         ajouterProgramme("FIN STRUCTURE", p -> new FinNamespace());
 
@@ -244,14 +244,14 @@ public class ASAst extends AstGenerator {
         ajouterProgramme("GET NOM_VARIABLE~" +
                         "GET NOM_VARIABLE FLECHE expression",
                 (p, variante) -> {
-                    ASType type = new ASType("tout");
+                    ASTypeExpr type = new ASTypeExpr("tout");
                     if (variante == 1) {
-                        if (!(p.get(3) instanceof ASType _type)) {
+                        if (!(p.get(3) instanceof ASTypeExpr _type)) {
                             throw new ErreurType("'" + p.get(3) + "' n'est pas un type valide");
                         }
                         type = _type;
                     }
-                    return new CreerGetter(new Var(((Token) p.get(1)).obtenirValeur()), type, executeurInstance);
+                    return new CreerGetter(new Var(((Token) p.get(1)).getValeur()), type, executeurInstance);
                 });
 
         ajouterProgramme("FIN GET", p -> new FinGet(executeurInstance));
@@ -260,16 +260,16 @@ public class ASAst extends AstGenerator {
         ajouterProgramme("SET NOM_VARIABLE PARENT_OUV NOM_VARIABLE PARENT_FERM~" +
                         "SET NOM_VARIABLE PARENT_OUV NOM_VARIABLE DEUX_POINTS expression PARENT_FERM",
                 (p, variante) -> {
-                    ASType type = new ASType("tout");
+                    ASTypeExpr type = new ASTypeExpr("tout");
                     if (variante == 1) {
-                        if (!(p.get(5) instanceof ASType _type)) {
+                        if (!(p.get(5) instanceof ASTypeExpr _type)) {
                             throw new ErreurType("'" + p.get(5) + "' n'est pas un type valide");
                         }
                         type = _type;
                     }
                     return new CreerSetter(
-                            new Var(((Token) p.get(1)).obtenirValeur()),
-                            new Var(((Token) p.get(3)).obtenirValeur()),
+                            new Var(((Token) p.get(1)).getValeur()),
+                            new Var(((Token) p.get(3)).getValeur()),
                             type,
                             executeurInstance
                     );
@@ -291,7 +291,7 @@ public class ASAst extends AstGenerator {
                                 new Ast<Argument>(19) {
                                     @Override
                                     public Argument apply(List<Object> p, Integer idxVariante) {
-                                        ASType type = new ASType("tout");
+                                        ASTypeExpr type = new ASTypeExpr("tout");
                                         Expression<?> valParDefaut = null;
 
                                         if (!(p.get(0) instanceof Var var)) {
@@ -299,12 +299,12 @@ public class ASAst extends AstGenerator {
                                         }
 
                                         Token deuxPointsToken = (Token) p.stream()
-                                                .filter(t -> t instanceof Token token && token.obtenirNom().equals("DEUX_POINTS"))
+                                                .filter(t -> t instanceof Token token && token.getNom().equals("DEUX_POINTS"))
                                                 .findFirst()
                                                 .orElse(null);
                                         if (deuxPointsToken != null) {
                                             Expression<?> typeObj = (Expression<?>) p.get(p.indexOf(deuxPointsToken) + 1);
-                                            if (!(typeObj instanceof ASType)) {
+                                            if (!(typeObj instanceof ASTypeExpr)) {
                                                 String nom;
                                                 if (p.get(0) instanceof Var) {
                                                     nom = ((Var) typeObj).getNom();
@@ -313,10 +313,10 @@ public class ASAst extends AstGenerator {
                                                 }
                                                 throw new ErreurType("Le symbole ':' doit \u00EAtre suivi d'un type valide ('" + nom + "' n'est pas un type valide)");
                                             }
-                                            type = (ASType) typeObj;
+                                            type = (ASTypeExpr) typeObj;
                                         }
                                         Token assignementToken = (Token) p.stream()
-                                                .filter(t -> t instanceof Token token && token.obtenirNom().equals("ASSIGNEMENT"))
+                                                .filter(t -> t instanceof Token token && token.getNom().equals("ASSIGNEMENT"))
                                                 .findFirst()
                                                 .orElse(null);
                                         if (assignementToken != null) {
@@ -331,9 +331,9 @@ public class ASAst extends AstGenerator {
                     public CreerFonction apply(List<Object> p, Integer idxVariante) {
                         Argument[] params = new Argument[]{};
 
-                        ASType typeRetour = p.get(p.size() - 1) instanceof ASType type ? type : new ASType("tout");
+                        ASTypeExpr typeRetour = p.get(p.size() - 1) instanceof ASTypeExpr type ? type : new ASTypeExpr("tout");
 
-                        if (p.get(p.size() - 1) == null && p.get(3) instanceof ASType type) {
+                        if (p.get(p.size() - 1) == null && p.get(3) instanceof ASTypeExpr type) {
                             typeRetour = type;
                             return new CreerFonction((Var) p.get(1), params, typeRetour, executeurInstance);
                         }
@@ -421,7 +421,7 @@ public class ASAst extends AstGenerator {
         ajouterProgramme("FIN POUR~"
                         + "FIN TANT_QUE~"
                         + "FIN REPETER",
-                p -> new FinBoucle(((Token) p.get(1)).obtenirValeur(), executeurInstance)
+                p -> new FinBoucle(((Token) p.get(1)).getValeur(), executeurInstance)
         );
 
         ajouterProgramme("expression",
@@ -452,16 +452,16 @@ public class ASAst extends AstGenerator {
 
     protected void ajouterExpressions() {
 
-        ajouterExpression("NOM_VARIABLE", p -> new Var(((Token) p.get(0)).obtenirValeur()));
+        ajouterExpression("NOM_VARIABLE", p -> new Var(((Token) p.get(0)).getValeur()));
 
         ajouterExpression("{nom_type_de_donnees}",
-                p -> new ASType(((Token) p.get(0)).obtenirValeur())
+                p -> new ASTypeExpr(((Token) p.get(0)).getValeur())
         );
 
         ajouterExpression("{type_de_donnees}",
                 p -> {
                     Token valeur = (Token) p.get(0);
-                    String nom = valeur.obtenirNom();
+                    String nom = valeur.getNom();
                     return new ValeurConstante(switch (nom) {
                         case "ENTIER" -> new ASEntier(valeur);
                         case "DECIMAL" -> new ASDecimal(valeur);
@@ -531,12 +531,12 @@ public class ASAst extends AstGenerator {
                  */
                 p -> {
                     int idxTroisPoints = p.indexOf(p.stream()
-                            .filter(exp -> exp instanceof Token token && token.obtenirNom().equals("TROIS_POINTS"))
+                            .filter(exp -> exp instanceof Token token && token.getNom().equals("TROIS_POINTS"))
                             .findFirst()
                             .orElseThrow());
 
                     Token bondToken = (Token) p.stream()
-                            .filter(exp -> exp instanceof Token token && token.obtenirNom().equals("BOND"))
+                            .filter(exp -> exp instanceof Token token && token.getNom().equals("BOND"))
                             .findFirst()
                             .orElse(null);
 
@@ -575,7 +575,7 @@ public class ASAst extends AstGenerator {
                     else {
                         Expression<?> debut = null, fin = null;
                         int idxDeuxPoints = p.indexOf(p.stream()
-                                .filter(exp -> exp instanceof Token token && token.obtenirNom().equals("DEUX_POINTS"))
+                                .filter(exp -> exp instanceof Token token && token.getNom().equals("DEUX_POINTS"))
                                 .findFirst()
                                 .orElse(null)
                         );
@@ -651,7 +651,7 @@ public class ASAst extends AstGenerator {
 
         ajouterExpression("expression PIPE expression",
                 p -> {
-                    if (!(p.get(0) instanceof ASType typeG && p.get(2) instanceof ASType typeD)) {
+                    if (!(p.get(0) instanceof ASTypeExpr typeG && p.get(2) instanceof ASTypeExpr typeD)) {
                         return new BinOp((Expression<?>) p.get(0), BinOp.Operation.PIPE, (Expression<?>) p.get(2));
                     }
                     typeG.union(typeD);
@@ -669,7 +669,7 @@ public class ASAst extends AstGenerator {
         ajouterExpression("expression {comparaison} expression",
                 p -> new BinComp(
                         (Expression<?>) p.get(0),
-                        BinComp.Comparateur.valueOf(((Token) p.get(1)).obtenirNom()),
+                        BinComp.Comparateur.valueOf(((Token) p.get(1)).getNom()),
                         (Expression<?>) p.get(2))
         );
 
@@ -677,7 +677,7 @@ public class ASAst extends AstGenerator {
         ajouterExpression("expression {porte_logique} expression",
                 p -> new BoolOp(
                         (Expression<?>) p.get(0),
-                        BoolOp.Operateur.valueOf(((Token) p.get(1)).obtenirNom()),
+                        BoolOp.Operateur.valueOf(((Token) p.get(1)).getNom()),
                         (Expression<?>) p.get(2)));
 
         ajouterExpression("PAS expression",

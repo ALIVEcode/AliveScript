@@ -5,7 +5,7 @@ import interpreteur.as.lang.ASFonctionModule;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.lang.ASTypeBuiltin;
 import interpreteur.as.modules.core.ASModule;
-import interpreteur.as.lang.ASType;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.executeur.Executeur;
 
 import java.util.Iterator;
@@ -33,7 +33,7 @@ public class BuiltinsTexteUtils {
             // minus
             new ASFonctionModule("modules.builtins.functions.lower", new ASParametre[]{
                     new ASParametre("txt", ASTypeBuiltin.texte.asType(), null)
-            }, new ASType("texte")) {
+            }, new ASTypeExpr("texte")) {
                 @Override
                 public ASTexte executer() {
                     return new ASTexte(this.getParamsValeursDict().get("txt").getValue().toString().toLowerCase());

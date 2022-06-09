@@ -60,7 +60,7 @@ public class CreerListe implements Expression<ASListe> {
                 if (evalExpr instanceof ASIterable iterable)
                     return indexOfIterable(iterable);
                 throw new ASErreur.ErreurType("L'op\u00E9ration d'index n'est pas d\u00E9finie pour " +
-                        "un \u00E9l\u00E9ment de type '" + evalExpr.obtenirNomType() + "'.");
+                        "un \u00E9l\u00E9ment de type '" + evalExpr.getNomType() + "'.");
             }
 
             private ASObjet<?> indexOfIterable(ASIterable<?> iterable) {
@@ -119,7 +119,7 @@ public class CreerListe implements Expression<ASListe> {
                     return iterable.sousSection(getDebut(), getFin());
                 }
                 throw new ASErreur.ErreurType("L'op\u00E9ration de coupe n'est pas d\u00E9finie pour " +
-                        "un \u00E9l\u00E9ment de type '" + evalExpr.obtenirNomType() + "'.");
+                        "un \u00E9l\u00E9ment de type '" + evalExpr.getNomType() + "'.");
             }
 
             @Override

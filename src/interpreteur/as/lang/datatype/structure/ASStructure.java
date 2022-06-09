@@ -1,8 +1,9 @@
-package interpreteur.as.lang.datatype;
+package interpreteur.as.lang.datatype.structure;
 
 
 import interpreteur.as.experimental.annotations.Experimental;
 import interpreteur.as.experimental.annotations.ExperimentalStage;
+import interpreteur.as.lang.datatype.ASObjet;
 
 @Experimental(stage = ExperimentalStage.PROTOTYPE)
 public class ASStructure implements ASObjet<Object> {
@@ -21,7 +22,7 @@ public class ASStructure implements ASObjet<Object> {
     }
 
     @Override
-    public String obtenirNomType() {
+    public String getNomType() {
         return null;
     }
 

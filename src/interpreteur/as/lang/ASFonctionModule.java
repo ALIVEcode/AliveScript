@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 
 public abstract class ASFonctionModule implements ASFonctionInterface {
-    private final ASType typeRetour;
+    private final ASTypeExpr typeRetour;
     private final ASParametre[] parametres; //String[] de forme {nomDuParam�tre, typeDuParam�tre (ou null s'il n'en poss�de pas)}
     private final Coordonnee coordReprise = null;
     private String nom;
@@ -33,7 +33,7 @@ public abstract class ASFonctionModule implements ASFonctionInterface {
      *                   Mettre <b>null</b> si le type du retour n'a pas de type forcee
      *                   </li>
      */
-    public ASFonctionModule(String nom, ASType typeRetour) {
+    public ASFonctionModule(String nom, ASTypeExpr typeRetour) {
         this.nom = nom;
         this.scopeName = "fonc_";
         this.typeRetour = typeRetour;
@@ -57,7 +57,7 @@ public abstract class ASFonctionModule implements ASFonctionInterface {
      *                   Mettre <b>null</b> si le type du retour n'a pas de type forcee
      *                   </li>
      */
-    public ASFonctionModule(String nom, ASParametre[] parametres, ASType typeRetour) {
+    public ASFonctionModule(String nom, ASParametre[] parametres, ASTypeExpr typeRetour) {
         this.nom = nom;
         this.scopeName = "fonc_";
         this.parametres = parametres;
@@ -74,7 +74,7 @@ public abstract class ASFonctionModule implements ASFonctionInterface {
     }
 
     @Override
-    public ASType getTypeRetour() {
+    public ASTypeExpr getTypeRetour() {
         return this.typeRetour;
     }
 
@@ -117,9 +117,9 @@ public abstract class ASFonctionModule implements ASFonctionInterface {
         }
         for (int i = 0; i < paramsValeurs.size(); i++) {
             ASParametre parametre = this.parametres[i];
-            if (parametre.getType().noMatch(((ASObjet<?>) paramsValeurs.get(i)).obtenirNomType())) {
-                throw new ASErreur.ErreurType("Le param\u00E8tres '" + parametre.getNom() + "' est de type '" + parametre.getType().nom() +
-                                              "', mais l'argument pass\u00E9 est de type '" + ((ASObjet<?>) paramsValeurs.get(i)).obtenirNomType() + "'.");
+            if (parametre.getType().noMatch(((ASObjet<?>) paramsValeurs.get(i)).getNomType())) {
+                throw new ASErreur.ErreurType("Le param\u00E8tres '" + parametre.getNom() + "' est de type '" + parametre.getType().getNom() +
+                                              "', mais l'argument pass\u00E9 est de type '" + ((ASObjet<?>) paramsValeurs.get(i)).getNomType() + "'.");
             }
         }
         return true;
@@ -202,10 +202,10 @@ public abstract class ASFonctionModule implements ASFonctionInterface {
     @Override
     public String toString() {
         return this.nom + "(" +
-               String.join(", ", Arrays.stream(this.parametres).map(p -> p.getNom() + ": " + p.obtenirNomType())
+               String.join(", ", Arrays.stream(this.parametres).map(p -> p.getNom() + ": " + p.getNomType())
                        .toArray(String[]::new)) +
                ") " +
-               "\u2192 " + this.typeRetour.nom();
+               "\u2192 " + this.typeRetour.getNom();
     }
 
     @Override
@@ -219,7 +219,7 @@ public abstract class ASFonctionModule implements ASFonctionInterface {
     }
 
     @Override
-    public String obtenirNomType() {
+    public String getNomType() {
         return ASTypeBuiltin.fonctionType.toString();
     }
 
