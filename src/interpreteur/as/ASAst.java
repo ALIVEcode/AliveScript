@@ -236,9 +236,9 @@ public class ASAst extends AstGenerator {
                 });
         */
 
-        ajouterProgramme("STRUCTURE NOM_VARIABLE", p -> new CreerStructure(((Token) p.get(1)).obtenirValeur()));
+        ajouterProgramme("STRUCTURE NOM_VARIABLE", p -> new CreerNamespace(((Token) p.get(1)).obtenirValeur()));
 
-        ajouterProgramme("FIN STRUCTURE", p -> new FinStructure());
+        ajouterProgramme("FIN STRUCTURE", p -> new FinNamespace());
 
         //<-----------------------------------Les getters----------------------------------------->//
         ajouterProgramme("GET NOM_VARIABLE~" +

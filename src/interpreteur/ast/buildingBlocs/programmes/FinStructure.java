@@ -1,21 +1,8 @@
 package interpreteur.ast.buildingBlocs.programmes;
 
-import interpreteur.as.lang.managers.ASFonctionManager;
-import interpreteur.ast.buildingBlocs.Programme;
+import interpreteur.as.experimental.annotations.Experimental;
+import interpreteur.as.experimental.annotations.ExperimentalStage;
 
-public class FinStructure extends Programme {
-
-    public FinStructure() {
-        ASFonctionManager.retirerNamespace();
-    }
-
-    @Override
-    public Object execute() {
-        return null;
-    }
-
-    @Override
-    public String toString() {
-        return "FinStructure";
-    }
+@Experimental(stage = ExperimentalStage.PROTOTYPE)
+public class FinStructure {
 }

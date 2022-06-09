@@ -6,15 +6,12 @@ import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.ast.buildingBlocs.expressions.CreerDict;
 import interpreteur.ast.buildingBlocs.expressions.CreerListe;
-import interpreteur.ast.buildingBlocs.programmes.CreerStructure;
 import interpreteur.executeur.Executeur;
-import interpreteur.tokens.Token;
 import utils.Pair;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Stack;
 import java.util.function.BiFunction;
 
 
@@ -23,8 +20,6 @@ import java.util.function.BiFunction;
  *
  * @author Mathis Laroche
  */
-
-
 public class ASAstExperimental extends ASAst {
     public ASAstExperimental(Executeur executeurInstance) {
         super(executeurInstance);
@@ -33,6 +28,10 @@ public class ASAstExperimental extends ASAst {
     @Override
     protected void ajouterProgrammes() {
         super.ajouterProgrammes();
+
+        remplacerProgramme("STRUCTURE NOM_VARIABLE");
+
+        remplacerProgramme("FIN STRUCTURE");
     }
 
     @Override
@@ -91,6 +90,16 @@ public class ASAstExperimental extends ASAst {
         }
     }
 
+    private void remplacerExpression(String oldPattern, Ast<? extends Expression<?>> expression) {
+        int idx = retirerProgramme(oldPattern);
+        ajouterExpression(oldPattern, expression);
+    }
+
+    private void remplacerExpression(String oldPattern, BiFunction<List<Object>, Integer, ? extends Expression<?>> func) {
+        int idx = retirerProgramme(oldPattern);
+        ajouterExpression(oldPattern, Ast.from(func));
+    }
+
     private int retirerExpression(String pattern) {
         String nouveauPattern = remplacerCategoriesParMembre(pattern);
         expressionsDict.remove(nouveauPattern);
@@ -112,6 +121,16 @@ public class ASAstExperimental extends ASAst {
             var pair = pairs[i];
             ajouterProgramme(pair.first(), Ast.from(idx, pair.second()));
         }
+    }
+
+    private void remplacerProgramme(String oldPattern, Ast<? extends Programme> program) {
+        int idx = retirerProgramme(oldPattern);
+        ajouterProgramme(oldPattern, program);
+    }
+
+    private void remplacerProgramme(String oldPattern, BiFunction<List<Object>, Integer, ? extends Programme> func) {
+        int idx = retirerProgramme(oldPattern);
+        ajouterProgramme(oldPattern, Ast.from(func));
     }
 
     private int retirerProgramme(String pattern) {
