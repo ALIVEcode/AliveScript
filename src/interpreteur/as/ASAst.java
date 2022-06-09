@@ -13,6 +13,7 @@ import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.ast.buildingBlocs.expressions.*;
 import interpreteur.ast.buildingBlocs.programmes.*;
 import interpreteur.executeur.Executeur;
+import interpreteur.generateurs.ast.AstFrameKind;
 import interpreteur.generateurs.ast.AstGenerator;
 import interpreteur.tokens.Token;
 
@@ -29,13 +30,15 @@ import java.util.Map;
  */
 
 
-public class ASAst extends AstGenerator {
-    private final Executeur executeurInstance;
+public class ASAst extends AstGenerator<AstFrameKind> {
+    protected final Executeur executeurInstance;
 
     public ASAst(Executeur executeurInstance) {
         reset();
+        defineAstFrame(AstFrameKind.DEFAULT);
         ajouterProgrammes();
         ajouterExpressions();
+        pushAstFrame(AstFrameKind.DEFAULT);
         this.executeurInstance = executeurInstance;
     }
 
