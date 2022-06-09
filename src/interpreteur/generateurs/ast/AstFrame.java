@@ -13,8 +13,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public record AstFrame(
-        Pair<Hashtable<String, Ast<?>>, ArrayList<String>> programmes,
-        Pair<Hashtable<String, Ast<?>>, ArrayList<String>> expressions
+        Pair<Hashtable<String, Ast<? extends Programme>>, ArrayList<String>> programmes,
+        Pair<Hashtable<String, Ast<? extends Expression<?>>>, ArrayList<String>> expressions
 ) {
     public AstFrame() {
         this(
@@ -23,11 +23,11 @@ public record AstFrame(
         );
     }
 
-    public Hashtable<String, Ast<?>> programmesDict() {
+    public Hashtable<String, Ast<? extends Programme>> programmesDict() {
         return programmes.first();
     }
 
-    public Hashtable<String, Ast<?>> expressionsDict() {
+    public Hashtable<String, Ast<? extends Expression<?>>> expressionsDict() {
         return expressions.first();
     }
 

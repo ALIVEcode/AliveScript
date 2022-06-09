@@ -487,7 +487,7 @@ public class ASAst extends AstGenerator<AstFrameKind> {
                             //        : (Expression<?>) p.get(0);
                             return new AppelFonc((Expression<?>) p.get(0), new CreerListe());
                         }
-                        Hashtable<String, Ast<?>> astParams = new Hashtable<>();
+                        Hashtable<String, Ast<? extends Expression<?>>> astParams = new Hashtable<>();
 
                         //astParams.put("expression DEUX_POINTS expression", new Ast<Argument>(8){
                         //    @Override

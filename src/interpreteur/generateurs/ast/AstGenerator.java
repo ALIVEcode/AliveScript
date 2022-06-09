@@ -103,7 +103,7 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
         return currentAstFrame.ordreExpressions();
     }
 
-    protected Hashtable<String, Ast<?>> currentExpressionsDict() {
+    protected Hashtable<String, Ast<? extends Expression<?>>> currentExpressionsDict() {
         return currentAstFrame.expressionsDict();
     }
 
@@ -111,7 +111,7 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
         return currentAstFrame.ordreProgrammes();
     }
 
-    protected Hashtable<String, Ast<?>> currentProgrammesDict() {
+    protected Hashtable<String, Ast<? extends Programme>> currentProgrammesDict() {
         return currentAstFrame.programmesDict();
     }
 
@@ -133,7 +133,7 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
         currentAstFrame = astFrameTable.get(kind);
     }
 
-    private ArrayList<String> ajouterSousAstOrdre(Hashtable<String, Ast<?>> sous_ast) {
+    private ArrayList<String> ajouterSousAstOrdre(Hashtable<String, Ast<? extends Expression<?>>> sous_ast) {
         ArrayList<String> nouvelOrdre = new ArrayList<>(currentOrdreExpressions());
 
         if (sous_ast.size() > 0) {
@@ -160,7 +160,7 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
         return nouvelOrdre;
     }
 
-    public Expression<?> evalOneExpr(ArrayList<Object> expressions, Hashtable<String, Ast<?>> sous_ast) {
+    public Expression<?> evalOneExpr(ArrayList<Object> expressions, Hashtable<String, Ast<? extends Expression<?>>> sous_ast) {
         var result = eval(expressions, sous_ast);
         if (result.size() != 1) {
             throw new ASErreur.ErreurSyntaxe("Erreur ligne 106 dans AstGenerator");
@@ -169,7 +169,7 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
         }
     }
 
-    public ArrayList<Expression<?>> eval(ArrayList<Object> expressions, Hashtable<String, Ast<?>> sous_ast) {
+    public ArrayList<Expression<?>> eval(ArrayList<Object> expressions, Hashtable<String, Ast<? extends Expression<?>>> sous_ast) {
 
         var regleSyntaxeDispo = new Hashtable<>(currentExpressionsDict());
         var ordreRegleSyntaxe = new ArrayList<>(currentOrdreExpressions());
@@ -366,6 +366,15 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
         astFrameStack.clear();
     }
 
+    protected void ajouterProgramme(String pattern, AstFrameKind frameKind) throws NoSuchElementException {
+        pattern = LexerGenerator.remplacerCategoriesParMembre(pattern);
+        var fonction = astFrameTable.get(frameKind).programmesDict().get(pattern);
+        if (fonction == null) {
+            throw new NoSuchElementException("Programme non trouv\u00E9 dans la frame " + frameKind + ": " + pattern);
+        }
+        currentAstFrame().ajouterProgramme(pattern, fonction);
+    }
+
     protected void ajouterProgramme(String pattern, Ast<? extends Programme> fonction) {
         currentAstFrame().ajouterProgramme(pattern, fonction);
     }
@@ -376,6 +385,15 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
 
     protected void ajouterProgramme(String pattern, BiFunction<List<Object>, Integer, ? extends Programme> fonction) {
         currentAstFrame().ajouterProgramme(pattern, fonction);
+    }
+
+    protected void ajouterExpression(String pattern, AstFrameKind frameKind) throws NoSuchElementException {
+        pattern = LexerGenerator.remplacerCategoriesParMembre(pattern);
+        var fonction = astFrameTable.get(frameKind).expressionsDict().get(pattern);
+        if (fonction == null) {
+            throw new NoSuchElementException("Expression non trouv\u00E9e dans la frame " + frameKind + ": " + pattern);
+        }
+        currentAstFrame().ajouterExpression(pattern, fonction);
     }
 
     protected void ajouterExpression(String pattern, Ast<? extends Expression<?>> fonction) {
@@ -451,7 +469,7 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
 
         var arbre = eval(
                 expressions.stream().map(e -> (Object) e).collect(Collectors.toCollection(ArrayList::new)),
-                programmesDict.get(programmeEtVariante).getSousAst()
+                (Hashtable<String, Ast<? extends Expression<?>>>) programmesDict.get(programmeEtVariante).getSousAst()
         );
 
         ArrayList<Object> finalLine = new ArrayList<>(Arrays.asList(programme.split(" ")));
