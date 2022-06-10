@@ -8,28 +8,25 @@ import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASObjet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Experimental(stage = ExperimentalStage.PROTOTYPE)
 public class ASStructure implements ASObjet<Object> {
     private final ASScope scope;
-    private final HashMap<String, ASVariable> proprietesMap;
+    private final LinkedHashMap<String, ASVariable> proprietesMap;
     private final String nom;
 
     public ASStructure(String nom, ASVariable[] proprietes, ASScope scope) {
         this.nom = nom;
         this.scope = scope;
-        this.proprietesMap = new HashMap<>();
+        this.proprietesMap = new LinkedHashMap<>();
         for (var propriete : proprietes) {
             this.proprietesMap.put(propriete.getNom(), propriete);
         }
     }
 
-    private ASPropriete[] validateProprietes(ASPropriete[] proprietesInstance) {
+    private ASPropriete[] makeFinalProprietes(ASPropriete[] proprietesInstance) {
         var proprietesStructure = this.proprietesMap;
 
         // 1. Verifier que le nombre de propriétés est correct (nbProprietesObligatoires <= proprietesInstance.length)
@@ -72,8 +69,7 @@ public class ASStructure implements ASObjet<Object> {
     }
 
     public StructureInstance makeInstance(ASPropriete[] proprietes) {
-        validateProprietes(proprietes);
-        return new StructureInstance(this, proprietes);
+        return new StructureInstance(this, makeFinalProprietes(proprietes));
     }
 
     @Override
@@ -115,7 +111,13 @@ public class ASStructure implements ASObjet<Object> {
 
         private void initProprietes() {
             for (var propriete : proprietes) {
-                scopeInstance.getVariable(propriete.name()).changerValeur(propriete.value());
+                var variable = scopeInstance.getVariable(propriete.name());
+                if (propriete.value() == null) {
+                    throw new ASErreur.ErreurVariableInconnue("La variable '" + propriete.name() + "' n'est pas d\u00E9finie dans le scope. " +
+                            "Pour utiliser cette syntaxe, vous devez d\u00E9finir une variable ayant le même nom que la propriété de la structure" +
+                            " ('" + propriete.name() + "')");
+                }
+                variable.changerValeur(propriete.value());
             }
         }
 

@@ -151,32 +151,31 @@ public class ASAstExperimental extends ASAst {
 
     @Override
     protected void ajouterExpressions() {
-        ajouterExpression("NOM_VARIABLE BRACES_OUV #expression BRACES_FERM~" +
+        ajouterExpression("NOM_VARIABLE BRACES_OUV #expression VIRGULE BRACES_FERM~" +
+                "NOM_VARIABLE BRACES_OUV #expression BRACES_FERM~" +
                 "NOM_VARIABLE BRACES_OUV BRACES_FERM", (p, variante) -> {
             var varStructure = new Var(((Token) p.get(0)).getValeur());
 
             Hashtable<String, Ast<? extends Expression<?>>> astParams = new Hashtable<>();
 
-            astParams.put("NOM_VARIABLE", new Ast<ArgumentStructure>(1) {
-                @Override
-                public ArgumentStructure apply(List<Object> p, Integer variante) {
-                    String nom = ((Token) p.get(0)).getValeur();
-                    return new ArgumentStructure(new Var(nom), null);
-                }
-            });
-
             astParams.put("expression DEUX_POINTS expression", new Ast<ArgumentStructure>(-2) {
                 @Override
                 public ArgumentStructure apply(List<Object> p, Integer variante) {
-                    return new ArgumentStructure(((ArgumentStructure) p.get(0)).var(), (Expression<?>) p.get(2));
+                    if (p.get(0) instanceof Var) {
+                        return new ArgumentStructure((Var) p.get(0), (Expression<?>) p.get(2));
+                    } else {
+                        throw new ASErreur.ErreurSyntaxe("Une d\u00E9finition de propri\u00E9t\u00E9 d'une structure " +
+                                "doit commencer par une variable.");
+                    }
                 }
             });
 
             ArgumentStructure[] argsStructure = new ArgumentStructure[]{};
-            if (variante == 1) {
+            if (variante == 2) {
                 return new CreerStructureInstance(varStructure, argsStructure);
             }
-            Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(2, p.size() - 1)), astParams);
+            int lastIndex = variante == 1 ? p.size() - 1 : p.size() - 2;
+            Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(2, lastIndex)), astParams);
 
             if (contenu instanceof ArgumentStructure argumentStructure) {
                 argsStructure = new ArgumentStructure[]{argumentStructure};

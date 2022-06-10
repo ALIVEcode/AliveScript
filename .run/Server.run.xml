@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Server" type="Application" factoryName="Application" nameIsGenerated="true">
+  <configuration default="false" name="Server" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="server.Server" />
     <module name="ServerAS" />
     <extension name="net.ashald.envfile">
