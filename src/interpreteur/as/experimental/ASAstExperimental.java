@@ -6,6 +6,7 @@ import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.datatype.ASNul;
 import interpreteur.as.lang.datatype.structure.ASStructure;
+import interpreteur.as.lang.managers.ASScopeManager;
 import interpreteur.ast.Ast;
 import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
@@ -255,24 +256,34 @@ public class ASAstExperimental extends ASAst {
                      * 5. var x:type
                      */
 
+                    setType:
                     if (variante == 1 || variante == 3 || variante == 6 || variante == 7) {
                         // si le type précisé n'est pas un type
                         if (p.get(3) instanceof ASTypeExpr _type) {
                             type = _type;
-                        } else if (p.get(3) instanceof Var var) {
-                            var variable = ASScope.getCurrentScope().getVariable(var.getNom());
-                            if (variable == null || !(variable.getValeurApresGetter() instanceof ASStructure structure)) {
-                                throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
-                                        (estConst ? "constante" : "variable") +
-                                        ", les deux points doivent \u00EAtre suivi d'un type valide");
-                            }
-                            type = new ASTypeExpr(structure.getNomType());
-                        } else {
-                            throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
-                                    (estConst ? "constante" : "variable") +
-                                    ", les deux points doivent \u00EAtre suivi d'un type valide");
+                            break setType;
                         }
 
+                        if (p.get(3) instanceof Var var) {
+                            var current = ASScope.popCurrentScope();
+                            var variable = ASScope.getCurrentScope().getVariable(var.getNom());
+                            ASScope.pushCurrentScope(current);
+                            if (variable != null) {
+                                // manière complexe de checker si le nom du type est le même nom que la structure dans laquelle il est déclaré
+                                if (variable.getNom().equals(ASScopeManager.getScopeName(executeurInstance.obtenirCoordRunTime().getScope()))) {
+                                    type = new ASTypeExpr(variable.getNom());
+                                    break setType;
+                                }
+                                if (variable.getValeurApresGetter() instanceof ASStructure structure) {
+                                    type = new ASTypeExpr(structure.getNomType());
+                                    break setType;
+                                }
+                            }
+                        }
+
+                        throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
+                                (estConst ? "constante" : "variable") +
+                                ", les deux points doivent \u00EAtre suivi d'un type valide");
                     }
 
                     if (variante == 7 || variante == 1) {

@@ -38,7 +38,7 @@ public class ASScope {
      */
     public static ASScope makeNewCurrentScope() {
         ASScope scope = new ASScope();
-        updateCurrentScope(scope);
+        pushCurrentScope(scope);
         return scope;
     }
 
@@ -52,12 +52,12 @@ public class ASScope {
         return scopeStack.peek();
     }
 
-    public static void updateCurrentScope(ASScope scope) {
+    public static void pushCurrentScope(ASScope scope) {
         scopeStack.push(scope);
     }
 
-    public static void popCurrentScope() {
-        scopeStack.pop();
+    public static ASScope popCurrentScope() {
+        return scopeStack.pop();
     }
 
     public static Stack<ScopeInstance> getScopeInstanceStack() {
