@@ -122,7 +122,7 @@ public class ASStructure implements ASObjet<Object> {
                             "Pour utiliser cette syntaxe, vous devez d\u00E9finir une variable ayant le même nom que la propriété de la structure" +
                             " ('" + propriete.name() + "')");
                 }
-                variable.changerValeur(propriete.asValue());
+                variable.setValeur(propriete.asValue());
             }
         }
 

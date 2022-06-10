@@ -144,9 +144,7 @@ public class ASAstExperimental extends ASAst {
             return new DefinirStructure(new Var(((Token) p.get(1)).getValeur()), executeurInstance);
         });
 
-        remplacerProgramme("FIN STRUCTURE", p -> {
-            throw new ASErreur.ErreurFermeture(executeurInstance.obtenirCoordRunTime().getBlocActuel(), "fin structure");
-        });
+        remplacerProgramme("FIN STRUCTURE", p -> new FinStructure());
     }
 
     @Override
@@ -211,24 +209,117 @@ public class ASAstExperimental extends ASAst {
     private void ajouterProgrammesStructure() {
         ajouterProgramme("CONSTANTE expression~"
                         + "CONSTANTE expression DEUX_POINTS expression~"
+                        + "CONSTANTE expression {assignements} expression~"
+                        + "CONSTANTE expression DEUX_POINTS expression {assignements} expression~"
+                        + "VAR expression~"
+                        + "VAR expression {assignements} expression~"
+                        + "VAR expression DEUX_POINTS expression {assignements} expression~"
+                        + "VAR expression DEUX_POINTS expression~"
+                        + "expression {assignements} expression",
+                (p, variante) -> {
+
+                    /*TODO erreur si c 'est pas une Var qui est passé comme expression à gauche de l' assignement */
+
+
+                    int idxValeur;
+                    int idxAssignement;
+
+
+                    // si le premier mot n'est ni "const" ni "var"
+                    if (variante == 8) {
+                        throw new ASErreur.ErreurSyntaxe("Seul les d\u00E9clarations de constantes ou de variables " +
+                                "sont autoris\u00E9es dans une structure.");
+                    }
+
+                    // déclaration sous la forme "const x"
+                    if (variante == 0) {
+                        return new Declarer((Expression<?>) p.get(1), null, null, true);
+                    }
+
+                    // déclaration sous la forme "var x"
+                    if (variante == 4) {
+                        return new Declarer((Expression<?>) p.get(1), new ValeurConstante(new ASNul()), null, false);
+                    }
+
+                    // si le premier mot est "const"
+                    boolean estConst = variante < 4;
+
+                    // le type de la variable déclarer (null signifie qu'il n'est pas mentionné dans la déclaration)
+                    ASTypeExpr type = null;
+
+                    /* Déclaration sous une des formes:
+                     * 1. const x: type = valeur
+                     * 4. var x:type = valeur
+                     * 5. var x:type
+                     */
+
+                    if (variante == 1 || variante == 3 || variante == 6 || variante == 7) {
+                        // si le type précisé n'est pas un type
+                        if (!(p.get(3) instanceof ASTypeExpr _type))
+                            throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
+                                    (estConst ? "constante" : "variable") +
+                                    ", les deux points doivent \u00EAtre suivi d'un type valide");
+                        type = _type;
+                    }
+
+                    if (variante == 7 || variante == 1) {
+                        return new Declarer((Expression<?>) p.get(1), null, type, variante == 1);
+                    }
+
+                    // si la précision du type est présente
+                    if (variante == 3 || variante == 6) {
+                        idxValeur = 5;
+                        idxAssignement = 4;
+                    }
+                    // si la précision du type n'est pas présente
+                    else {
+                        idxValeur = 3;
+                        idxAssignement = 2;
+                    }
+
+                    // si on tente de déclarer une constante avec autre chose que = (ex: +=, *=, -=, etc.)
+                    String nomAssignement = ((Token) p.get(idxAssignement)).getNom();
+                    if (!nomAssignement.equals("ASSIGNEMENT") && !(nomAssignement.equals("ASSIGNEMENT_FLECHE"))) {
+                        if (estConst)
+                            throw new ASErreur.ErreurAssignement("Impossible de modifier la valeur d'une constante");
+                        else
+                            throw new ASErreur.ErreurAssignement("Impossible de modifier la valeur d'une variable durant sa d\u00E9claration");
+                    }
+
+                    // si la valeur de l'expression est une énumération d'éléments ex: 3, "salut", 4
+                    // on forme une liste avec la suite d'éléments
+                    if (p.get(idxValeur) instanceof CreerListe.Enumeration enumeration)
+                        p.set(idxValeur, enumeration.buildCreerListe());
+
+                    // on retourne l'objet Declarer
+                    return new Declarer((Expression<?>) p.get(1), (Expression<?>) p.get(idxValeur), type, estConst, true);
+                });
+/*
+
+        ajouterProgramme("CONSTANTE expression~"
+                        + "CONSTANTE expression DEUX_POINTS expression~"
                         + "VAR expression~"
                         + "VAR expression DEUX_POINTS expression",
                 (p, variante) -> {
-                    /*
-                     * TODO erreur si c'est pas une Var qui est passé comme expression à gauche du assignment
-                     */
+                    */
+        /*
+         * TODO erreur si c'est pas une Var qui est passé comme expression à gauche du assignment
+         *//*
+
                     // si le premier mot est "const"
                     boolean estConst = variante < 2;
 
                     // le type de la variable déclarer (null signifie qu'il n'est pas mentionné dans la déclaration)
                     ASTypeExpr type = null;
 
-                    /*
-                     * Déclaration sous une des formes:
-                     * 1. const x: type = valeur
-                     * 4. var x: type = valeur
-                     * 5. var x: type
-                     */
+                    */
+        /*
+         * Déclaration sous une des formes:
+         * 1. const x: type = valeur
+         * 4. var x: type = valeur
+         * 5. var x: type
+         *//*
+
                     if (variante == 1 || variante == 3) {
                         // si le type précisé n'est pas un type
                         if (!(p.get(3) instanceof ASTypeExpr _type))
@@ -241,6 +332,7 @@ public class ASAstExperimental extends ASAst {
                     // on retourne l'objet Declarer
                     return new Declarer((Expression<?>) p.get(1), null, type, estConst);
                 });
+*/
 
 
         ajouterProgramme("FIN STRUCTURE", p -> {

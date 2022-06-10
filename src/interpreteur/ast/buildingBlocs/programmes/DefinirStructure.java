@@ -17,6 +17,7 @@ import java.util.List;
 @Experimental(stage = ExperimentalStage.PROTOTYPE)
 public class DefinirStructure extends Programme {
     private final Var varExpr;
+    private final ASScope scope;
 
     public DefinirStructure(Var varExpr, Executeur executeurInstance) {
         super(executeurInstance);
@@ -26,7 +27,7 @@ public class DefinirStructure extends Programme {
         var varStructure = new ASConstante(varExpr.getNom(), null, new ASTypeExpr(varExpr.getNom()));
         this.varExpr.setNom(varStructure.getNom());
         ASScope.getCurrentScope().declarerVariable(varStructure);
-        ASScope.makeNewCurrentScope();
+        scope = ASScope.makeNewCurrentScope();
     }
 
     @Override
