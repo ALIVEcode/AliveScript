@@ -3,30 +3,62 @@ package interpreteur.as.lang.datatype.structure;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASObjet;
 
+import java.util.Objects;
 
-public record ASPropriete(String name, ASObjet<?> value) implements ASObjet<Object> {
-    public ASPropriete(String name, ASObjet<?> value) {
+
+public final class ASPropriete implements ASObjet<Object> {
+    private final String name;
+    private ASObjet<?> asValue;
+
+    public ASPropriete(String name, ASObjet<?> asValue) {
         this.name = name;
-        this.value = value instanceof ASVariable variable ? variable.getValeurApresGetter() : value;
+        this.asValue = asValue instanceof ASVariable variable ? variable.getValeurApresGetter() : asValue;
     }
 
     @Override
     public Object getValue() {
-        return value == null ? null : value.getValue();
+        return asValue == null ? null : asValue.getValue();
+    }
+
+    public void setAsValue(ASObjet<?> asValue) {
+        this.asValue = asValue;
     }
 
     @Override
     public boolean boolValue() {
-        return value != null && value.boolValue();
+        return asValue != null && asValue.boolValue();
     }
 
     @Override
     public String getNomType() {
-        return this.value.getNomType();
+        return this.asValue.getNomType();
     }
 
     @Override
     public String toString() {
-        return name + ": " + value;
+        return name + ": " + asValue;
     }
+
+    public String name() {
+        return name;
+    }
+
+    public ASObjet<?> asValue() {
+        return asValue;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (ASPropriete) obj;
+        return Objects.equals(this.name, that.name) &&
+                Objects.equals(this.asValue, that.asValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, asValue);
+    }
+
 }

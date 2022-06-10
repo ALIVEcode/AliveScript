@@ -37,12 +37,12 @@ public record ASModuleManager(Executeur executeurInstance) {
 
     public void utiliserModuleBuiltins() {
         var moduleBuiltins = getModuleBuiltins();
-        moduleBuiltins.utiliser("");
-        ASScope.getCurrentScope().declarerVariable(new ASConstante("builtins", new ASListe(moduleBuiltins
-                .getNomsConstantesEtFonctions()
-                .stream()
-                .map(ASTexte::new)
-                .toArray(ASTexte[]::new))));
+        moduleBuiltins.utiliser(null);
+        // ASScope.getCurrentScope().declarerVariable(new ASConstante("builtins", new ASListe(moduleBuiltins
+        //         .getNomsConstantesEtFonctions()
+        //         .stream()
+        //         .map(ASTexte::new)
+        //         .toArray(ASTexte[]::new))));
 
     }
 
@@ -59,17 +59,17 @@ public record ASModuleManager(Executeur executeurInstance) {
         ASModule module = getModule(nomModule);
 
         module.utiliser(prefix);
-        ASScope.getCurrentScope().declarerVariable(new ASConstante(nomModule, new ASListe(module
-                .getNomsConstantesEtFonctions()
-                .stream()
-                .map(e -> nomModule + "." + e)
-                .map(ASTexte::new)
-                .toArray(ASTexte[]::new))));
+        // ASScope.getCurrentScope().declarerVariable(new ASConstante(nomModule, new ASListe(module
+        //         .getNomsConstantesEtFonctions()
+        //         .stream()
+        //         .map(e -> nomModule + "." + e)
+        //         .map(ASTexte::new)
+        //         .toArray(ASTexte[]::new))));
     }
 
     public void utiliserModuleAvecPrefix(String nomModule, String[] methodes, String prefix) {
         if (nomModule.equals("builtins")) {
-            new ASErreur.AlerteUtiliserBuiltins("Il est inutile d'utiliser builtins, puisque le module builtins est utilise par defaut");
+            new ASErreur.AlerteUtiliserBuiltins("Il est inutile d'utiliser builtins, puisque le module builtins est utilis\u00E9 par d\u00E9faut");
             return;
         }
 
@@ -86,10 +86,10 @@ public record ASModuleManager(Executeur executeurInstance) {
                                                     .replaceAll("[\\[\\]]", ""));
 
         module.utiliser(nomsFctEtConstDemandees, prefix);
-        ASScope.getCurrentScope().declarerVariable(new ASConstante(nomModule, new ASListe(nomsFctEtConstDemandees
-                .stream()
-                .map(ASTexte::new)
-                .toArray(ASTexte[]::new))));
+        // ASScope.getCurrentScope().declarerVariable(new ASConstante(nomModule, new ASListe(nomsFctEtConstDemandees
+        //         .stream()
+        //         .map(ASTexte::new)
+        //         .toArray(ASTexte[]::new))));
     }
 
     public void utiliserModule(String nomModule) {

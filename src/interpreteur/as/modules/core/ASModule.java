@@ -1,10 +1,7 @@
 package interpreteur.as.modules.core;
 
-import interpreteur.as.lang.ASFonctionModule;
-import interpreteur.as.lang.ASVariable;
-import interpreteur.as.lang.ASScope;
-import interpreteur.as.lang.managers.ASFonctionManager;
-import interpreteur.as.lang.ASTypeExpr;
+import interpreteur.as.lang.*;
+import interpreteur.as.lang.datatype.ASNamespace;
 import language.Translator;
 
 import java.util.ArrayList;
@@ -31,29 +28,70 @@ public record ASModule(ASFonctionModule[] fonctions,
         return this;
     }
 
-    public void utiliser(String prefix) {
-        ASFonctionManager.ajouterNamespace(prefix);
+    private void utiliser() {
         for (ASFonctionModule fonction : fonctions) {
             ASScope.getCurrentScope().declarerVariable(new ASVariable(fonction.getNom(), fonction, new ASTypeExpr(fonction.getNomType())));
         }
         for (ASVariable variable : variables) {
             ASScope.getCurrentScope().declarerVariable(variable.clone());
         }
-        ASFonctionManager.retirerNamespace();
     }
 
-    public void utiliser(List<String> nomMethodes, String prefix) {
-        ASFonctionManager.ajouterNamespace(prefix);
+    private void utiliser(List<String> nomMethodes) {
         for (ASFonctionModule fonction : fonctions) {
-            if (nomMethodes.contains(fonction.getNom()))
-                ASFonctionManager.ajouterFonction(fonction);
+            if (nomMethodes.contains(fonction.getNom())) {
+                ASScope.getCurrentScope().declarerVariable(new ASVariable(fonction.getNom(), fonction, new ASTypeExpr(fonction.getNomType())));
+            }
         }
         for (ASVariable variable : variables) {
             if (nomMethodes.contains(variable.getNom())) {
                 ASScope.getCurrentScope().declarerVariable(variable.clone());
             }
         }
-        ASFonctionManager.retirerNamespace();
+    }
+
+    public void utiliser(String prefix) {
+        if (prefix == null || prefix.isBlank()) {
+            utiliser();
+            return;
+        }
+        var module = new ASNamespace(prefix);
+        ASScope.getCurrentScope().declarerVariable(new ASConstante(prefix, module));
+
+        // ASFonctionManager.ajouterNamespace(prefix);
+        for (ASFonctionModule fonction : fonctions) {
+            // ASScope.getCurrentScope().declarerVariable(new ASVariable(fonction.getNom(), fonction, new ASTypeExpr(fonction.getNomType())));
+            module.ajouterObjet(new ASVariable(fonction.getNom(), fonction, new ASTypeExpr(fonction.getNomType())));
+        }
+        for (ASVariable variable : variables) {
+            //ASScope.getCurrentScope().declarerVariable(variable.clone());
+            module.ajouterObjet(variable.clone());
+        }
+        // ASFonctionManager.retirerNamespace();
+    }
+
+    public void utiliser(List<String> nomMethodes, String prefix) {
+        if (prefix == null || prefix.isBlank()) {
+            utiliser(nomMethodes);
+            return;
+        }
+        var module = new ASNamespace(prefix);
+        ASScope.getCurrentScope().declarerVariable(new ASVariable(prefix, module, new ASTypeExpr("namespace")));
+
+        // ASFonctionManager.ajouterNamespace(prefix);
+        for (ASFonctionModule fonction : fonctions) {
+            if (nomMethodes.contains(fonction.getNom())) {
+                // ASFonctionManager.ajouterFonction(fonction);
+                module.ajouterObjet(new ASVariable(fonction.getNom(), fonction, new ASTypeExpr(fonction.getNomType())));
+            }
+        }
+        for (ASVariable variable : variables) {
+            if (nomMethodes.contains(variable.getNom())) {
+                ASScope.getCurrentScope().declarerVariable(variable.clone());
+                module.ajouterObjet(variable.clone());
+            }
+        }
+        // ASFonctionManager.retirerNamespace();
     }
 
     /**
@@ -98,9 +136,9 @@ public record ASModule(ASFonctionModule[] fonctions,
     @Override
     public String toString() {
         return "Module{\n" +
-               "fonctions=" + Arrays.toString(fonctions) + "\n" +
-               ", variables=" + Arrays.toString(variables) + "\n" +
-               '}';
+                "fonctions=" + Arrays.toString(fonctions) + "\n" +
+                ", variables=" + Arrays.toString(variables) + "\n" +
+                '}';
     }
 }
 

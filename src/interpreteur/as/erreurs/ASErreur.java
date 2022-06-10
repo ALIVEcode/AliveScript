@@ -272,6 +272,12 @@ public interface ASErreur {
         public ErreurPropriete(String nom, String message) {
             super("dans la structure '" + nom + "': " + message, "error.Property");
         }
+    }
+
+    class ErreurMembreModule extends ErreurAliveScript {
+        public ErreurMembreModule(String nom, String message) {
+            super("dans le module '" + nom + "': " + message, "error.ModuleMember");
+        }
 
     }
 

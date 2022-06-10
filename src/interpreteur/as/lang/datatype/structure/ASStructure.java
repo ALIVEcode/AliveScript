@@ -113,23 +113,30 @@ public class ASStructure implements ASObjet<Object> {
         private void initProprietes() {
             for (var propriete : proprietes) {
                 var variable = scopeInstance.getVariable(propriete.name());
-                if (propriete.value() == null) {
+                if (propriete.asValue() == null) {
                     throw new ASErreur.ErreurVariableInconnue("La variable '" + propriete.name() + "' n'est pas d\u00E9finie dans le scope. " +
                             "Pour utiliser cette syntaxe, vous devez d\u00E9finir une variable ayant le même nom que la propriété de la structure" +
                             " ('" + propriete.name() + "')");
                 }
-                variable.changerValeur(propriete.value());
+                variable.changerValeur(propriete.asValue());
             }
+        }
+
+        private ASPropriete getProprieteOrThrow(String nom) {
+            return Arrays.stream(proprietes).filter(p -> p.name().equals(nom)).findFirst().orElseThrow(() -> new ASErreur.ErreurPropriete(
+                    structure.nom, "La propri\u00E9t\u00E9 '" + nom + "' n'existe pas dans la structure '" + structure.nom + "'")
+            );
         }
 
         @Override
         public ASObjet<?> getAttr(String attrName) {
-            return Arrays.stream(proprietes)
-                    .filter(propriete -> propriete.name().equals(attrName))
-                    .findFirst()
-                    .orElseThrow(() -> new ASErreur.ErreurPropriete(
-                            structure.nom, "La propri\u00E9t\u00E9 '" + attrName + "' n'existe pas dans la structure '" + structure.nom + "'")
-                    ).value();
+            return getProprieteOrThrow(attrName).asValue();
+        }
+
+        @Override
+        public void setAttr(String attrName, ASObjet<?> newValue) {
+            var propriete = getProprieteOrThrow(attrName);
+            propriete.setAsValue(newValue);
         }
 
         @Override

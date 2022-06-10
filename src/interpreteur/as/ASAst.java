@@ -49,8 +49,9 @@ public class ASAst extends AstGenerator<AstFrameKind> {
         ajouterProgramme("UTILISER expression~"
                         + "UTILISER expression BRACES_OUV MUL BRACES_FERM~"
                         + "UTILISER expression BRACES_OUV expression BRACES_FERM~"
-                        + "UTILISER expression NOM_VARIABLE BRACES_OUV MUL BRACES_FERM~"
-                        + "UTILISER expression NOM_VARIABLE BRACES_OUV expression BRACES_FERM",
+                        + "UTILISER expression NOM_VARIABLE POINT BRACES_OUV MUL BRACES_FERM~"
+                        + "UTILISER expression NOM_VARIABLE POINT BRACES_OUV expression BRACES_FERM~"
+                        + "UTILISER expression NOM_VARIABLE BRACES_OUV MUL BRACES_FERM~",
                 (p, variante) -> {
                     if (p.get(1) instanceof ValeurConstante valeurConstante && valeurConstante.eval() instanceof ASTexte texte) {
                         String msg = texte.getValue();
@@ -62,20 +63,24 @@ public class ASAst extends AstGenerator<AstFrameKind> {
                         }
                     }
 
+                    if (variante == 5) {
+                        throw new ASErreur.ErreurSyntaxe("Le pr\u00E9fix du module doit finir par '.'");
+                    }
+
                     String nomPrefix = "";
                     if (variante == 3 || variante == 4) {
                         nomPrefix = ((Token) p.get(2)).getValeur();
-                        if (!nomPrefix.endsWith(".")) {
-                            throw new ASErreur.ErreurSyntaxe("Le pr\u00E9fix du module doit finir par '.'");
-                        }
-                        nomPrefix = nomPrefix.substring(0, nomPrefix.length() - 1);
+                        // if (!nomPrefix.endsWith(".")) {
+                        //
+                        // }
+                        // nomPrefix = nomPrefix.substring(0, nomPrefix.length() - 1);
                     }
 
                     if (variante == 1 || variante == 3) {
                         return new Utiliser((Var) p.get(1), executeurInstance, nomPrefix);
 
                     } else if (variante == 2 || variante == 4) {
-                        int idxEnumeration = variante == 2 ? 3 : 4;
+                        int idxEnumeration = variante == 2 ? 3 : 5;
                         Var[] sous_modules;
                         if (p.get(idxEnumeration) instanceof CreerListe.Enumeration enumeration) {
                             sous_modules = enumeration.getExprs().toArray(Var[]::new);
