@@ -6,6 +6,7 @@ import interpreteur.as.experimental.annotations.Experimental;
 import interpreteur.as.experimental.annotations.ExperimentalStage;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASVariable;
+import interpreteur.as.lang.datatype.ASHasAttr;
 import interpreteur.as.lang.datatype.ASObjet;
 
 import java.util.*;
@@ -97,7 +98,7 @@ public class ASStructure implements ASObjet<Object> {
                 '}';
     }
 
-    public static class StructureInstance implements ASObjet<Object> {
+    public static class StructureInstance implements ASObjet<Object>, ASHasAttr {
         private final ASStructure structure;
         private final ASScope.ScopeInstance scopeInstance;
         private final ASPropriete[] proprietes;
@@ -119,6 +120,16 @@ public class ASStructure implements ASObjet<Object> {
                 }
                 variable.changerValeur(propriete.value());
             }
+        }
+
+        @Override
+        public ASObjet<?> getAttr(String attrName) {
+            return Arrays.stream(proprietes)
+                    .filter(propriete -> propriete.name().equals(attrName))
+                    .findFirst()
+                    .orElseThrow(() -> new ASErreur.ErreurPropriete(
+                            structure.nom, "La propri\u00E9t\u00E9 '" + attrName + "' n'existe pas dans la structure '" + structure.nom + "'")
+                    ).value();
         }
 
         @Override

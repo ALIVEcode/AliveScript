@@ -200,6 +200,13 @@ public class ASAstExperimental extends ASAst {
 
         super.ajouterExpressions();
 
+        ajouterExpression("expression POINT expression", new Ast<GetAttr>(5) {
+            @Override
+            public GetAttr apply(List<Object> p, Integer idxVariante) {
+                return new GetAttr((Expression<?>) p.get(0), (Var) p.get(2));
+            }
+        });
+
         remplacerExpression(
                 "BRACES_OUV BRACES_FERM~"
                         + "BRACES_OUV #expression BRACES_FERM~"

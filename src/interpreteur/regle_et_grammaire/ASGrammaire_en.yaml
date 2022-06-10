@@ -117,7 +117,7 @@ Ajouter:
   DEUX_POINTS: "[:]"
   POINT_VIRGULE: "[;]"
 
-  NOM_VARIABLE: '((\p{L}|_)+(\d+)*(\p{L})*_*\.?)+'
+  NOM_VARIABLE: '((\p{L}|_)+(\d+)*(\p{L})*_*)+'
 
 Ignorer:
   - '\s+'
