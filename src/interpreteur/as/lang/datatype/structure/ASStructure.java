@@ -88,7 +88,6 @@ public class ASStructure implements ASObjet<Object> {
         return nom;
     }
 
-
     @Override
     public String toString() {
         return "ASStructure{" +
