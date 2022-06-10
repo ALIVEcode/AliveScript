@@ -24,6 +24,9 @@ public class ASStructure implements ASObjet<Object> {
         this.scope = scope;
         this.proprietesMap = new LinkedHashMap<>();
         for (var propriete : proprietes) {
+            if (propriete.getNom().equals("instance")) {
+                throw new ASErreur.ErreurDeclaration("Il est interdit de déclarer une propriété portant le nom 'instance' dans une structure");
+            }
             this.proprietesMap.put(propriete.getNom(), propriete);
         }
     }
