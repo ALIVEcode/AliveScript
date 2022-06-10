@@ -2,8 +2,10 @@ package interpreteur.as.experimental;
 
 import interpreteur.as.ASAst;
 import interpreteur.as.erreurs.ASErreur;
+import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.datatype.ASNul;
+import interpreteur.as.lang.datatype.structure.ASStructure;
 import interpreteur.ast.Ast;
 import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
@@ -255,11 +257,22 @@ public class ASAstExperimental extends ASAst {
 
                     if (variante == 1 || variante == 3 || variante == 6 || variante == 7) {
                         // si le type précisé n'est pas un type
-                        if (!(p.get(3) instanceof ASTypeExpr _type))
+                        if (p.get(3) instanceof ASTypeExpr _type) {
+                            type = _type;
+                        } else if (p.get(3) instanceof Var var) {
+                            var variable = ASScope.getCurrentScope().getVariable(var.getNom());
+                            if (variable == null || !(variable.getValeurApresGetter() instanceof ASStructure structure)) {
+                                throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
+                                        (estConst ? "constante" : "variable") +
+                                        ", les deux points doivent \u00EAtre suivi d'un type valide");
+                            }
+                            type = new ASTypeExpr(structure.getNomType());
+                        } else {
                             throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
                                     (estConst ? "constante" : "variable") +
                                     ", les deux points doivent \u00EAtre suivi d'un type valide");
-                        type = _type;
+                        }
+
                     }
 
                     if (variante == 7 || variante == 1) {

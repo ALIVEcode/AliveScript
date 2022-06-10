@@ -5,8 +5,10 @@ import interpreteur.as.erreurs.ASErreur.ErreurAssignement;
 import interpreteur.as.erreurs.ASErreur.ErreurInputOutput;
 import interpreteur.as.erreurs.ASErreur.ErreurSyntaxe;
 import interpreteur.as.erreurs.ASErreur.ErreurType;
+import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.datatype.*;
+import interpreteur.as.lang.datatype.structure.ASStructure;
 import interpreteur.ast.Ast;
 import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
@@ -193,11 +195,26 @@ public class ASAst extends AstGenerator<AstFrameKind> {
                      */
                     if (variante == 1 || variante == 4 || variante == 5) {
                         // si le type précisé n'est pas un type
-                        if (!(p.get(3) instanceof ASTypeExpr _type))
+                        if (p.get(3) instanceof ASTypeExpr _type) {
+                            type = _type;
+                        } else if (p.get(3) instanceof Var var) {
+                            var variable = ASScope.getCurrentScope().getVariable(var.getNom());
+                            if (variable == null || !(variable.getValeurApresGetter() instanceof ASStructure structure)) {
+                                throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
+                                        (estConst ? "constante" : "variable") +
+                                        ", les deux points doivent \u00EAtre suivi d'un type valide");
+                            }
+                            type = new ASTypeExpr(structure.getNomType());
+                        } else {
+                            throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
+                                    (estConst ? "constante" : "variable") +
+                                    ", les deux points doivent \u00EAtre suivi d'un type valide");
+                        }
+                        /*if (!(p.get(3) instanceof ASTypeExpr _type))
                             throw new ErreurType("Dans une d\u00E9claration de " +
                                     (estConst ? "constante" : "variable") +
                                     ", les deux points doivent \u00EAtre suivi d'un type valide");
-                        type = _type;
+                        type = _type;*/
                     }
 
                     if (variante == 5) {
