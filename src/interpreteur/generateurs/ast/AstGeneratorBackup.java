@@ -473,7 +473,7 @@ public class AstGeneratorBackup {
 
         var arbre = eval(
                 expressions.stream().map(e -> (Object) e).collect(Collectors.toCollection(ArrayList::new)),
-                programmesDict.get(programmeEtVariante).getSousAst()
+                null //programmesDict.get(programmeEtVariante).getSousAst()
         );
 
         ArrayList<Object> finalLine = new ArrayList<>(Arrays.asList(programme.split(" ")));

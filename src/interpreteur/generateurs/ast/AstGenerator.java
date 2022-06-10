@@ -121,7 +121,8 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
     }
 
     protected void popAstFrame() {
-        setCurrentAstFrame(astFrameStack.pop());
+        astFrameStack.pop();
+        setCurrentAstFrame(astFrameStack.peek());
     }
 
     protected void defineAstFrame(AstFrameKind kind) {
@@ -139,10 +140,12 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
         if (sous_ast.size() > 0) {
             for (String pattern : sous_ast.keySet()) {
                 pattern = LexerGenerator.remplacerCategoriesParMembre(pattern);
+                int importance = sous_ast.get(pattern).getImportance();
+                if (importance == -2) continue; // -2 = take the same place as the replaced expression
+
                 if (currentOrdreExpressions().contains(pattern)) {
                     nouvelOrdre.remove(pattern);
                 }
-                int importance = sous_ast.get(pattern).getImportance();
                 if (importance == -1) {
                     nouvelOrdre.add(pattern);
                 } else {
@@ -469,7 +472,7 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
 
         var arbre = eval(
                 expressions.stream().map(e -> (Object) e).collect(Collectors.toCollection(ArrayList::new)),
-                (Hashtable<String, Ast<? extends Expression<?>>>) programmesDict.get(programmeEtVariante).getSousAst()
+                programmesDict.get(programmeEtVariante).getSousAst()
         );
 
         ArrayList<Object> finalLine = new ArrayList<>(Arrays.asList(programme.split(" ")));

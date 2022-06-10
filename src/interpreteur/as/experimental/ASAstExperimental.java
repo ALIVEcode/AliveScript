@@ -141,17 +141,64 @@ public class ASAstExperimental extends ASAst {
 
         remplacerProgramme("STRUCTURE NOM_VARIABLE", p -> {
             pushAstFrame(AstFrameKind.STRUCTURE);
-            return new CreerStructure(new Var(((Token) p.get(1)).getValeur()), executeurInstance);
+            return new DefinirStructure(new Var(((Token) p.get(1)).getValeur()), executeurInstance);
         });
 
         remplacerProgramme("FIN STRUCTURE", p -> {
-            popAstFrame();
-            return new FinStructure();
+            throw new ASErreur.ErreurFermeture(executeurInstance.obtenirCoordRunTime().getBlocActuel(), "fin structure");
         });
     }
 
     @Override
     protected void ajouterExpressions() {
+        ajouterExpression("NOM_VARIABLE BRACES_OUV #expression BRACES_FERM~" +
+                "NOM_VARIABLE BRACES_OUV BRACES_FERM", (p, variante) -> {
+            var varStructure = new Var(((Token) p.get(0)).getValeur());
+
+            Hashtable<String, Ast<? extends Expression<?>>> astParams = new Hashtable<>();
+
+            astParams.put("NOM_VARIABLE", new Ast<ArgumentStructure>(1) {
+                @Override
+                public ArgumentStructure apply(List<Object> p, Integer variante) {
+                    String nom = ((Token) p.get(0)).getValeur();
+                    return new ArgumentStructure(new Var(nom), null);
+                }
+            });
+
+            astParams.put("expression DEUX_POINTS expression", new Ast<ArgumentStructure>(-2) {
+                @Override
+                public ArgumentStructure apply(List<Object> p, Integer variante) {
+                    return new ArgumentStructure(((ArgumentStructure) p.get(0)).var(), (Expression<?>) p.get(2));
+                }
+            });
+
+            ArgumentStructure[] argsStructure = new ArgumentStructure[]{};
+            if (variante == 1) {
+                return new CreerStructureInstance(varStructure, argsStructure);
+            }
+            Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(2, p.size() - 1)), astParams);
+
+            if (contenu instanceof ArgumentStructure argumentStructure) {
+                argsStructure = new ArgumentStructure[]{argumentStructure};
+            } else if (contenu instanceof CreerListe.Enumeration enumeration) {
+
+                argsStructure = enumeration.getExprs()
+                        .stream()
+                        .map(expr -> {
+                            if (expr instanceof ArgumentStructure arg) {
+                                return arg;
+                            } else if (expr instanceof Var var) {
+                                return new ArgumentStructure(var, null);
+                            } else {
+                                throw new ASErreur.ErreurType("Une structure doit contenir des variables ou des arguments");
+                            }
+                        })
+                        .toArray(ArgumentStructure[]::new);
+            }
+
+            return new CreerStructureInstance(varStructure, argsStructure);
+        });
+
         super.ajouterExpressions();
 
         remplacerExpression(
@@ -191,51 +238,14 @@ public class ASAstExperimental extends ASAst {
     }
 
     private void ajouterProgrammesStructure() {
-        ajouterProgramme("CONSTANTE expression {assignements} expression~"
-                        + "CONSTANTE expression DEUX_POINTS expression {assignements} expression~"
+        ajouterProgramme("CONSTANTE expression~"
+                        + "CONSTANTE expression DEUX_POINTS expression~"
                         + "VAR expression~"
-                        + "VAR expression {assignements} expression~"
-                        + "VAR expression DEUX_POINTS expression {assignements} expression~"
-                        + "VAR expression DEUX_POINTS expression~"
-                        + "expression {assignements} expression",
+                        + "VAR expression DEUX_POINTS expression",
                 (p, variante) -> {
                     /*
-                     * TODO erreur si c'est pas une Var qui est passé comme expression à gauche de l'assignement
+                     * TODO erreur si c'est pas une Var qui est passé comme expression à gauche du assignment
                      */
-
-                    int idxValeur;
-                    int idxAssignement;
-
-                    BinOp.Operation op = null;
-
-                    // si le premier mot n'est ni "const" ni "var" et qu'un type est précisé
-                    if (variante == 7) {
-                        throw new ASErreur.ErreurType("Il est impossible de pr\u00E9ciser le type d'une variable " +
-                                "ailleurs que dans sa d\u00E9claration");
-                    }
-                    // si le premier mot n'est ni "const" ni "var"
-                    if (variante == 6) {
-                        // si on tente d'assigner avec un opérateur spécial (ex: +=, *=, -=, etc.)
-                        String nomAssignement = ((Token) p.get(1)).getNom();
-                        if (!nomAssignement.equals("ASSIGNEMENT") && !(nomAssignement.equals("ASSIGNEMENT_FLECHE"))) {
-                            // only keep the first part of the name (ex: PLUS_ASSIGNEMENT becomes PLUS)
-                            op = BinOp.Operation.valueOf(nomAssignement.substring(
-                                    0, nomAssignement.lastIndexOf("_"))
-                            );
-                        }
-
-                        // si la valeur de l'expression est une énumération d'éléments ex: var = 3, "salut", 4
-                        // on forme une liste avec la suite d'éléments
-                        if (p.get(2) instanceof CreerListe.Enumeration enumeration)
-                            p.set(2, enumeration.buildCreerListe());
-                        return new Assigner((Expression<?>) p.get(0), (Expression<?>) p.get(2), op);
-                    }
-
-                    // déclaration sous la forme "var x"
-                    if (variante == 2) {
-                        return new Declarer((Expression<?>) p.get(1), new ValeurConstante(new ASNul()), null, false);
-                    }
-
                     // si le premier mot est "const"
                     boolean estConst = variante < 2;
 
@@ -248,7 +258,7 @@ public class ASAstExperimental extends ASAst {
                      * 4. var x: type = valeur
                      * 5. var x: type
                      */
-                    if (variante == 1 || variante == 4 || variante == 5) {
+                    if (variante == 1 || variante == 3) {
                         // si le type précisé n'est pas un type
                         if (!(p.get(3) instanceof ASTypeExpr _type))
                             throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
@@ -257,49 +267,26 @@ public class ASAstExperimental extends ASAst {
                         type = _type;
                     }
 
-                    if (variante == 5) {
-                        return new Declarer((Expression<?>) p.get(1), null, type, false);
-                    }
-
-                    // si la précision du type est présente
-                    if (variante == 1 || variante == 4) {
-                        idxValeur = 5;
-                        idxAssignement = 4;
-                    }
-                    // si la précision du type n'est pas présente
-                    else {
-                        idxValeur = 3;
-                        idxAssignement = 2;
-                    }
-
-                    // si on tente de déclarer une constante avec autre chose que = (ex: +=, *=, -=, etc.)
-                    String nomAssignement = ((Token) p.get(idxAssignement)).getNom();
-                    if (!nomAssignement.equals("ASSIGNEMENT") && !(nomAssignement.equals("ASSIGNEMENT_FLECHE"))) {
-                        if (estConst)
-                            throw new ASErreur.ErreurAssignement("Impossible de modifier la valeur d'une constante");
-                        else
-                            throw new ASErreur.ErreurAssignement("Impossible de modifier la valeur d'une variable durant sa d\u00E9claration");
-                    }
-
-                    // si la valeur de l'expression est une énumération d'éléments ex: 3, "salut", 4
-                    // on forme une liste avec la suite d'éléments
-                    if (p.get(idxValeur) instanceof CreerListe.Enumeration enumeration)
-                        p.set(idxValeur, enumeration.buildCreerListe());
-
                     // on retourne l'objet Declarer
-                    return new Declarer((Expression<?>) p.get(1), (Expression<?>) p.get(idxValeur), type, estConst);
+                    return new Declarer((Expression<?>) p.get(1), null, type, estConst);
                 });
+
+
+        ajouterProgramme("FIN STRUCTURE", p -> {
+            popAstFrame();
+            return new CreerStructure(executeurInstance);
+        });
     }
 
 
     private void ajouterExpressionsStructure() {
-
+        ajouterExpressions();
     }
 
     //----------------- utils -----------------//
 
     private void changerPatternExpression(String oldPattern, String newPattern) {
-        changerPattern(oldPattern, newPattern, (Hashtable<String, Ast<?>>) currentExpressionsDict(), currentOrdreExpressions());
+        changerPattern(oldPattern, newPattern, currentExpressionsDict(), currentOrdreExpressions());
     }
 
     @SafeVarargs
@@ -337,7 +324,7 @@ public class ASAstExperimental extends ASAst {
 
 
     private void changerPatternProgramme(String oldPattern, String newPattern) {
-        changerPattern(oldPattern, newPattern, (Hashtable<String, Ast<?>>) currentProgrammesDict(), currentOrdreProgrammes());
+        changerPattern(oldPattern, newPattern, currentProgrammesDict(), currentOrdreProgrammes());
     }
 
 
@@ -375,7 +362,7 @@ public class ASAstExperimental extends ASAst {
     }
 
 
-    private void changerPattern(String oldPattern, String newPattern, Hashtable<String, Ast<?>> dict, ArrayList<String> ordre) {
+    private <T> void changerPattern(String oldPattern, String newPattern, Hashtable<String, Ast<? extends T>> dict, ArrayList<String> ordre) {
         String ancienPattern = LexerGenerator.remplacerCategoriesParMembre(oldPattern);
         String nouveauPattern = LexerGenerator.remplacerCategoriesParMembre(newPattern);
         var ast = dict.remove(ancienPattern);

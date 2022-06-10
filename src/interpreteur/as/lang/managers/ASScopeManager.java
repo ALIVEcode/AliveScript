@@ -17,6 +17,13 @@ public class ASScopeManager {
         ScopeKind(String start) {
             this.start = start;
         }
+
+        private static ScopeKind fromString(String start) {
+            for (var kind : ScopeKind.values()) {
+                if (kind.start.equals(start)) return kind;
+            }
+            return null;
+        }
     }
 
     private static final String SCOPE_SEPARATOR = "@";
@@ -27,8 +34,13 @@ public class ASScopeManager {
 
     @Contract(pure = true)
     public static ScopeKind getScopeKind(String scope) throws IllegalArgumentException {
-        if (!scope.contains("~")) throw new IllegalArgumentException(scope);
-        return ScopeKind.valueOf(scope.split("~", 2)[0]);
+        if (!scope.contains(SCOPE_START_SEPARATOR)) throw new IllegalArgumentException(scope);
+        return ScopeKind.fromString(scope.split(SCOPE_START_SEPARATOR, 2)[0]);
+    }
+
+    @Contract(pure = true)
+    public static String getScopeName(String scope) throws IllegalArgumentException {
+        return scope.substring(scope.lastIndexOf(SCOPE_SEPARATOR) + 1);
     }
 
     @Contract(pure = true)
