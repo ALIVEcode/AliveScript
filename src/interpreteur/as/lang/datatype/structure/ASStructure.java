@@ -4,6 +4,7 @@ package interpreteur.as.lang.datatype.structure;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.experimental.annotations.Experimental;
 import interpreteur.as.experimental.annotations.ExperimentalStage;
+import interpreteur.as.lang.ASConstante;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASHasAttr;
@@ -51,13 +52,17 @@ public class ASStructure implements ASObjet<Object> {
             if (proprieteStructEntry.getValue().pasInitialisee()) { // Si la propriété est obligatoire
                 // Si elle n'est pas initialisée dans la création de l'instance
                 if (proprieteInstance == null) pasInit.add(proprieteStructure);
-                else proprietesFinales.add(proprieteInstance); // Si elle est initialisée dans la création de l'instance
+                else {
+                    proprieteInstance.setIsConst(proprieteStructure instanceof ASConstante);
+                    proprietesFinales.add(proprieteInstance); // Si elle est initialisée dans la création de l'instance
+                }
             } else { // Si la propriété n'est pas obligatoire
                 // Si elle n'est pas initialisée dans la création de l'instance
-                proprietesFinales.add(Objects.requireNonNullElseGet(
+                var propriete = Objects.requireNonNullElseGet(
                         proprieteInstance,
-                        () -> new ASPropriete(proprieteStructure.getNom(), proprieteStructure.getValeurApresGetter())
-                ));
+                        () -> new ASPropriete(proprieteStructure.getNom(), proprieteStructure.getValeurApresGetter()));
+                propriete.setIsConst(proprieteStructure instanceof ASConstante);
+                proprietesFinales.add(propriete);
             }
         }
 

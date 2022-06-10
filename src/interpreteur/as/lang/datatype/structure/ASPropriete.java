@@ -1,5 +1,6 @@
 package interpreteur.as.lang.datatype.structure;
 
+import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASObjet;
 
@@ -9,10 +10,19 @@ import java.util.Objects;
 public final class ASPropriete implements ASObjet<Object> {
     private final String name;
     private ASObjet<?> asValue;
+    private boolean isConst;
 
     public ASPropriete(String name, ASObjet<?> asValue) {
         this.name = name;
         this.asValue = asValue instanceof ASVariable variable ? variable.getValeurApresGetter() : asValue;
+    }
+
+    public boolean isConst() {
+        return isConst;
+    }
+
+    public void setIsConst(boolean aConst) {
+        isConst = aConst;
     }
 
     @Override
@@ -21,6 +31,9 @@ public final class ASPropriete implements ASObjet<Object> {
     }
 
     public void setAsValue(ASObjet<?> asValue) {
+        if (isConst) {
+            throw new ASErreur.ErreurAssignement("La propri\u00E9t\u00E9 '" + name + "' est une constante.");
+        }
         this.asValue = asValue;
     }
 

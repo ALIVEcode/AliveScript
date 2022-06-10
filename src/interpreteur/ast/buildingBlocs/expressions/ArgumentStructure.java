@@ -1,5 +1,6 @@
 package interpreteur.ast.buildingBlocs.expressions;
 
+import interpreteur.as.lang.ASConstante;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.datatype.structure.ASPropriete;

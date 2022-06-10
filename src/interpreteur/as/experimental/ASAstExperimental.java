@@ -206,41 +206,6 @@ public class ASAstExperimental extends ASAst {
                 return new GetAttr((Expression<?>) p.get(0), (Var) p.get(2));
             }
         });
-
-        remplacerExpression(
-                "BRACES_OUV BRACES_FERM~"
-                        + "BRACES_OUV #expression BRACES_FERM~"
-                        + "CROCHET_OUV CROCHET_FERM~"
-                        + "!expression CROCHET_OUV CROCHET_FERM~"
-                        + "!expression CROCHET_OUV #expression CROCHET_FERM",
-                new Pair<>(
-                        "BRACES_OUV BRACES_FERM~"
-                                + "BRACES_OUV #expression BRACES_FERM",
-                        (p, variante) -> {
-                            System.out.println("Dictionary Created");
-                            if (variante == 0) {
-                                return new CreerDict();
-                            }
-                            Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
-                            if (contenu instanceof CreerListe.Enumeration enumeration)
-                                return enumeration.buildCreerListe();
-                            return new CreerDict(contenu);
-                        }),
-                new Pair<>(
-                        "CROCHET_OUV CROCHET_FERM~"
-                                + "!expression CROCHET_OUV CROCHET_FERM~"
-                                + "!expression CROCHET_OUV #expression CROCHET_FERM",
-                        (p, variante) -> {
-                            System.out.println("List created");
-                            if (variante == 0 || variante == 1) {
-                                return new CreerListe();
-                            }
-                            Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
-                            if (contenu instanceof CreerListe.Enumeration enumeration)
-                                return enumeration.buildCreerListe();
-                            return new CreerListe(contenu);
-                        })
-        );
     }
 
     private void ajouterProgrammesStructure() {
