@@ -18,7 +18,7 @@ public class ASConstante extends ASVariable {
 
     @Override
     public ASVariable clone() {
-        return new interpreteur.as.lang.ASConstante(getNom(), this.getValeur());
+        return new ASConstante(getNom(), this.getValeur(), getType());
     }
 
     @Override

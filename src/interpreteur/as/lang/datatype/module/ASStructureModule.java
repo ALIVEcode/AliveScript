@@ -44,11 +44,6 @@ public class ASStructureModule implements ASStructureInterface {
     }
 
     @Override
-    public Coordonnee getStartingCoord() {
-        return null;
-    }
-
-    @Override
     public Object getValue() {
         return this;
     }

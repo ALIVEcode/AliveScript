@@ -50,7 +50,7 @@ public class ASAstExperimental extends ASAst {
                         "FONCTION expression PARENT_OUV expression PARENT_FERM~" +
                         "FONCTION expression PARENT_OUV PARENT_FERM FLECHE expression~" +
                         "FONCTION expression PARENT_OUV PARENT_FERM",
-                new Ast<CreerFonction>(
+                new Ast<>(
                         Map.entry(
                                 "expression DEUX_POINTS expression ASSIGNEMENT expression~"
                                         + "expression ASSIGNEMENT expression~"
@@ -65,29 +65,16 @@ public class ASAstExperimental extends ASAst {
                                             throw new ASErreur.ErreurSyntaxe("Une d\u00E9claration de fonction doit commencer par une variable, pas par " + p.get(0));
                                         }
 
-                                        Token deuxPointsToken = (Token) p.stream()
-                                                .filter(t -> t instanceof Token token && token.getNom().equals("DEUX_POINTS"))
-                                                .findFirst()
-                                                .orElse(null);
-                                        if (deuxPointsToken != null) {
-                                            Expression<?> typeObj = (Expression<?>) p.get(p.indexOf(deuxPointsToken) + 1);
-                                            if (!(typeObj instanceof ASTypeExpr)) {
-                                                String nom;
-                                                if (p.get(0) instanceof Var) {
-                                                    nom = ((Var) typeObj).getNom();
-                                                } else {
-                                                    nom = typeObj.eval().toString();
-                                                }
-                                                throw new ASErreur.ErreurType("Le symbole ':' doit \u00EAtre suivi d'un type valide ('" + nom + "' n'est pas un type valide)");
+                                        if (idxVariante != 1) {
+                                            Expression<?> typeExpr = (Expression<?>) p.get(2);
+                                            if (!(typeExpr instanceof ASTypeExpr typeObj)) {
+                                                throw new ASErreur.ErreurType("Le symbole ':' doit \u00EAtre suivi d'un type valide ('" + typeExpr.eval().getNomType() + "' n'est pas un type valide)");
                                             }
-                                            type = (ASTypeExpr) typeObj;
+                                            type = typeObj;
                                         }
-                                        Token assignementToken = (Token) p.stream()
-                                                .filter(t -> t instanceof Token token && token.getNom().equals("ASSIGNEMENT"))
-                                                .findFirst()
-                                                .orElse(null);
-                                        if (assignementToken != null) {
-                                            valParDefaut = (Expression<?>) p.get(p.indexOf(assignementToken) + 1);
+
+                                        if (idxVariante < 2) {
+                                            valParDefaut = (Expression<?>) p.get(idxVariante == 1 ? 2 : 4);
                                         }
 
                                         return new Argument(var, valParDefaut, type);
@@ -96,18 +83,16 @@ public class ASAstExperimental extends ASAst {
                 ) {
                     @Override
                     public CreerFonction apply(List<Object> p, Integer idxVariante) {
-                        pushAstFrame(AstFrameKind.DEFAULT);
-
                         Argument[] params = new Argument[]{};
 
                         ASTypeExpr typeRetour = p.get(p.size() - 1) instanceof ASTypeExpr type ? type : new ASTypeExpr("tout");
 
-                        if (p.get(p.size() - 1) == null && p.get(3) instanceof ASTypeExpr type) {
-                            typeRetour = type;
-                            return new CreerFonction((Var) p.get(1), params, typeRetour, executeurInstance);
-                        }
+                        // if (p.get(p.size() - 1) == null && p.get(3) instanceof ASTypeExpr type) {
+                        //     typeRetour = type;
+                        //     return new CreerFonction((Var) p.get(1), params, typeRetour, executeurInstance);
+                        // }
 
-                        if (p.get(3) != null && !(p.get(3) instanceof Token)) {
+                        if (idxVariante < 2) {
                             if (p.get(3) instanceof CreerListe.Enumeration enumeration) {
                                 params = enumeration.getExprs()
                                         .stream()
@@ -127,20 +112,6 @@ public class ASAstExperimental extends ASAst {
                         return new CreerFonction((Var) p.get(1), params, typeRetour, executeurInstance);
                     }
                 });
-
-        remplacerProgramme("RETOURNER~" +
-                        "RETOURNER expression",
-                (p, variante) -> {
-                    popAstFrame();
-                    if (variante == 1 && p.get(1) instanceof CreerListe.Enumeration enumeration)
-                        p.set(1, enumeration.buildCreerListe());
-                    return new Retourner(variante == 1 ? (Expression<?>) p.get(1) : new ValeurConstante(new ASNul()));
-                });
-
-        remplacerProgramme("FIN FONCTION", p -> {
-            popAstFrame();
-            return new FinFonction(executeurInstance);
-        });
 
         remplacerProgramme("STRUCTURE NOM_VARIABLE", p -> {
             pushAstFrame(AstFrameKind.STRUCTURE);

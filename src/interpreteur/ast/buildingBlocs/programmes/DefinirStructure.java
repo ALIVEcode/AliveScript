@@ -24,7 +24,7 @@ public class DefinirStructure extends Programme {
         this.varExpr = varExpr;
         // FIXME : bug potentiel avec les namespaces, car le nom du type sera seulement le nom de la structure (sans le namespace devant)
         // Je ne vais pas fix le bug, car le système de namespace et de type doit être changer anyway
-        var varStructure = new ASConstante(varExpr.getNom(), null, new ASTypeExpr(varExpr.getNom()));
+        var varStructure = new ASConstante(varExpr.getNom(), null);
         this.varExpr.setNom(varStructure.getNom());
         ASScope.getCurrentScope().declarerVariable(varStructure);
         scope = ASScope.makeNewCurrentScope();

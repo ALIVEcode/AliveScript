@@ -93,7 +93,7 @@ public class ASStructure implements ASObjet<Object> {
 
     @Override
     public String getNomType() {
-        return nom;
+        return "structureType";
     }
 
     @Override

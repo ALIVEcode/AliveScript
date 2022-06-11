@@ -11,5 +11,4 @@ public interface ASStructureInterface extends ASObjet<Object> {
 
     ASObjet<?> apply(ArrayList<ASObjet<?>> args);
 
-    Coordonnee getStartingCoord();
 }

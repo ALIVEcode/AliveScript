@@ -41,11 +41,6 @@ public record AstFrame(
 
     public void ajouterProgramme(String pattern, Ast<? extends Programme> fonction) {
         pattern = LexerGenerator.remplacerCategoriesParMembre(pattern);
-        var sousAstCopy = new Hashtable<>(fonction.getSousAst());
-        for (String p : sousAstCopy.keySet()) {
-            fonction.getSousAst().remove(p);
-            fonction.getSousAst().put(pattern, sousAstCopy.get(p));
-        }
         if (fonction.getImportance() == -1)
             fonction.setImportance(ordreProgrammes().size());
         var previous = programmesDict().put(pattern, fonction);

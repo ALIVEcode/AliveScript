@@ -143,9 +143,7 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
                 int importance = sous_ast.get(pattern).getImportance();
                 if (importance == -2) continue; // -2 = take the same place as the replaced expression
 
-                if (currentOrdreExpressions().contains(pattern)) {
-                    nouvelOrdre.remove(pattern);
-                }
+                nouvelOrdre.remove(pattern);
                 if (importance == -1) {
                     nouvelOrdre.add(pattern);
                 } else {
@@ -287,7 +285,7 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
                         //expr.stream().map(Object::toString).forEach(Executeur::printCompiledCode);
 
 
-                        Expression<?> capsule = (Expression<?>) currentExpressionsDict()
+                        Expression<?> capsule = regleSyntaxeDispo
                                 .get(regleSyntaxeEtVariante)
                                 .apply(new ArrayList<>(expr), idxVariante);
                         //System.out.println(capsule);
@@ -330,7 +328,7 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
                              */
                             //System.out.println("expr ->" + expression + " : " + expressionArray.subList(debut, fin));
 
-                            Expression<?> capsule = (Expression<?>) regleSyntaxeDispo
+                            Expression<?> capsule = regleSyntaxeDispo
                                     .get(regleSyntaxeEtVariante)
                                     .apply(expressionArray.subList(debut, exprLength), idxVariante);
                             //System.out.println(capsule);
