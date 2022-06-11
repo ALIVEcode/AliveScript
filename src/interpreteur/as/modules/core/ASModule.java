@@ -2,6 +2,7 @@ package interpreteur.as.modules.core;
 
 import interpreteur.as.lang.*;
 import interpreteur.as.lang.datatype.ASNamespace;
+import interpreteur.as.lang.datatype.module.ASFonctionModule;
 import language.Translator;
 
 import java.util.ArrayList;

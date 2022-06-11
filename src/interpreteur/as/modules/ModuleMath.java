@@ -1,7 +1,7 @@
 package interpreteur.as.modules;
 
 import interpreteur.as.lang.ASConstante;
-import interpreteur.as.lang.ASFonctionModule;
+import interpreteur.as.lang.datatype.module.ASFonctionModule;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASDecimal;
 import interpreteur.as.lang.datatype.ASEntier;

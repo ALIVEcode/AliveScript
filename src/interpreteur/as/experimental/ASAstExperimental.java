@@ -180,6 +180,8 @@ public class ASAstExperimental extends ASAst {
 
             if (contenu instanceof ArgumentStructure argumentStructure) {
                 argsStructure = new ArgumentStructure[]{argumentStructure};
+            } else if (contenu instanceof Var var) {
+                argsStructure = new ArgumentStructure[]{new ArgumentStructure(var, null)};
             } else if (contenu instanceof CreerListe.Enumeration enumeration) {
 
                 argsStructure = enumeration.getExprs()

@@ -1,11 +1,10 @@
 package interpreteur.as.modules;
 
-import interpreteur.as.lang.ASFonctionModule;
+import interpreteur.as.lang.datatype.module.ASFonctionModule;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASTypeBuiltin;
 import interpreteur.as.modules.core.ASModule;
-import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
 
 

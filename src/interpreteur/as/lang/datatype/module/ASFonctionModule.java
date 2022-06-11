@@ -1,6 +1,9 @@
-package interpreteur.as.lang;
+package interpreteur.as.lang.datatype.module;
 
 import interpreteur.as.erreurs.ASErreur;
+import interpreteur.as.lang.ASFonctionInterface;
+import interpreteur.as.lang.ASTypeBuiltin;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.datatype.ASParametre;
 import interpreteur.executeur.Coordonnee;

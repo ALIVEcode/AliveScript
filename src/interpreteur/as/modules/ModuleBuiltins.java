@@ -3,6 +3,7 @@ package interpreteur.as.modules;
 import interpreteur.as.lang.*;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur;
+import interpreteur.as.lang.datatype.module.ASFonctionModule;
 import interpreteur.as.modules.builtins.BuiltinsListeUtils;
 import interpreteur.as.modules.builtins.BuiltinsNombreUtils;
 import interpreteur.as.modules.builtins.BuiltinsTexteUtils;
