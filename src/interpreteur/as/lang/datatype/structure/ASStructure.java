@@ -31,6 +31,10 @@ public class ASStructure implements ASObjet<Object> {
         }
     }
 
+    public String getNom() {
+        return nom;
+    }
+
     private ASPropriete[] makeFinalProprietes(ASPropriete[] proprietesInstance) {
         var proprietesStructure = this.proprietesMap;
 

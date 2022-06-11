@@ -65,12 +65,21 @@ public class ASAstExperimental extends ASAst {
                                             throw new ASErreur.ErreurSyntaxe("Une d\u00E9claration de fonction doit commencer par une variable, pas par " + p.get(0));
                                         }
 
+                                        setType:
                                         if (idxVariante != 1) {
-                                            Expression<?> typeExpr = (Expression<?>) p.get(2);
-                                            if (!(typeExpr instanceof ASTypeExpr typeObj)) {
-                                                throw new ASErreur.ErreurType("Le symbole ':' doit \u00EAtre suivi d'un type valide ('" + typeExpr.eval().getNomType() + "' n'est pas un type valide)");
+                                            if (p.get(2) instanceof ASTypeExpr _type) {
+                                                type = _type;
+                                                break setType;
                                             }
-                                            type = typeObj;
+
+                                            if (p.get(2) instanceof Var varType) {
+                                                var variable = ASScope.getCurrentScope().getVariable(varType.getNom());
+                                                if (variable != null && variable.getValeurApresGetter() instanceof ASStructure structure) {
+                                                    type = new ASTypeExpr(structure.getNom());
+                                                    break setType;
+                                                }
+                                            }
+                                            throw new ASErreur.ErreurType("Le symbole ':' doit \u00EAtre suivi d'un type valide.");
                                         }
 
                                         if (idxVariante < 2) {
@@ -248,7 +257,7 @@ public class ASAstExperimental extends ASAst {
                                     break setType;
                                 }
                                 if (variable.getValeurApresGetter() instanceof ASStructure structure) {
-                                    type = new ASTypeExpr(structure.getNomType());
+                                    type = new ASTypeExpr(structure.getNom());
                                     break setType;
                                 }
                             }
