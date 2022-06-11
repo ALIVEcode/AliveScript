@@ -4,19 +4,6 @@ import language.Language;
 public class Main {
 
     static final String[] CODE = """
-            "experimental"
-                        
-            structure Personne
-                var nom: texte
-                var prenom: texte
-                var age: entier
-                var argent: decimal
-            fin structure
-
-            var personne = Personne { nom: "Dupont", prenom: "Jean", age: 25, argent: 100.0 }
-            
-            afficher personne
-
             """.split("\n");
 
     public static void main(String[] args) {

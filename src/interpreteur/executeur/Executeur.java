@@ -372,6 +372,9 @@ public class Executeur {
             // Si le code est different ou que la compilation est forcee, compiler les lignes
             //System.out.println(Arrays.toString(PreCompiler.preCompile(lignes)));
             lignes = PreCompiler.preCompile(lignes);
+            if (lignes.length == 0) {
+                lignes = new String[]{""};
+            }
             return compiler(lignes);
         }
     }
