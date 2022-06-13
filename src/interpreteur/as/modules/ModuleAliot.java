@@ -36,7 +36,7 @@ public class ModuleAliot {
     public static ASModule charger(Executeur executeurInstance) {
         var Ecouteur = new ASStructure("Ecouteur", new ASPropriete[]{
                 ASPropriete.obligatoire("fonc", ASTypeBuiltin.fonctionType.asType(), true),
-                new ASPropriete("champs", new ASListe(), ASTypeBuiltin.liste.asType(), true),
+                new ASPropriete("champs", new ASListe(), ASTypeBuiltin.iterable.asType(), true),
         });
 
 
@@ -67,7 +67,7 @@ public class ModuleAliot {
 
                 // ecouterDocChange
                 // TODO
-                new ASFonctionModule("ecouterDoc", new ASParametre[]{
+                /*new ASFonctionModule("ecouterDoc", new ASParametre[]{
                         ASParametre.obligatoire("champs", ASTypeBuiltin.iterable.asType()),
                         ASParametre.obligatoire("ecouteur", ASTypeBuiltin.fonctionType.asType())
                 }, ASTypeBuiltin.entier.asType()) {
@@ -92,6 +92,39 @@ public class ModuleAliot {
 
                         executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER).addParam(new JSONArray().put(champs.getValue())).addParam(funcName));
                         return new ASNul();
+                    }
+                },*/
+
+                new ASFonctionModule("ecouterDoc", new ASParametre[]{
+                        ASParametre.obligatoire("champs", ASTypeBuiltin.iterable.asType()),
+                        ASParametre.obligatoire("ecouteur", ASTypeBuiltin.fonctionType.asType())
+                }, Ecouteur.getTypeInstance()) {
+                    @Override
+                    public ASStructure.ASStructureInstance executer() {
+                        ASObjet<?> champs = getValeurParam("champs");
+                        ASObjet<?> callback = getValeurParam("ecouteur");
+                        String funcName = callback instanceof ASFonctionInterface fonction
+                                ? fonction.getNom()
+                                : null;
+
+                        var ecouteur = Ecouteur.makeInstance(new ASPropriete[]{
+                                ASPropriete.fromASObj("champs", champs),
+                                ASPropriete.fromASObj("fonc", callback)
+                        });
+
+                        if (champs instanceof ASListe liste) {
+                            if (liste.getValue().stream().anyMatch(el -> !(el instanceof ASTexte))) {
+                                throw new ASErreur.ErreurAppelFonction("La liste doit \u00EAtre une liste d'\u00E9l\u00E9ments de type texte");
+                            }
+                            var champsStringList = liste.getValue().stream().map(el -> (String) el.getValue()).toList();
+                            executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER)
+                                    .addParam(new JSONArray(champsStringList))
+                                    .addParam(funcName));
+                            return ecouteur;
+                        }
+
+                        executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER).addParam(new JSONArray().put(champs.getValue())).addParam(funcName));
+                        return ecouteur;
                     }
                 },
 

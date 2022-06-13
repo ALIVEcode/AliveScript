@@ -4,6 +4,7 @@ package interpreteur.as.lang.datatype.structure;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.experimental.annotations.Experimental;
 import interpreteur.as.experimental.annotations.ExperimentalStage;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASHasAttr;
 import interpreteur.as.lang.datatype.ASObjet;
@@ -43,7 +44,7 @@ public class ASStructure implements ASObjet<Object> {
             throw new ASErreur.ErreurAssignement("La propri\u00E9t\u00E9 '" +
                     propriete.getNom() +
                     "' est de type *" +
-                    getNomType() +
+                    propriete.getNomType() +
                     "*. Elle ne peut pas prendre une valeur de type *" +
                     nouvellePropriete.getNomType() +
                     "*.");
@@ -109,6 +110,10 @@ public class ASStructure implements ASObjet<Object> {
     @Override
     public String getNomType() {
         return "structureType";
+    }
+
+    public ASTypeExpr getTypeInstance() {
+        return new ASTypeExpr(getNom());
     }
 
     @Override

@@ -5,6 +5,7 @@ import interpreteur.as.lang.ASConstante;
 import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASObjet;
+import interpreteur.as.lang.datatype.ASTexte;
 
 import java.util.Objects;
 
@@ -28,6 +29,10 @@ public final class ASPropriete implements ASObjet<Object> {
 
     public static ASPropriete obligatoire(String nom, ASTypeExpr type, boolean isConst) {
         return new ASPropriete(nom, null, type, isConst);
+    }
+
+    public static ASPropriete fromASObj(String nom, ASObjet<?> asValue) {
+        return new ASPropriete(nom, asValue, new ASTypeExpr(asValue.getNomType()), false);
     }
 
     public static ASPropriete optionnelle(String nom, ASObjet<?> asValue, ASTypeExpr type, boolean isConst) {
@@ -86,7 +91,7 @@ public final class ASPropriete implements ASObjet<Object> {
 
     @Override
     public String toString() {
-        return nom + ": " + asValue;
+        return nom + ": " + (asValue instanceof ASTexte ? "'" + asValue + "'" : asValue);
     }
 
     public String name() {
