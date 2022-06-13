@@ -40,7 +40,7 @@ public class ASAst extends AstGenerator<AstFrameKind> {
         defineAstFrame(AstFrameKind.DEFAULT);
         ajouterProgrammes();
         ajouterExpressions();
-//        pushAstFrame(AstFrameKind.DEFAULT);
+        pushAstFrame(AstFrameKind.DEFAULT);
         this.executeurInstance = executeurInstance;
     }
 

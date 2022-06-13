@@ -39,6 +39,7 @@ public class ASAstExperimental extends ASAst {
         ajouterProgrammesStructure();
         ajouterExpressionsStructure();
         // puts the current ast frame to the default one.
+        popAstFrame();
         pushAstFrame(AstFrameKind.DEFAULT);
     }
 
@@ -192,7 +193,6 @@ public class ASAstExperimental extends ASAst {
                 return new CreerStructureInstance(varStructure, argsStructure);
             }
         });
-
 
 
     }

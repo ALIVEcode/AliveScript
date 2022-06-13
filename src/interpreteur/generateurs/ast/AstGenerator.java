@@ -122,7 +122,11 @@ public class AstGenerator<AstFrameKind extends Enum<?>> {
 
     protected void popAstFrame() {
         astFrameStack.pop();
-        setCurrentAstFrame(astFrameStack.peek());
+        if (astFrameStack.isEmpty()) {
+            currentAstFrame = null;
+        } else {
+            setCurrentAstFrame(astFrameStack.peek());
+        }
     }
 
     protected void defineAstFrame(AstFrameKind kind) {
