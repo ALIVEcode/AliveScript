@@ -11,7 +11,10 @@ import interpreteur.ast.Ast;
 import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.ast.buildingBlocs.expressions.*;
-import interpreteur.ast.buildingBlocs.programmes.*;
+import interpreteur.ast.buildingBlocs.programmes.CreerFonction;
+import interpreteur.ast.buildingBlocs.programmes.FinStructure;
+import interpreteur.ast.buildingBlocs.programmes.Declarer;
+import interpreteur.ast.buildingBlocs.programmes.CreerStructure;
 import interpreteur.executeur.Executeur;
 import interpreteur.generateurs.ast.AstFrameKind;
 import interpreteur.generateurs.lexer.LexerGenerator;
@@ -125,10 +128,10 @@ public class ASAstExperimental extends ASAst {
 
         remplacerProgramme("STRUCTURE NOM_VARIABLE", p -> {
             pushAstFrame(AstFrameKind.STRUCTURE);
-            return new DefinirStructure(new Var(((Token) p.get(1)).getValeur()), executeurInstance);
+            return new CreerStructure(new Var(((Token) p.get(1)).getValeur()), executeurInstance);
         });
 
-        remplacerProgramme("FIN STRUCTURE", p -> new FinStructure());
+        remplacerProgramme("FIN STRUCTURE", p -> Programme.evalExpression(new Expression.ExpressionVide(), "Fin de structure"));
     }
 
     @Override
@@ -349,7 +352,7 @@ public class ASAstExperimental extends ASAst {
 
         ajouterProgramme("FIN STRUCTURE", p -> {
             popAstFrame();
-            return new CreerStructure(executeurInstance);
+            return new FinStructure(executeurInstance);
         });
     }
 
