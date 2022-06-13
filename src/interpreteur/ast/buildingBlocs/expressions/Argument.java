@@ -3,7 +3,7 @@ package interpreteur.ast.buildingBlocs.expressions;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.datatype.ASObjet;
-import interpreteur.as.lang.datatype.ASParametre;
+import interpreteur.as.lang.datatype.fonction.ASParametre;
 import interpreteur.ast.buildingBlocs.Expression;
 
 public class Argument implements Expression<ASParametre> {

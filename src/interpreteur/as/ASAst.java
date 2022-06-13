@@ -204,7 +204,7 @@ public class ASAst extends AstGenerator<AstFrameKind> {
                                         (estConst ? "constante" : "variable") +
                                         ", les deux points doivent \u00EAtre suivi d'un type valide");
                             }
-                            type = new ASTypeExpr(structure.getNomType());
+                            type = new ASTypeExpr(structure.getNom());
                         } else {
                             throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
                                     (estConst ? "constante" : "variable") +

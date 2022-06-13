@@ -5,7 +5,7 @@ import interpreteur.as.ASLexer;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.erreurs.ASErreur.*;
 import interpreteur.as.experimental.ASAstExperimental;
-import interpreteur.as.lang.ASFonctionInterface;
+import interpreteur.as.lang.datatype.fonction.ASFonctionInterface;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.datatype.ASNul;
 import interpreteur.as.lang.datatype.ASObjet;

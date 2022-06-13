@@ -1,7 +1,8 @@
-package interpreteur.as.lang.datatype;
+package interpreteur.as.lang.datatype.fonction;
 
 import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.ASTypeBuiltin;
+import interpreteur.as.lang.datatype.ASObjet;
 
 /**
  * Classe responsable de definir les proprietes des parametres des fonctions

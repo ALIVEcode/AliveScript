@@ -4,7 +4,8 @@ import interpreteur.as.experimental.annotations.Experimental;
 import interpreteur.as.experimental.annotations.ExperimentalStage;
 import interpreteur.as.lang.ASConstante;
 import interpreteur.as.lang.ASScope;
-import interpreteur.as.lang.ASTypeExpr;
+import interpreteur.as.lang.ASVariable;
+import interpreteur.as.lang.datatype.structure.ASStructure;
 import interpreteur.as.lang.managers.ASScopeManager;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.ast.buildingBlocs.expressions.Var;
@@ -32,6 +33,15 @@ public class DefinirStructure extends Programme {
 
     @Override
     public Object execute() {
+        // Get les variables déclarées dans le scope de la structure
+        var variables = scope.getVariablesDeclarees();
+        // transformer les variables en ASPropriete
+        var proprietes = variables.toArray(ASVariable[]::new);
+        // Creer ASStructure
+        var nomStructure = varExpr.getNom();
+        var structure = new ASStructure(nomStructure, proprietes);
+        // changer la valeur de la structure dans le scope instance
+        ASScope.getCurrentScopeInstance().getVariable(nomStructure).setValeur(structure);
         return null;
     }
 

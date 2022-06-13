@@ -119,6 +119,16 @@ public class ASVariable implements ASObjet<Object> {
         return this.valeur;
     }
 
+    public ASObjet<?> getValeurApresGetterOuNull() {
+        if (this.valeur == null) {
+            return null;
+        }
+        if (this.getter != null) {
+            return this.getter.get();
+        }
+        return this.valeur;
+    }
+
     @Override
     public Object getValue() {
         if (this.valeur == null) {

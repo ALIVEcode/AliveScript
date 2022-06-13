@@ -13,7 +13,7 @@ public record ArgumentStructure(Var var, @Nullable Expression<?> valeur) impleme
     public ASPropriete eval() {
         ASObjet<?> valeurPropriete = valeur == null ? null : valeur.eval();
         if (valeurPropriete == null) {
-            valeurPropriete = ASScope.getCurrentScopeInstance().getVariable(var.getNom());
+            valeurPropriete = var.eval();
         }
         return new ASPropriete(var.getNom(), valeurPropriete);
     }

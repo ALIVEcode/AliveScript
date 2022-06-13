@@ -3,9 +3,9 @@ package interpreteur.as.modules;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.*;
 import interpreteur.as.lang.datatype.*;
-import interpreteur.as.lang.datatype.module.ASFonctionModule;
-import interpreteur.as.lang.datatype.module.ASStructureModule;
-import interpreteur.as.lang.datatype.structure.ASStructure;
+import interpreteur.as.lang.datatype.fonction.ASFonctionInterface;
+import interpreteur.as.lang.datatype.fonction.ASParametre;
+import interpreteur.as.lang.datatype.fonction.ASFonctionModule;
 import interpreteur.as.modules.core.ASModule;
 import interpreteur.converter.ASObjetConverter;
 import interpreteur.data_manager.Data;
@@ -30,9 +30,6 @@ public class ModuleAliot {
      */
 
     public static ASModule charger(Executeur executeurInstance) {
-        ASStructureModule[] structures = {
-
-        };
 
         ASFonctionModule[] fonctionModules = {
                 //----------------- écouteurs -----------------//

@@ -1,12 +1,12 @@
 package interpreteur.as.modules;
 
 import interpreteur.as.lang.ASConstante;
-import interpreteur.as.lang.datatype.module.ASFonctionModule;
+import interpreteur.as.lang.datatype.fonction.ASFonctionModule;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASDecimal;
 import interpreteur.as.lang.datatype.ASEntier;
 import interpreteur.as.lang.datatype.ASObjet;
-import interpreteur.as.lang.datatype.ASParametre;
+import interpreteur.as.lang.datatype.fonction.ASParametre;
 import interpreteur.as.modules.core.ASModule;
 import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.executeur.Executeur;

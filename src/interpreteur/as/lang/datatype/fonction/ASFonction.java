@@ -1,10 +1,9 @@
-package interpreteur.as.lang.datatype;
+package interpreteur.as.lang.datatype.fonction;
 
-import interpreteur.as.lang.ASFonctionInterface;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASTypeExpr;
-import interpreteur.as.lang.managers.ASScopeManager;
+import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.ast.buildingBlocs.programmes.Boucle;
 import interpreteur.executeur.Coordonnee;
 import interpreteur.executeur.Executeur;

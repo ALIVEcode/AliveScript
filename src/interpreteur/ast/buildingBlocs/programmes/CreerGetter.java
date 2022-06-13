@@ -3,7 +3,7 @@ package interpreteur.ast.buildingBlocs.programmes;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.ASVariable;
-import interpreteur.as.lang.datatype.ASFonction;
+import interpreteur.as.lang.datatype.fonction.ASFonction;
 import interpreteur.as.lang.managers.ASFonctionManager;
 import interpreteur.as.lang.managers.ASScopeManager;
 import interpreteur.ast.buildingBlocs.Programme;

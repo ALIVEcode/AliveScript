@@ -1,7 +1,8 @@
-package interpreteur.as.lang;
+package interpreteur.as.lang.datatype.fonction;
 
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.datatype.ASObjet;
-import interpreteur.as.lang.datatype.ASParametre;
+import interpreteur.as.lang.datatype.fonction.ASParametre;
 import interpreteur.executeur.Coordonnee;
 
 import java.util.ArrayList;

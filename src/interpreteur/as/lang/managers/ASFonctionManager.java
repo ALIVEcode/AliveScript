@@ -1,6 +1,6 @@
 package interpreteur.as.lang.managers;
 
-import interpreteur.as.lang.datatype.module.ASFonctionModule;
+import interpreteur.as.lang.datatype.fonction.ASFonctionModule;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.ASTypeExpr;

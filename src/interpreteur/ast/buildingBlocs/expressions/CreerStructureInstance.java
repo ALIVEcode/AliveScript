@@ -15,7 +15,7 @@ import java.util.Arrays;
  * var prop2 = expr2
  * Structure { prop1, prop2 }
  */
-public class CreerStructureInstance implements Expression<ASStructure.StructureInstance> {
+public class CreerStructureInstance implements Expression<ASStructure.ASStructureInstance> {
     private final Var varStructure;
     private final ArgumentStructure[] argumentStructures;
 
@@ -25,7 +25,7 @@ public class CreerStructureInstance implements Expression<ASStructure.StructureI
     }
 
     @Override
-    public ASStructure.StructureInstance eval() {
+    public ASStructure.ASStructureInstance eval() {
         // 1. Récupérer la structure
         if (!(varStructure.eval() instanceof ASStructure structure)) {
             throw new ASErreur.ErreurVariableInconnue("La variable '" + varStructure.getNom() + "' n'est pas une structure.");
@@ -36,3 +36,17 @@ public class CreerStructureInstance implements Expression<ASStructure.StructureI
         return structure.makeInstance(proprietes);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

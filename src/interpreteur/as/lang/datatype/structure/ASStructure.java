@@ -4,8 +4,6 @@ package interpreteur.as.lang.datatype.structure;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.experimental.annotations.Experimental;
 import interpreteur.as.experimental.annotations.ExperimentalStage;
-import interpreteur.as.lang.ASConstante;
-import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASHasAttr;
 import interpreteur.as.lang.datatype.ASObjet;
@@ -15,13 +13,11 @@ import java.util.stream.Collectors;
 
 @Experimental(stage = ExperimentalStage.PROTOTYPE)
 public class ASStructure implements ASObjet<Object> {
-    private final ASScope scope;
-    private final LinkedHashMap<String, ASVariable> proprietesMap;
+    private final LinkedHashMap<String, ASPropriete> proprietesMap;
     private final String nom;
 
-    public ASStructure(String nom, ASVariable[] proprietes, ASScope scope) {
+    public ASStructure(String nom, ASPropriete[] proprietes) {
         this.nom = nom;
-        this.scope = scope;
         this.proprietesMap = new LinkedHashMap<>();
         for (var propriete : proprietes) {
             if (propriete.getNom().equals("instance")) {
@@ -31,16 +27,23 @@ public class ASStructure implements ASObjet<Object> {
         }
     }
 
-    public String getNom() {
-        return nom;
+    public ASStructure(String nom, ASVariable[] variables) {
+        this.nom = nom;
+        this.proprietesMap = new LinkedHashMap<>();
+        for (var variable : variables) {
+            if (variable.getNom().equals("instance")) {
+                throw new ASErreur.ErreurDeclaration("Il est interdit de déclarer une propriété portant le nom 'instance' dans une structure");
+            }
+            this.proprietesMap.put(variable.getNom(), ASPropriete.fromVariable(variable));
+        }
     }
 
-    private ASPropriete[] makeFinalProprietes(ASPropriete[] proprietesInstance) {
-        var proprietesStructure = this.proprietesMap;
+    protected ASPropriete[] makeFinalProprietes(ASPropriete[] proprietesInstance) {
+        var proprietesStructure = this.getProprietesMap();
 
         // 1. Verifier que le nombre de propriétés est correct (nbProprietesObligatoires <= proprietesInstance.length)
         if (proprietesInstance.length > proprietesStructure.size())
-            throw new ASErreur.ErreurPropriete(this.nom, "Le nombre de propri\u00E9t\u00E9s donn\u00E9s est '" + proprietesInstance.length +
+            throw new ASErreur.ErreurPropriete(this.getNom(), "Le nombre de propri\u00E9t\u00E9s donn\u00E9s est '" + proprietesInstance.length +
                     "' alors que la structure en prend au plus '" + proprietesStructure.size() + "'");
 
         // 2. Faire une hashmap pour comparer les propriétés
@@ -50,49 +53,43 @@ public class ASStructure implements ASObjet<Object> {
         }
 
         // 2. Verifier que toutes les propriétés obligatoires ont bien une valeur
-        var pasInit = new ArrayList<ASVariable>();
+        var pasInit = new ArrayList<ASPropriete>();
         var proprietesFinales = new ArrayList<ASPropriete>();
 
         for (var proprieteStructEntry : proprietesStructure.entrySet()) {
             var proprieteInstance = proprietesInstanceMap.getOrDefault(proprieteStructEntry.getKey(), null);
             var proprieteStructure = proprieteStructEntry.getValue();
-            if (proprieteStructEntry.getValue().pasInitialisee()) { // Si la propriété est obligatoire
+            if (proprieteStructEntry.getValue().isObligatoire()) { // Si la propriété est obligatoire
                 // Si elle n'est pas initialisée dans la création de l'instance
                 if (proprieteInstance == null) pasInit.add(proprieteStructure);
                 else {
-                    proprieteInstance.setIsConst(proprieteStructure instanceof ASConstante);
+                    proprieteInstance.setIsConst(proprieteStructure.isConst());
                     proprietesFinales.add(proprieteInstance); // Si elle est initialisée dans la création de l'instance
                 }
             } else { // Si la propriété n'est pas obligatoire
                 // Si elle n'est pas initialisée dans la création de l'instance
                 var propriete = Objects.requireNonNullElseGet(
                         proprieteInstance,
-                        () -> new ASPropriete(proprieteStructure.getNom(), proprieteStructure.getValeurApresGetter()));
-                propriete.setIsConst(proprieteStructure instanceof ASConstante);
+                        proprieteStructure::copy);
+                propriete.setIsConst(proprieteStructure.isConst());
                 proprietesFinales.add(propriete);
             }
         }
 
         if (!pasInit.isEmpty()) {
-            throw new ASErreur.ErreurPropriete(this.nom, "Les propri\u00E9t\u00E9s obligatoires suivantes n'ont pas \u00E9t\u00E9 donn\u00E9es : " +
-                    pasInit.stream().map(ASVariable::getNom).toList());
+            throw new ASErreur.ErreurPropriete(this.getNom(), "Les propri\u00E9t\u00E9s obligatoires suivantes n'ont pas \u00E9t\u00E9 donn\u00E9es : " +
+                    pasInit.stream().map(ASPropriete::getNom).toList());
         }
 
         return proprietesFinales.toArray(ASPropriete[]::new);
     }
 
-    public StructureInstance makeInstance(ASPropriete[] proprietes) {
-        return new StructureInstance(this, makeFinalProprietes(proprietes));
+    protected LinkedHashMap<String, ASPropriete> getProprietesMap() {
+        return proprietesMap;
     }
 
-    @Override
-    public Object getValue() {
-        return null;
-    }
-
-    @Override
-    public boolean boolValue() {
-        return false;
+    public String getNom() {
+        return nom;
     }
 
     @Override
@@ -101,41 +98,37 @@ public class ASStructure implements ASObjet<Object> {
     }
 
     @Override
-    public String toString() {
-        return "ASStructure{" +
-                "scope=" + scope +
-                ", proprietesMap=" + proprietesMap +
-                ", nom='" + nom + '\'' +
-                '}';
+    public boolean boolValue() {
+        return true;
     }
 
-    public static class StructureInstance implements ASObjet<Object>, ASHasAttr {
+    @Override
+    public Object getValue() {
+        return this;
+    }
+
+    public ASStructureInstance makeInstance(ASPropriete[] proprietes) {
+        proprietes = makeFinalProprietes(proprietes);
+        return new ASStructureInstance(this, proprietes);
+    }
+
+    public static class ASStructureInstance implements ASObjet<Object>, ASHasAttr {
         private final ASStructure structure;
-        private final ASScope.ScopeInstance scopeInstance;
         private final ASPropriete[] proprietes;
 
-        public StructureInstance(ASStructure structure, ASPropriete[] proprietes) {
+        public ASStructureInstance(ASStructure structure, ASPropriete[] proprietes) {
             this.structure = structure;
-            this.scopeInstance = structure.scope.makeScopeInstanceFromScopeParent();
             this.proprietes = proprietes;
             initProprietes();
         }
 
         private void initProprietes() {
-            for (var propriete : proprietes) {
-                var variable = scopeInstance.getVariable(propriete.name());
-                if (propriete.asValue() == null) {
-                    throw new ASErreur.ErreurVariableInconnue("La variable '" + propriete.name() + "' n'est pas d\u00E9finie dans le scope. " +
-                            "Pour utiliser cette syntaxe, vous devez d\u00E9finir une variable ayant le même nom que la propriété de la structure" +
-                            " ('" + propriete.name() + "')");
-                }
-                variable.setValeur(propriete.asValue());
-            }
+
         }
 
         private ASPropriete getProprieteOrThrow(String nom) {
             return Arrays.stream(proprietes).filter(p -> p.name().equals(nom)).findFirst().orElseThrow(() -> new ASErreur.ErreurPropriete(
-                    structure.nom, "La propri\u00E9t\u00E9 '" + nom + "' n'existe pas dans la structure '" + structure.nom + "'")
+                    structure.getNom(), "La propri\u00E9t\u00E9 '" + nom + "' n'existe pas dans la structure '" + structure.getNom() + "'")
             );
         }
 
@@ -162,12 +155,12 @@ public class ASStructure implements ASObjet<Object> {
 
         @Override
         public String getNomType() {
-            return structure.nom;
+            return structure.getNom();
         }
 
         @Override
         public String toString() {
-            return structure.nom + " {" +
+            return structure.getNom() + " {" +
                     Arrays.stream(proprietes).map(ASPropriete::toString).collect(Collectors.joining(", ")) +
                     "}";
         }

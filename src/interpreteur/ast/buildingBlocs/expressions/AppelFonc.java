@@ -1,6 +1,6 @@
 package interpreteur.ast.buildingBlocs.expressions;
 
-import interpreteur.as.lang.ASFonctionInterface;
+import interpreteur.as.lang.datatype.fonction.ASFonctionInterface;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.ast.buildingBlocs.Expression;

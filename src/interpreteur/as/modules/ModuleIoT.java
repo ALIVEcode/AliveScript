@@ -1,6 +1,7 @@
 package interpreteur.as.modules;
 
-import interpreteur.as.lang.datatype.module.ASFonctionModule;
+import interpreteur.as.lang.datatype.fonction.ASParametre;
+import interpreteur.as.lang.datatype.fonction.ASFonctionModule;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASTypeBuiltin;

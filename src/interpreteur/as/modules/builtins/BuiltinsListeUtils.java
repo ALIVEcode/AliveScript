@@ -3,7 +3,9 @@ package interpreteur.as.modules.builtins;
 import interpreteur.as.lang.*;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur;
-import interpreteur.as.lang.datatype.module.ASFonctionModule;
+import interpreteur.as.lang.datatype.fonction.ASFonctionInterface;
+import interpreteur.as.lang.datatype.fonction.ASParametre;
+import interpreteur.as.lang.datatype.fonction.ASFonctionModule;
 import interpreteur.as.modules.core.ASModule;
 import interpreteur.executeur.Executeur;
 

@@ -6,6 +6,7 @@ import interpreteur.as.experimental.annotations.ExperimentalStage;
 import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASObjet;
+import interpreteur.as.lang.datatype.structure.ASPropriete;
 import interpreteur.as.lang.datatype.structure.ASStructure;
 import interpreteur.as.lang.managers.ASScopeManager;
 import interpreteur.ast.buildingBlocs.Programme;
@@ -23,7 +24,8 @@ public class CreerStructure extends Programme {
         super(executeurInstance);
         this.scope = ASScope.getCurrentScope();
         ASScope.popCurrentScope();
-        creerStructure();
+        // creerStructure();
+        ASScope.getCurrentScope().getVariable(getNomStructure()).setValeur(new ASStructure(getNomStructure(), new ASPropriete[]{}));
     }
 
 
@@ -41,7 +43,7 @@ public class CreerStructure extends Programme {
         var proprietes = variables.toArray(ASVariable[]::new);
         // Creer ASStructure
         var nomStructure = getNomStructure();
-        var structure = new ASStructure(nomStructure, proprietes, scope);
+        var structure = new ASStructure(nomStructure, proprietes);
         // changer la valeur de la structure dans le scope instance
         ASScope.getCurrentScope().getVariable(nomStructure).setValeur(structure);
     }
