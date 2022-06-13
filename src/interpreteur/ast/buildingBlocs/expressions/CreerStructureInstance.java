@@ -16,10 +16,10 @@ import java.util.Arrays;
  * Structure { prop1, prop2 }
  */
 public class CreerStructureInstance implements Expression<ASStructure.ASStructureInstance> {
-    private final Var varStructure;
+    private final Expression<?> varStructure;
     private final ArgumentStructure[] argumentStructures;
 
-    public CreerStructureInstance(Var varStructure, ArgumentStructure[] argumentStructures) {
+    public CreerStructureInstance(Expression<?> varStructure, ArgumentStructure[] argumentStructures) {
         this.varStructure = varStructure;
         this.argumentStructures = argumentStructures;
     }
@@ -27,8 +27,9 @@ public class CreerStructureInstance implements Expression<ASStructure.ASStructur
     @Override
     public ASStructure.ASStructureInstance eval() {
         // 1. Récupérer la structure
-        if (!(varStructure.eval() instanceof ASStructure structure)) {
-            throw new ASErreur.ErreurVariableInconnue("La variable '" + varStructure.getNom() + "' n'est pas une structure.");
+        var valeur = varStructure.eval();
+        if (!(valeur instanceof ASStructure structure)) {
+            throw new ASErreur.ErreurType("Les \u00E9l\u00E9ments de type '" + valeur.getNomType() + "' ne sont pas des structures et ne peuvent pas \u00EAtre construits.");
         }
         // 2. Récupérer les valeurs des propriétés
         ASPropriete[] proprietes = Arrays.stream(argumentStructures).map(ArgumentStructure::eval).toArray(ASPropriete[]::new);

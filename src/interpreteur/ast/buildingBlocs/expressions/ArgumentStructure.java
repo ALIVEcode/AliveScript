@@ -1,7 +1,6 @@
 package interpreteur.ast.buildingBlocs.expressions;
 
-import interpreteur.as.lang.ASConstante;
-import interpreteur.as.lang.ASScope;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.as.lang.datatype.structure.ASPropriete;
 import interpreteur.ast.buildingBlocs.Expression;
@@ -15,6 +14,6 @@ public record ArgumentStructure(Var var, @Nullable Expression<?> valeur) impleme
         if (valeurPropriete == null) {
             valeurPropriete = var.eval();
         }
-        return new ASPropriete(var.getNom(), valeurPropriete);
+        return new ASPropriete(var.getNom(), valeurPropriete, new ASTypeExpr(valeurPropriete.getNomType()));
     }
 }

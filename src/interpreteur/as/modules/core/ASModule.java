@@ -1,8 +1,12 @@
 package interpreteur.as.modules.core;
 
-import interpreteur.as.lang.*;
+import interpreteur.as.lang.ASConstante;
+import interpreteur.as.lang.ASScope;
+import interpreteur.as.lang.ASTypeExpr;
+import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASNamespace;
 import interpreteur.as.lang.datatype.fonction.ASFonctionModule;
+import interpreteur.as.lang.datatype.structure.ASStructure;
 import language.Translator;
 
 import java.util.ArrayList;
@@ -13,7 +17,12 @@ import java.util.stream.Stream;
 
 
 public record ASModule(ASFonctionModule[] fonctions,
-                       ASVariable[] variables) {
+                       ASVariable[] variables,
+                       ASStructure[] structures) {
+
+    public ASModule(ASFonctionModule[] fonctions, ASVariable[] variables) {
+        this(fonctions, variables, new ASStructure[]{});
+    }
 
     public ASModule(ASFonctionModule[] fonctions) {
         this(fonctions, new ASVariable[]{});
@@ -36,6 +45,9 @@ public record ASModule(ASFonctionModule[] fonctions,
         for (ASVariable variable : variables) {
             ASScope.getCurrentScope().declarerVariable(variable.clone());
         }
+        for (ASStructure structure : structures) {
+            ASScope.getCurrentScope().declarerVariable(new ASVariable(structure.getNom(), structure, new ASTypeExpr(structure.getNomType())));
+        }
     }
 
     private void utiliser(List<String> nomMethodes) {
@@ -47,6 +59,11 @@ public record ASModule(ASFonctionModule[] fonctions,
         for (ASVariable variable : variables) {
             if (nomMethodes.contains(variable.getNom())) {
                 ASScope.getCurrentScope().declarerVariable(variable.clone());
+            }
+        }
+        for (ASStructure structure : structures) {
+            if (nomMethodes.contains(structure.getNom())) {
+                ASScope.getCurrentScope().declarerVariable(new ASVariable(structure.getNom(), structure, new ASTypeExpr(structure.getNomType())));
             }
         }
     }
@@ -67,6 +84,10 @@ public record ASModule(ASFonctionModule[] fonctions,
         for (ASVariable variable : variables) {
             //ASScope.getCurrentScope().declarerVariable(variable.clone());
             module.ajouterObjet(variable.clone());
+        }
+        for (ASStructure structure : structures) {
+            //ASScope.getCurrentScope().declarerVariable(new ASVariable(structure.getNom(), structure, new ASTypeExpr(structure.getNomType())));
+            module.ajouterObjet(new ASVariable(structure.getNom(), structure, new ASTypeExpr(structure.getNomType())));
         }
         // ASFonctionManager.retirerNamespace();
     }
@@ -90,6 +111,12 @@ public record ASModule(ASFonctionModule[] fonctions,
             if (nomMethodes.contains(variable.getNom())) {
                 ASScope.getCurrentScope().declarerVariable(variable.clone());
                 module.ajouterObjet(variable.clone());
+            }
+        }
+        for (ASStructure structure : structures) {
+            if (nomMethodes.contains(structure.getNom())) {
+                ASScope.getCurrentScope().declarerVariable(new ASVariable(structure.getNom(), structure, new ASTypeExpr(structure.getNomType())));
+                module.ajouterObjet(new ASVariable(structure.getNom(), structure, new ASTypeExpr(structure.getNomType())));
             }
         }
         // ASFonctionManager.retirerNamespace();

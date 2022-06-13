@@ -38,6 +38,18 @@ public class ASStructure implements ASObjet<Object> {
         }
     }
 
+    private void testProprieteValide(ASPropriete propriete, ASPropriete nouvellePropriete) {
+        if (propriete.getType().noMatch(nouvellePropriete.getType())) {
+            throw new ASErreur.ErreurAssignement("La propri\u00E9t\u00E9 '" +
+                    propriete.getNom() +
+                    "' est de type *" +
+                    getNomType() +
+                    "*. Elle ne peut pas prendre une valeur de type *" +
+                    nouvellePropriete.getNomType() +
+                    "*.");
+        }
+    }
+
     protected ASPropriete[] makeFinalProprietes(ASPropriete[] proprietesInstance) {
         var proprietesStructure = this.getProprietesMap();
 
@@ -59,10 +71,11 @@ public class ASStructure implements ASObjet<Object> {
         for (var proprieteStructEntry : proprietesStructure.entrySet()) {
             var proprieteInstance = proprietesInstanceMap.getOrDefault(proprieteStructEntry.getKey(), null);
             var proprieteStructure = proprieteStructEntry.getValue();
-            if (proprieteStructEntry.getValue().isObligatoire()) { // Si la propriété est obligatoire
+            if (proprieteStructure.isObligatoire()) { // Si la propriété est obligatoire
                 // Si elle n'est pas initialisée dans la création de l'instance
                 if (proprieteInstance == null) pasInit.add(proprieteStructure);
                 else {
+                    testProprieteValide(proprieteStructure, proprieteInstance);
                     proprieteInstance.setIsConst(proprieteStructure.isConst());
                     proprietesFinales.add(proprieteInstance); // Si elle est initialisée dans la création de l'instance
                 }
@@ -71,6 +84,7 @@ public class ASStructure implements ASObjet<Object> {
                 var propriete = Objects.requireNonNullElseGet(
                         proprieteInstance,
                         proprieteStructure::copy);
+                testProprieteValide(proprieteStructure, propriete);
                 propriete.setIsConst(proprieteStructure.isConst());
                 proprietesFinales.add(propriete);
             }
@@ -110,6 +124,17 @@ public class ASStructure implements ASObjet<Object> {
     public ASStructureInstance makeInstance(ASPropriete[] proprietes) {
         proprietes = makeFinalProprietes(proprietes);
         return new ASStructureInstance(this, proprietes);
+    }
+
+    private String proprieteToString(ASPropriete propriete) {
+        return //(propriete.isConst() ? "(const) " : "") +
+                propriete.getNom() + ": " +
+                        propriete.getNomType() + (propriete.isObligatoire() ? "" : " = " + propriete.asValue());
+    }
+
+    @Override
+    public String toString() {
+        return nom + " {" + proprietesMap.values().stream().map(this::proprieteToString).collect(Collectors.joining(", ")) + "}";
     }
 
     public static class ASStructureInstance implements ASObjet<Object>, ASHasAttr {

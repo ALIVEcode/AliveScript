@@ -1,11 +1,15 @@
 package interpreteur.as.modules;
 
 import interpreteur.as.erreurs.ASErreur;
-import interpreteur.as.lang.*;
+import interpreteur.as.lang.ASTypeBuiltin;
+import interpreteur.as.lang.ASTypeExpr;
+import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.lang.datatype.fonction.ASFonctionInterface;
-import interpreteur.as.lang.datatype.fonction.ASParametre;
 import interpreteur.as.lang.datatype.fonction.ASFonctionModule;
+import interpreteur.as.lang.datatype.fonction.ASParametre;
+import interpreteur.as.lang.datatype.structure.ASPropriete;
+import interpreteur.as.lang.datatype.structure.ASStructure;
 import interpreteur.as.modules.core.ASModule;
 import interpreteur.converter.ASObjetConverter;
 import interpreteur.data_manager.Data;
@@ -30,6 +34,11 @@ public class ModuleAliot {
      */
 
     public static ASModule charger(Executeur executeurInstance) {
+        var Ecouteur = new ASStructure("Ecouteur", new ASPropriete[]{
+                ASPropriete.obligatoire("fonc", ASTypeBuiltin.fonctionType.asType(), true),
+                new ASPropriete("champs", new ASListe(), ASTypeBuiltin.liste.asType(), true),
+        });
+
 
         ASFonctionModule[] fonctionModules = {
                 //----------------- écouteurs -----------------//
@@ -169,9 +178,9 @@ public class ModuleAliot {
         };
 
         ASVariable[] variables = {
-            // new ASVariable("Ecouteur", new ASStructureModule(), new ASTypeExpr("Ecouteur")),
+                // new ASVariable("Ecouteur", new ASStructureModule(), new ASTypeExpr("Ecouteur")),
         };
 
-        return new ASModule(fonctionModules, variables);
+        return new ASModule(fonctionModules, variables, new ASStructure[]{Ecouteur});
     }
 }

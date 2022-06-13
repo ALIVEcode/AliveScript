@@ -132,63 +132,69 @@ public class ASAstExperimental extends ASAst {
 
     @Override
     protected void ajouterExpressions() {
-        ajouterExpression("NOM_VARIABLE BRACES_OUV #expression VIRGULE BRACES_FERM~" +
-                "NOM_VARIABLE BRACES_OUV #expression BRACES_FERM~" +
-                "NOM_VARIABLE BRACES_OUV BRACES_FERM", (p, variante) -> {
-            var varStructure = new Var(((Token) p.get(0)).getValeur());
-
-            Hashtable<String, Ast<? extends Expression<?>>> astParams = new Hashtable<>();
-
-            astParams.put("expression DEUX_POINTS expression", new Ast<ArgumentStructure>(-2) {
-                @Override
-                public ArgumentStructure apply(List<Object> p, Integer variante) {
-                    if (p.get(0) instanceof Var) {
-                        return new ArgumentStructure((Var) p.get(0), (Expression<?>) p.get(2));
-                    } else {
-                        throw new ASErreur.ErreurSyntaxe("Une d\u00E9finition de propri\u00E9t\u00E9 d'une structure " +
-                                "doit commencer par une variable.");
-                    }
-                }
-            });
-
-            ArgumentStructure[] argsStructure = new ArgumentStructure[]{};
-            if (variante == 2) {
-                return new CreerStructureInstance(varStructure, argsStructure);
-            }
-            int lastIndex = variante == 1 ? p.size() - 1 : p.size() - 2;
-            Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(2, lastIndex)), astParams);
-
-            if (contenu instanceof ArgumentStructure argumentStructure) {
-                argsStructure = new ArgumentStructure[]{argumentStructure};
-            } else if (contenu instanceof Var var) {
-                argsStructure = new ArgumentStructure[]{new ArgumentStructure(var, null)};
-            } else if (contenu instanceof CreerListe.Enumeration enumeration) {
-
-                argsStructure = enumeration.getExprs()
-                        .stream()
-                        .map(expr -> {
-                            if (expr instanceof ArgumentStructure arg) {
-                                return arg;
-                            } else if (expr instanceof Var var) {
-                                return new ArgumentStructure(var, null);
-                            } else {
-                                throw new ASErreur.ErreurType("Une structure doit contenir des variables ou des arguments");
-                            }
-                        })
-                        .toArray(ArgumentStructure[]::new);
-            }
-
-            return new CreerStructureInstance(varStructure, argsStructure);
-        });
-
         super.ajouterExpressions();
 
-        ajouterExpression("expression POINT expression", new Ast<GetAttr>(3) {
+        ajouterExpression("expression POINT expression", new Ast<GetAttr>(2) {
             @Override
             public GetAttr apply(List<Object> p, Integer idxVariante) {
                 return new GetAttr((Expression<?>) p.get(0), (Var) p.get(2));
             }
         });
+
+        ajouterExpression("expression BRACES_OUV #expression VIRGULE BRACES_FERM~" +
+                "expression BRACES_OUV #expression BRACES_FERM~" +
+                "expression BRACES_OUV BRACES_FERM", new Ast<>(3) {
+            @Override
+            public CreerStructureInstance apply(List<Object> p, Integer variante) {
+                var varStructure = (Expression<?>) p.get(0);
+
+                Hashtable<String, Ast<? extends Expression<?>>> astParams = new Hashtable<>();
+
+                astParams.put("expression DEUX_POINTS expression", new Ast<ArgumentStructure>(-2) {
+                    @Override
+                    public ArgumentStructure apply(List<Object> p, Integer variante) {
+                        if (p.get(0) instanceof Var) {
+                            return new ArgumentStructure((Var) p.get(0), (Expression<?>) p.get(2));
+                        } else {
+                            throw new ASErreur.ErreurSyntaxe("Une d\u00E9finition de propri\u00E9t\u00E9 d'une structure " +
+                                    "doit commencer par une variable.");
+                        }
+                    }
+                });
+
+                ArgumentStructure[] argsStructure = new ArgumentStructure[]{};
+                if (variante == 2) {
+                    return new CreerStructureInstance(varStructure, argsStructure);
+                }
+                int lastIndex = variante == 1 ? p.size() - 1 : p.size() - 2;
+                Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(2, lastIndex)), astParams);
+
+                if (contenu instanceof ArgumentStructure argumentStructure) {
+                    argsStructure = new ArgumentStructure[]{argumentStructure};
+                } else if (contenu instanceof Var var) {
+                    argsStructure = new ArgumentStructure[]{new ArgumentStructure(var, null)};
+                } else if (contenu instanceof CreerListe.Enumeration enumeration) {
+
+                    argsStructure = enumeration.getExprs()
+                            .stream()
+                            .map(expr -> {
+                                if (expr instanceof ArgumentStructure arg) {
+                                    return arg;
+                                } else if (expr instanceof Var var) {
+                                    return new ArgumentStructure(var, null);
+                                } else {
+                                    throw new ASErreur.ErreurType("Une structure doit contenir des variables ou des arguments");
+                                }
+                            })
+                            .toArray(ArgumentStructure[]::new);
+                }
+
+                return new CreerStructureInstance(varStructure, argsStructure);
+            }
+        });
+
+
+
     }
 
     private void ajouterProgrammesStructure() {

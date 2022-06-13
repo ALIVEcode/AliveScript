@@ -2,6 +2,7 @@ package interpreteur.as.lang.datatype.structure;
 
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASConstante;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASObjet;
 
@@ -10,21 +11,31 @@ import java.util.Objects;
 
 public final class ASPropriete implements ASObjet<Object> {
     private final String nom;
+    private final ASTypeExpr type;
     private ASObjet<?> asValue;
     private boolean isConst;
 
-    public ASPropriete(String nom, ASObjet<?> asValue, boolean isConst) {
+    public ASPropriete(String nom, ASObjet<?> asValue, ASTypeExpr type, boolean isConst) {
         this.nom = nom;
         this.asValue = asValue instanceof ASVariable variable ? variable.getValeurApresGetterOuNull() : asValue;
+        this.type = type;
         this.isConst = isConst;
     }
 
-    public ASPropriete(String nom, ASObjet<?> asValue) {
-        this(nom, asValue, false);
+    public ASPropriete(String nom, ASObjet<?> asValue, ASTypeExpr type) {
+        this(nom, asValue, type, false);
+    }
+
+    public static ASPropriete obligatoire(String nom, ASTypeExpr type, boolean isConst) {
+        return new ASPropriete(nom, null, type, isConst);
+    }
+
+    public static ASPropriete optionnelle(String nom, ASObjet<?> asValue, ASTypeExpr type, boolean isConst) {
+        return new ASPropriete(nom, asValue, type, isConst);
     }
 
     public static ASPropriete fromVariable(ASVariable variable) {
-        return new ASPropriete(variable.getNom(), variable.getValeurApresGetterOuNull(), variable instanceof ASConstante);
+        return new ASPropriete(variable.getNom(), variable.getValeurApresGetterOuNull(), variable.getType(), variable instanceof ASConstante);
     }
 
     public boolean isConst() {
@@ -43,8 +54,12 @@ public final class ASPropriete implements ASObjet<Object> {
         return nom;
     }
 
+    public ASTypeExpr getType() {
+        return type;
+    }
+
     public ASPropriete copy() {
-        return new ASPropriete(nom, asValue, isConst);
+        return new ASPropriete(nom, asValue, type, isConst);
     }
 
     @Override
@@ -66,7 +81,7 @@ public final class ASPropriete implements ASObjet<Object> {
 
     @Override
     public String getNomType() {
-        return this.asValue.getNomType();
+        return type.getNom();
     }
 
     @Override
