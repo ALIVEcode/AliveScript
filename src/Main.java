@@ -4,6 +4,7 @@ import language.Language;
 public class Main {
 
     static final String[] CODE = """
+            afficher "Hello world!"
             """.split("\n");
 
     public static void main(String[] args) {

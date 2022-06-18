@@ -1,6 +1,6 @@
 package interpreteur.generateurs.ast;
 
-public enum AstFrameKind {
+public enum ASAstFrameKind {
     DEFAULT,
     STRUCTURE;
 }

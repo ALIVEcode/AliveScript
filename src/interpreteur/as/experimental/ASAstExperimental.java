@@ -16,7 +16,7 @@ import interpreteur.ast.buildingBlocs.programmes.FinStructure;
 import interpreteur.ast.buildingBlocs.programmes.Declarer;
 import interpreteur.ast.buildingBlocs.programmes.CreerStructure;
 import interpreteur.executeur.Executeur;
-import interpreteur.generateurs.ast.AstFrameKind;
+import interpreteur.generateurs.ast.ASAstFrameKind;
 import interpreteur.generateurs.lexer.LexerGenerator;
 import interpreteur.tokens.Token;
 import utils.Pair;
@@ -38,12 +38,12 @@ public class ASAstExperimental extends ASAst {
     public ASAstExperimental(Executeur executeurInstance) {
         super(executeurInstance);
         // set the kind of the ast to STRUCTURE to define it.
-        defineAstFrame(AstFrameKind.STRUCTURE);
+        defineAstFrame(ASAstFrameKind.STRUCTURE);
         ajouterProgrammesStructure();
         ajouterExpressionsStructure();
         // puts the current ast frame to the default one.
         popAstFrame();
-        pushAstFrame(AstFrameKind.DEFAULT);
+        pushAstFrame(ASAstFrameKind.DEFAULT);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class ASAstExperimental extends ASAst {
                 });
 
         remplacerProgramme("STRUCTURE NOM_VARIABLE", p -> {
-            pushAstFrame(AstFrameKind.STRUCTURE);
+            pushAstFrame(ASAstFrameKind.STRUCTURE);
             return new CreerStructure(new Var(((Token) p.get(1)).getValeur()), executeurInstance);
         });
 
