@@ -78,6 +78,8 @@ public class Data extends JSONObject {
         VALEUR_COLONNE(Categorie.AI),       // 6
         CREER_MODELE(Categorie.AI),         // 7
         ONE_HOT(Categorie.AI),              // 8
+        NORMALISER_COLONNE(Categorie.AI),    // 9
+        NORMALISER(Categorie.AI),           // 10
 
         // IoT Data Ids
         // document related

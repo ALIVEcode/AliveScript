@@ -553,6 +553,50 @@ public class ModuleAI {
                         return null;
                     }
                 },
+                /*
+                Nomalizes the data of a column
+                 */
+                new ASFonctionModule("normaliserColonne", new ASParametre[]{
+                        new ASParametre(
+                                "colonne", ASTypeBuiltin.texte.asType(), null )
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Converting the parameter into an AS object
+                        String col = this.getValeurParam("colonne").getValue().toString();
+                        executeurInstance.addData(new Data(Data.Id.NORMALISER_COLONNE).addParam(col));
+                        return null;
+                    }
+                },
+                /*
+                Nomalizes the data of a column
+                 */
+                new ASFonctionModule("normaliser", new ASParametre[]{
+                        new ASParametre(
+                                "colonne", ASTypeBuiltin.texte.asType(), null ),
+                        new ASParametre(
+                                "valeur", ASTypeBuiltin.entier.asType(), null )
+                }, ASTypeBuiltin.decimal.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Converting the parameter into an AS object
+                        String col = this.getValeurParam("colonne").getValue().toString();
+                        double data = ((Number) this.getValeurParam("valeur").getValue()).doubleValue();
+
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.NORMALISER).addParam(col).addParam(data));
+                        }
+                        ASDecimal element;
+                        try {
+                            element = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().pop().toString()));
+                        }catch (Exception e){
+                            throw new ASErreur.ErreurAppelFonction("Impossible de normaliser la valeur.");
+                        }
+                        return element;
+                    }
+                },
+
         });
     }
 
