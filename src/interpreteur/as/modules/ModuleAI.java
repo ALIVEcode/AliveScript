@@ -645,6 +645,15 @@ public class ModuleAI {
                     }
                 },
 
+                new ASFonctionModule("optimiser", new ASParametre[]{
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        executeurInstance.addData(new Data(Data.Id.OPTIMISER));
+                        return null;
+                    }
+                },
+
         });
     }
 
