@@ -512,7 +512,7 @@ public class ModuleAI {
                                     ASDecimal element = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().pop().toString()));
                                     liste.ajouterElement(element);
                                 }else if ( executeurInstance.getDataResponse().peek() instanceof String){
-                                    ASTexte element = new ASTexte(executeurInstance.getDataResponse().pop().getClass());
+                                    ASTexte element = new ASTexte(executeurInstance.getDataResponse().pop().toString());
                                     liste.ajouterElement(element);
                                 }else{
                                     executeurInstance.getDataResponse().pop();
@@ -537,7 +537,7 @@ public class ModuleAI {
                     @Override
                     public ASObjet<?> executer() {
                         executeurInstance.addData(new Data(Data.Id.CREER_MODELE));
-                        return null;
+                        return new ASNul();
                     }
                 },
 
@@ -562,7 +562,7 @@ public class ModuleAI {
                             col[i]=lst1.get(i).toString();
                         }
                         executeurInstance.addData(new Data(Data.Id.ONE_HOT).addParam(name).addParam(col));
-                        return null;
+                        return new ASNul();
                     }
                 },
                 /*
@@ -650,7 +650,7 @@ public class ModuleAI {
                     @Override
                     public ASObjet<?> executer() {
                         executeurInstance.addData(new Data(Data.Id.OPTIMISER));
-                        return null;
+                        return new ASNul();
                     }
                 },
                 new ASFonctionModule("nomES", new ASParametre[]{
@@ -683,7 +683,7 @@ public class ModuleAI {
                     public ASObjet<?> executer() {
                         int i = ((Number) this.getValeurParam("indice").getValue()).intValue();
                         executeurInstance.addData(new Data(Data.Id.SUPPRIMER_LIGNE).addParam(i));
-                        return null;
+                        return new ASNul();
                     }
                 }
 
