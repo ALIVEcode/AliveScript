@@ -528,6 +528,31 @@ public class ModuleAI {
                         return null;
                     }
                 },
+
+                /*
+                Creats of a one shot associate to the column selected
+                 */
+                new ASFonctionModule("oneHot", new ASParametre[]{
+                        new ASParametre(
+                                "nom", ASTypeBuiltin.texte.asType(), null ),
+                        new ASParametre(
+                                "colonnes", ASTypeBuiltin.liste.asType(), null)
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Converting the parameter into an AS object
+                        String name = this.getValeurParam("nom").getValue().toString();
+
+                        //Create a string array
+                        ASListe lst1 = (ASListe) this.getValeurParam("colonnes");
+                        String[]  col = new String[lst1.taille()];
+                        for (int i =0; i<lst1.taille(); i++){
+                            col[i]=lst1.get(i).toString();
+                        }
+                        executeurInstance.addData(new Data(Data.Id.ONE_HOT).addParam(name).addParam(col));
+                        return null;
+                    }
+                },
         });
     }
 
