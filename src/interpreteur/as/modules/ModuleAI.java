@@ -516,6 +516,18 @@ public class ModuleAI {
                         }
                     }
                 },
+
+                /**
+                 * Creates the AI model
+                */
+                new ASFonctionModule("creerModele", new ASParametre[]{
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        executeurInstance.addData(new Data(Data.Id.CREER_MODELE));
+                        return null;
+                    }
+                },
         });
     }
 
