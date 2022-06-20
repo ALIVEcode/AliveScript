@@ -80,6 +80,7 @@ public class Data extends JSONObject {
         ONE_HOT(Categorie.AI),              // 8
         NORMALISER_COLONNE(Categorie.AI),    // 9
         NORMALISER(Categorie.AI),           // 10
+        PREDIRE(Categorie.AI),              // 11
 
         // IoT Data Ids
         // document related

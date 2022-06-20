@@ -596,6 +596,42 @@ public class ModuleAI {
                         return element;
                     }
                 },
+                new ASFonctionModule("predire", new ASParametre[]{
+                        new ASParametre(
+                                "entrees", ASTypeBuiltin.liste.asType(), null )
+                }, ASTypeBuiltin.liste.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        System.out.println("Start Predire");
+                        //Create a string array
+                        ASListe lst1 = (ASListe) this.getValeurParam("entrees");
+                        ASListe lst2 = new ASListe();
+                        double[]  entry = new double[lst1.taille()];
+                        try {
+                            for (int i =0; i<lst1.taille(); i++){
+                                entry[i]= (Double.parseDouble(lst1.get(i).toString()));
+                            }
+                        } catch (Exception err) {
+                            throw new ASErreur.ErreurType("La fonction predire prend une liste de nombre, mais la liste pass\u00E9e en param\u00E8tre n'est pas compos\u00E9e que de nombres.");
+                        }
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.PREDIRE).addParam(entry));
+                        }
+
+                        try {
+                            ASDecimal element = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().peek().toString()));
+                            while (!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list")) {
+                                element = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().pop().toString()));
+                                lst2.ajouterElement(element);
+                            }
+                            executeurInstance.getDataResponse().pop();
+                        }catch (Exception e){
+                            throw new ASErreur.ErreurInputOutput(executeurInstance.getDataResponse().pop().toString());
+                        }
+                        return lst2;
+                    }
+                },
 
         });
     }
