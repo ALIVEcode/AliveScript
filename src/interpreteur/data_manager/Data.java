@@ -21,6 +21,12 @@ public class Data extends JSONObject {
         this.put("p", new JSONArray());
     }
 
+    public static Data endOfExecution() {
+        Data endOfExecutionData = new Data(Id.ARRETER);
+        endOfExecutionData.put("id", 0);
+        return endOfExecutionData;
+    }
+
     public Data addParam(Object val) {
         this.getJSONArray("p").put(val);
         return this;
@@ -29,12 +35,6 @@ public class Data extends JSONObject {
     public Data addDodo(double dodo) {
         this.put("d", dodo);
         return this;
-    }
-
-    public static Data endOfExecution() {
-        Data endOfExecutionData = new Data(Id.ARRETER);
-        endOfExecutionData.put("id", 0);
-        return endOfExecutionData;
     }
 
     /**
@@ -56,6 +56,8 @@ public class Data extends JSONObject {
 
         AFFICHER(Categorie.UTILITAIRE),  // 0
         ATTENDRE(Categorie.UTILITAIRE),  // 1
+        NOTIF_INFO(Categorie.UTILITAIRE),     // 2
+        NOTIF_ERR(Categorie.UTILITAIRE),     // 2
 
         ERREUR(Categorie.ERREUR),
 
@@ -73,9 +75,23 @@ public class Data extends JSONObject {
         GET_EVALUER(Categorie.AI),          // 3
         FONCTION_COUT(Categorie.AI),        // 4
         TEST_RESEAU_NEURONES(Categorie.AI), // 5
+        VALEUR_COLONNE(Categorie.AI),       // 6
 
         // IoT Data Ids
-        UPDATE_COMPONENT(Categorie.IOT), // 0
+        // document related
+        UPDATE_DOC(Categorie.IOT),              // 0
+        SUBSCRIBE_LISTENER(Categorie.IOT),      // 1
+        UNSUBSCRIBE_LISTENER(Categorie.IOT),    // 2
+        // misc events
+        SEND_ACTION(Categorie.IOT),             // 3
+        SEND_BROADCAST(Categorie.IOT),          // 4
+        SEND_ROUTE(Categorie.IOT),              // 5
+        RECEIVE_BROADCAST(Categorie.IOT),       // 6
+        // http requests
+        GET_DOC(Categorie.IOT),                 // 7
+        GET_FIELD(Categorie.IOT),               // 8
+        // send iot error
+        SEND_IOT_ERROR(Categorie.IOT),          // 9
         ;
 
         private final int id;

@@ -468,7 +468,54 @@ public class ModuleAI {
                         executeurInstance.addData(new Data(Data.Id.TEST_RESEAU_NEURONES));
                         return null;
                     }
-                }
+                },
+
+                /*
+                Creats a list containing all the elements of the selected column
+                 */
+                new ASFonctionModule("valeursColonne", new ASParametre[]{
+                        new ASParametre(
+                                "colonne", ASTypeBuiltin.texte.asType(), null )
+                }, ASTypeBuiltin.liste.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Converting the parameter into an AS object
+                        String col = this.getValeurParam("colonne").getValue().toString();
+
+                        //Tell the linter to shut up
+                        assert executeurInstance != null;
+
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.VALEUR_COLONNE).addParam(col));
+                        }
+
+                        //Get the response
+                        ASListe liste = new ASListe();
+                        if(!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list")) {
+
+                            do {
+                                if (executeurInstance.getDataResponse().peek() instanceof Integer ||
+                                        executeurInstance.getDataResponse().peek() instanceof Double){
+                                    ASDecimal element = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().pop().toString()));
+                                    liste.ajouterElement(element);
+                                }else if ( executeurInstance.getDataResponse().peek() instanceof String){
+                                    ASTexte element = new ASTexte(executeurInstance.getDataResponse().pop().getClass());
+                                    liste.ajouterElement(element);
+                                }else{
+                                    executeurInstance.getDataResponse().pop();
+                                    liste.ajouterElement(new ASNul());
+                                }
+                            } while (!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list"));
+
+                            executeurInstance.getDataResponse().pop();
+                            System.out.println("Final list" + liste);
+                            return liste;
+                        }else{
+                            throw new ASErreur.ErreurInputOutput("Le nom de la colonne entrée en paramètre est inexistante");
+                        }
+                    }
+                },
         });
     }
 

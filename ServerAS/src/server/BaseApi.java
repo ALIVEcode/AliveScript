@@ -7,6 +7,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 public abstract class BaseApi implements HttpHandler {
     protected final String CORS_ORIGIN;
@@ -29,7 +31,8 @@ public abstract class BaseApi implements HttpHandler {
         for (byte b : byteArray) {
             inputData.append((char) b);
         }
-        return new JSONObject(inputData.toString());
+        //return new JSONObject(inputData.toString());
+        return new JSONObject(StandardCharsets.UTF_8.decode(ByteBuffer.wrap(byteArray)).toString());
     }
 
     protected void handleResponse(HttpExchange httpExchange, String requestParamValue) throws IOException {
