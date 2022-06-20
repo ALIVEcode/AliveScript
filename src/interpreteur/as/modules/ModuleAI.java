@@ -454,11 +454,23 @@ public class ModuleAI {
                     Evaluates the cost function for the regression on the screen.
                  */
                 new ASFonctionModule("fonctionCout", new ASParametre[]{
-                }, ASTypeBuiltin.nulType.asType()) {
+                }, ASTypeBuiltin.decimal.asType()) {
                     @Override
                     public ASObjet<?> executer() {
-                        executeurInstance.addData(new Data(Data.Id.FONCTION_COUT));
-                        return new ASNul();
+                        //Tell the linter to shut up
+                        assert executeurInstance != null;
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.FONCTION_COUT));
+                        }
+                        try {
+                            ASDecimal element =  new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().peek().toString()));
+                            executeurInstance.getDataResponse().pop();
+                            return element;
+                        }catch (Exception e){
+                            throw new ASErreur.ErreurInputOutput(executeurInstance.getDataResponse().pop().toString());
+                        }
+
                     }
                 },
                 new ASFonctionModule("testReseauNeurones", new ASParametre[]{
