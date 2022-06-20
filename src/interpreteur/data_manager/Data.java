@@ -82,7 +82,8 @@ public class Data extends JSONObject {
         NORMALISER(Categorie.AI),           // 10
         PREDIRE(Categorie.AI),              // 11
         OPTIMISER(Categorie.AI),            // 12
-
+        NOM_ES(Categorie.AI),               // 13
+        SUPPRIMER_LIGNE(Categorie.AI),      // 14
 
         // IoT Data Ids
         // document related

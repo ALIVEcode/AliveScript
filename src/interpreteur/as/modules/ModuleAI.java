@@ -653,6 +653,39 @@ public class ModuleAI {
                         return null;
                     }
                 },
+                new ASFonctionModule("nomES", new ASParametre[]{
+                }, ASTypeBuiltin.liste.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Tell the linter to shut up
+                        assert executeurInstance != null;
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.NOM_ES));
+                        }
+
+                        ASListe liste = new ASListe();
+                        while (!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list")) {
+                            ASTexte element = new ASTexte(executeurInstance.getDataResponse().pop().toString());
+                            liste.ajouterElement(element);
+                        }
+                        executeurInstance.getDataResponse().pop();
+                        System.out.println("Final list" + liste);
+                        return liste;
+                    }
+                },
+
+                new ASFonctionModule("supprimerLigne", new ASParametre[]{
+                        new ASParametre(
+                                "indice", ASTypeBuiltin.entier.asType(), null )
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        int i = ((Number) this.getValeurParam("indice").getValue()).intValue();
+                        executeurInstance.addData(new Data(Data.Id.SUPPRIMER_LIGNE).addParam(i));
+                        return null;
+                    }
+                }
 
         });
     }
