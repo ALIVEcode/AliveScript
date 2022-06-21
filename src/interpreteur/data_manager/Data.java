@@ -82,6 +82,8 @@ public class Data extends JSONObject {
         OPTIMISER(Categorie.AI),            // 12
         NOM_ES(Categorie.AI),               // 13
         SUPPRIMER_LIGNE(Categorie.AI),      // 14
+        COEFFICIENT_CORRELATION(Categorie.AI), // 15
+        COEFFICIENT_DETERMINATION(Categorie.AI),//16
         // IoT Data Ids
         UPDATE_COMPONENT(Categorie.IOT), // 0
         ;
