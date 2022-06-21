@@ -304,7 +304,18 @@ public class ModuleAI {
                         } catch (ClassCastException err) {
                             throw new ASErreur.ErreurType("La fonction ecartType prend une liste de nombre, mais la liste pass\u00E9e en param\u00E8tre n'est pas compos\u00E9e que de nombres.");
                         }
-                        return new ASDecimal(correlationCoefficient(x, y));
+
+                        //Tell the linter to shut up
+                        assert executeurInstance != null;
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.COEFFICIENT_CORRELATION).addParam(x).addParam(y));
+                        }
+
+                        System.out.println("test");
+                        ASDecimal element = new ASDecimal(Double.parseDouble((executeurInstance.getDataResponse().pop().toString())));
+                        return element;
+
                     }
                 },
 
@@ -337,42 +348,17 @@ public class ModuleAI {
                         } catch (ClassCastException err) {
                             throw new ASErreur.ErreurType("La fonction ecartType prend une liste de nombre, mais la liste pass\u00E9e en param\u00E8tre n'est pas compos\u00E9e que de nombres.");
                         }
-                        return new ASDecimal(determinationCoefficient(x, y));
+                        //Tell the linter to shut up
+                        assert executeurInstance != null;
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.COEFFICIENT_DETERMINATION).addParam(y).addParam(x));
+                        }
+                        ASDecimal element = new ASDecimal(Double.parseDouble((executeurInstance.getDataResponse().pop().toString())));
+                        return element;
                     }
                 },
 
-                /*
-                  Returns the values of the specified column. (ONLY TAKES THE SAME DATASET FOR NOW, WILL BE CHANGED)
-                */
-                new ASFonctionModule("valeursColonne", new ASParametre[]{
-                        new ASParametre(
-                                "col", ASTypeBuiltin.texte.asType(),
-                                null
-                        )
-                }, ASTypeBuiltin.liste.asType()) {
-                    @Override
-                    public ASObjet<?> executer() {
-                        String col = this.getValeurParam("col").getValue().toString();
-                        ASListe liste = new ASListe();
-
-                        if (!(col.equalsIgnoreCase("x") || col.equalsIgnoreCase("y"))) {
-                            throw new ASErreur.ErreurInputOutput("La fonction valeursColonne() prend en param\u00E8tre le caract\u00E8re \"x\" ou \"y\" seulement.");
-                        }
-                        System.out.println(col);
-                        if (col.contains("x")) {
-                            for (Double el : DATA_X) {
-                                liste.ajouterElement(new ASDecimal(el));
-                            }
-                        } else {
-                            for (Double el : DATA_Y) {
-                                liste.ajouterElement(new ASDecimal(el));
-                            }
-                        }
-                        return liste;
-
-                        //  A TERMINER
-                    }
-                },
                 /*
                     Shows the data on the graph as a scatter plot.
                  */
@@ -454,11 +440,23 @@ public class ModuleAI {
                     Evaluates the cost function for the regression on the screen.
                  */
                 new ASFonctionModule("fonctionCout", new ASParametre[]{
-                }, ASTypeBuiltin.nulType.asType()) {
+                }, ASTypeBuiltin.decimal.asType()) {
                     @Override
                     public ASObjet<?> executer() {
-                        executeurInstance.addData(new Data(Data.Id.FONCTION_COUT));
-                        return new ASNul();
+                        //Tell the linter to shut up
+                        assert executeurInstance != null;
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.FONCTION_COUT));
+                        }
+                        try {
+                            ASDecimal element =  new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().peek().toString()));
+                            executeurInstance.getDataResponse().pop();
+                            return element;
+                        }catch (Exception e){
+                            throw new ASErreur.ErreurInputOutput(executeurInstance.getDataResponse().pop().toString());
+                        }
+
                     }
                 },
                 new ASFonctionModule("testReseauNeurones", new ASParametre[]{
@@ -468,7 +466,216 @@ public class ModuleAI {
                         executeurInstance.addData(new Data(Data.Id.TEST_RESEAU_NEURONES));
                         return null;
                     }
+                },
+
+                /*
+                Creats a list containing all the elements of the selected column
+                 */
+                new ASFonctionModule("valeursColonne", new ASParametre[]{
+                        new ASParametre(
+                                "colonne", ASTypeBuiltin.texte.asType(), null )
+                }, ASTypeBuiltin.liste.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Converting the parameter into an AS object
+                        String col = this.getValeurParam("colonne").getValue().toString();
+
+                        //Tell the linter to shut up
+                        assert executeurInstance != null;
+
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.VALEUR_COLONNE).addParam(col));
+                        }
+
+                        //Get the response
+                        ASListe liste = new ASListe();
+                        if(!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list")) {
+
+                            do {
+                                if (executeurInstance.getDataResponse().peek() instanceof Integer ||
+                                        executeurInstance.getDataResponse().peek() instanceof Double){
+                                    ASDecimal element = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().pop().toString()));
+                                    liste.ajouterElement(element);
+                                }else if ( executeurInstance.getDataResponse().peek() instanceof String){
+                                    ASTexte element = new ASTexte(executeurInstance.getDataResponse().pop().toString());
+                                    liste.ajouterElement(element);
+                                }else{
+                                    executeurInstance.getDataResponse().pop();
+                                    liste.ajouterElement(new ASNul());
+                                }
+                            } while (!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list"));
+
+                            executeurInstance.getDataResponse().pop();
+                            System.out.println("Final list" + liste);
+                            return liste;
+                        }else{
+                            throw new ASErreur.ErreurInputOutput("Le nom de la colonne entrée en paramètre est inexistante");
+                        }
+                    }
+                },
+
+                /**
+                 * Creates the AI model
+                */
+                new ASFonctionModule("creerModele", new ASParametre[]{
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        executeurInstance.addData(new Data(Data.Id.CREER_MODELE));
+                        return new ASNul();
+                    }
+                },
+
+                /*
+                Creats of a one shot associate to the column selected
+                 */
+                new ASFonctionModule("oneHot", new ASParametre[]{
+                        new ASParametre(
+                                "nom", ASTypeBuiltin.texte.asType(), null ),
+                        new ASParametre(
+                                "colonnes", ASTypeBuiltin.liste.asType(), null),
+                        new ASParametre(
+                                "autre", ASTypeBuiltin.booleen.asType(), new ASBooleen(true))
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Converting the parameter into an AS object
+                        String name = this.getValeurParam("nom").getValue().toString();
+                        boolean other = (boolean) this.getValeurParam("autre").getValue();
+                        // System.out.println(other);
+                        //Create a string array
+                        ASListe lst1 = (ASListe) this.getValeurParam("colonnes");
+                        String[]  col = new String[lst1.taille()];
+                        for (int i =0; i<lst1.taille(); i++){
+                            col[i]=lst1.get(i).toString();
+                        }
+                        executeurInstance.addData(new Data(Data.Id.ONE_HOT).addParam(name).addParam(col).addParam(other));
+                        return new ASNul();
+                    }
+                },
+                /*
+                Nomalizes the data of a column
+                 */
+                new ASFonctionModule("normaliserColonne", new ASParametre[]{
+                        new ASParametre(
+                                "colonne", ASTypeBuiltin.texte.asType(), null )
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Converting the parameter into an AS object
+                        String col = this.getValeurParam("colonne").getValue().toString();
+                        executeurInstance.addData(new Data(Data.Id.NORMALISER_COLONNE).addParam(col));
+                        return new ASNul();
+                    }
+                },
+                /*
+                Nomalizes the data of a column
+                 */
+                new ASFonctionModule("normaliser", new ASParametre[]{
+                        new ASParametre(
+                                "colonne", ASTypeBuiltin.texte.asType(), null ),
+                        new ASParametre(
+                                "valeur", ASTypeBuiltin.entier.asType(), null )
+                }, ASTypeBuiltin.decimal.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Converting the parameter into an AS object
+                        String col = this.getValeurParam("colonne").getValue().toString();
+                        double data = ((Number) this.getValeurParam("valeur").getValue()).doubleValue();
+
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.NORMALISER).addParam(col).addParam(data));
+                        }
+                        ASDecimal element;
+                        try {
+                            element = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().pop().toString()));
+                        }catch (Exception e){
+                            throw new ASErreur.ErreurAppelFonction("Impossible de normaliser la valeur.");
+                        }
+                        return element;
+                    }
+                },
+                new ASFonctionModule("predire", new ASParametre[]{
+                        new ASParametre(
+                                "entrees", ASTypeBuiltin.liste.asType(), null )
+                }, ASTypeBuiltin.liste.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        System.out.println("Start Predire");
+                        //Create a string array
+                        ASListe lst1 = (ASListe) this.getValeurParam("entrees");
+                        ASListe lst2 = new ASListe();
+                        double[]  entry = new double[lst1.taille()];
+                        try {
+                            for (int i =0; i<lst1.taille(); i++){
+                                entry[i]= (Double.parseDouble(lst1.get(i).toString()));
+                            }
+                        } catch (Exception err) {
+                            throw new ASErreur.ErreurType("La fonction predire prend une liste de nombre, mais la liste pass\u00E9e en param\u00E8tre n'est pas compos\u00E9e que de nombres.");
+                        }
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.PREDIRE).addParam(entry));
+                        }
+
+                        try {
+                            ASDecimal element = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().peek().toString()));
+                            while (!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list")) {
+                                element = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().pop().toString()));
+                                lst2.ajouterElement(element);
+                            }
+                            executeurInstance.getDataResponse().pop();
+                        }catch (Exception e){
+                            throw new ASErreur.ErreurInputOutput(executeurInstance.getDataResponse().pop().toString());
+                        }
+                        return lst2;
+                    }
+                },
+
+                new ASFonctionModule("optimiser", new ASParametre[]{
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        executeurInstance.addData(new Data(Data.Id.OPTIMISER));
+                        return new ASNul();
+                    }
+                },
+                new ASFonctionModule("nomES", new ASParametre[]{
+                }, ASTypeBuiltin.liste.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        //Tell the linter to shut up
+                        assert executeurInstance != null;
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.NOM_ES));
+                        }
+
+                        ASListe liste = new ASListe();
+                        while (!executeurInstance.getDataResponse().peek().toString().equals("Creation of a list")) {
+                            ASTexte element = new ASTexte(executeurInstance.getDataResponse().pop().toString());
+                            liste.ajouterElement(element);
+                        }
+                        executeurInstance.getDataResponse().pop();
+                        System.out.println("Final list" + liste);
+                        return liste;
+                    }
+                },
+
+                new ASFonctionModule("supprimerLigne", new ASParametre[]{
+                        new ASParametre(
+                                "indice", ASTypeBuiltin.entier.asType(), null )
+                }, ASTypeBuiltin.nulType.asType()) {
+                    @Override
+                    public ASObjet<?> executer() {
+                        int i = ((Number) this.getValeurParam("indice").getValue()).intValue();
+                        executeurInstance.addData(new Data(Data.Id.SUPPRIMER_LIGNE).addParam(i));
+                        return new ASNul();
+                    }
                 }
+
         });
     }
 
