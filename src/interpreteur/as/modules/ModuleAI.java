@@ -319,6 +319,7 @@ public class ModuleAI {
                     }
                 },
 
+
                 /*
                   Calculates the determination coefficient of two list of numbers which together are representing
                   coordinates. The first list contains all X values for each point while the second list
