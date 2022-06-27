@@ -577,7 +577,7 @@ public class ModuleAI {
                         new ASParametre(
                                 "colonne", ASTypeBuiltin.texte.asType(), null ),
                         new ASParametre(
-                                "valeur", ASTypeBuiltin.entier.asType(), null )
+                                "valeur", ASTypeBuiltin.decimal.asType(), null )
                 }, ASTypeBuiltin.decimal.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -643,7 +643,7 @@ public class ModuleAI {
                         return new ASNul();
                     }
                 },
-                new ASFonctionModule("nomES", new ASParametre[]{
+                new ASFonctionModule("nomsES", new ASParametre[]{
                 }, ASTypeBuiltin.liste.asType()) {
                     @Override
                     public ASObjet<?> executer() {
