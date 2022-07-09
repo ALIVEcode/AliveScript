@@ -9,6 +9,7 @@ import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.lang.datatype.structure.ASStructure;
+import interpreteur.as.lang.managers.ASScopeManager;
 import interpreteur.ast.Ast;
 import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
@@ -40,6 +41,9 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
         defineAstFrame(ASAstFrameKind.DEFAULT);
         ajouterProgrammes();
         ajouterExpressions();
+        defineAstFrame(ASAstFrameKind.STRUCTURE);
+        ajouterProgrammesStructure();
+        ajouterExpressionsStructure();
         pushAstFrame(ASAstFrameKind.DEFAULT);
         this.executeurInstance = executeurInstance;
     }
@@ -48,11 +52,11 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
         ajouterProgramme("", (p) -> null);
 
         ajouterProgramme("UTILISER expression~"
-                        + "UTILISER expression BRACES_OUV MUL BRACES_FERM~"
-                        + "UTILISER expression BRACES_OUV expression BRACES_FERM~"
-                        + "UTILISER expression NOM_VARIABLE POINT BRACES_OUV MUL BRACES_FERM~"
-                        + "UTILISER expression NOM_VARIABLE POINT BRACES_OUV expression BRACES_FERM~"
-                        + "UTILISER expression NOM_VARIABLE BRACES_OUV MUL BRACES_FERM~",
+                         + "UTILISER expression BRACES_OUV MUL BRACES_FERM~"
+                         + "UTILISER expression BRACES_OUV expression BRACES_FERM~"
+                         + "UTILISER expression NOM_VARIABLE POINT BRACES_OUV MUL BRACES_FERM~"
+                         + "UTILISER expression NOM_VARIABLE POINT BRACES_OUV expression BRACES_FERM~"
+                         + "UTILISER expression NOM_VARIABLE BRACES_OUV MUL BRACES_FERM~",
                 (p, variante) -> {
                     if (p.get(1) instanceof ValeurConstante valeurConstante && valeurConstante.eval() instanceof ASTexte texte) {
                         String msg = texte.getValue();
@@ -104,9 +108,9 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
          */
 
         ajouterProgramme("LIRE expression~"
-                        + "LIRE expression DANS expression~"
-                        + "LIRE expression VIRGULE expression~"
-                        + "LIRE expression DANS expression VIRGULE expression",
+                         + "LIRE expression DANS expression~"
+                         + "LIRE expression VIRGULE expression~"
+                         + "LIRE expression DANS expression VIRGULE expression",
                 (p, variante) -> {
                     Expression<?> message = null, fonction = null;
 
@@ -121,7 +125,7 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
 
                     if (!(p.get(idxVar) instanceof Var var)) {
                         throw new ErreurInputOutput("Une variable est attendue apr\u00E8s la commande 'lire', mais '" +
-                                p.get(idxVar).getClass().getSimpleName() + "' a \u00E9t\u00E9 trouv\u00E9.");
+                                                    p.get(idxVar).getClass().getSimpleName() + "' a \u00E9t\u00E9 trouv\u00E9.");
                     }
 
                     return new Lire(var, message, fonction, executeurInstance);
@@ -136,12 +140,12 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
          */
 
         ajouterProgramme("CONSTANTE expression {assignements} expression~"
-                        + "CONSTANTE expression DEUX_POINTS expression {assignements} expression~"
-                        + "VAR expression~"
-                        + "VAR expression {assignements} expression~"
-                        + "VAR expression DEUX_POINTS expression {assignements} expression~"
-                        + "VAR expression DEUX_POINTS expression~"
-                        + "expression {assignements} expression",
+                         + "CONSTANTE expression DEUX_POINTS expression {assignements} expression~"
+                         + "VAR expression~"
+                         + "VAR expression {assignements} expression~"
+                         + "VAR expression DEUX_POINTS expression {assignements} expression~"
+                         + "VAR expression DEUX_POINTS expression~"
+                         + "expression {assignements} expression",
                 (p, variante) -> {
                     /*
                      * TODO erreur si c'est pas une Var qui est passé comme expression à gauche de l'assignement
@@ -155,7 +159,7 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                     // si le premier mot n'est ni "const" ni "var" et qu'un type est précisé
                     if (variante == 7) {
                         throw new ErreurType("Il est impossible de pr\u00E9ciser le type d'une variable " +
-                                "ailleurs que dans sa d\u00E9claration");
+                                             "ailleurs que dans sa d\u00E9claration");
                     }
                     // si le premier mot n'est ni "const" ni "var"
                     if (variante == 6) {
@@ -200,14 +204,14 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                             var variable = ASScope.getCurrentScope().getVariable(var.getNom());
                             if (variable == null || !(variable.getValeurApresGetter() instanceof ASStructure structure)) {
                                 throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
-                                        (estConst ? "constante" : "variable") +
-                                        ", les deux points doivent \u00EAtre suivi d'un type valide");
+                                                              (estConst ? "constante" : "variable") +
+                                                              ", les deux points doivent \u00EAtre suivi d'un type valide");
                             }
                             type = new ASTypeExpr(structure.getNom());
                         } else {
                             throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
-                                    (estConst ? "constante" : "variable") +
-                                    ", les deux points doivent \u00EAtre suivi d'un type valide");
+                                                          (estConst ? "constante" : "variable") +
+                                                          ", les deux points doivent \u00EAtre suivi d'un type valide");
                         }
                         /*if (!(p.get(3) instanceof ASTypeExpr _type))
                             throw new ErreurType("Dans une d\u00E9claration de " +
@@ -260,13 +264,16 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                 });
         */
 
-        ajouterProgramme("STRUCTURE NOM_VARIABLE", p -> new CreerNamespace(((Token) p.get(1)).getValeur()));
+        ajouterProgramme("STRUCTURE NOM_VARIABLE", p -> {
+            pushAstFrame(ASAstFrameKind.STRUCTURE);
+            return new CreerStructure(new Var(((Token) p.get(1)).getValeur()), executeurInstance);
+        });
 
-        ajouterProgramme("FIN STRUCTURE", p -> new FinNamespace());
+        ajouterProgramme("FIN STRUCTURE", p -> Programme.evalExpression(new Expression.ExpressionVide(), "Fin de structure"));
 
         //<-----------------------------------Les getters----------------------------------------->//
         ajouterProgramme("GET NOM_VARIABLE~" +
-                        "GET NOM_VARIABLE FLECHE expression",
+                         "GET NOM_VARIABLE FLECHE expression",
                 (p, variante) -> {
                     ASTypeExpr type = new ASTypeExpr("tout");
                     if (variante == 1) {
@@ -282,7 +289,7 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
 
         //<-----------------------------------Les setters----------------------------------------->//
         ajouterProgramme("SET NOM_VARIABLE PARENT_OUV NOM_VARIABLE PARENT_FERM~" +
-                        "SET NOM_VARIABLE PARENT_OUV NOM_VARIABLE DEUX_POINTS expression PARENT_FERM",
+                         "SET NOM_VARIABLE PARENT_OUV NOM_VARIABLE DEUX_POINTS expression PARENT_FERM",
                 (p, variante) -> {
                     ASTypeExpr type = new ASTypeExpr("tout");
                     if (variante == 1) {
@@ -304,14 +311,14 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
         //<-----------------------------------Les fonctions----------------------------------------->//
 
         ajouterProgramme("FONCTION expression PARENT_OUV expression PARENT_FERM FLECHE expression~" +
-                        "FONCTION expression PARENT_OUV expression PARENT_FERM~" +
-                        "FONCTION expression PARENT_OUV PARENT_FERM FLECHE expression~" +
-                        "FONCTION expression PARENT_OUV PARENT_FERM",
+                         "FONCTION expression PARENT_OUV expression PARENT_FERM~" +
+                         "FONCTION expression PARENT_OUV PARENT_FERM FLECHE expression~" +
+                         "FONCTION expression PARENT_OUV PARENT_FERM",
                 new Ast<CreerFonction>(
                         Map.entry(
                                 "expression DEUX_POINTS expression ASSIGNEMENT expression~"
-                                        + "expression ASSIGNEMENT expression~"
-                                        + "expression DEUX_POINTS expression",
+                                + "expression ASSIGNEMENT expression~"
+                                + "expression DEUX_POINTS expression",
                                 new Ast<Argument>(19) {
                                     @Override
                                     public Argument apply(List<Object> p, Integer idxVariante) {
@@ -319,32 +326,28 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                                         Expression<?> valParDefaut = null;
 
                                         if (!(p.get(0) instanceof Var var)) {
-                                            throw new ErreurSyntaxe("Une d\u00E9claration de fonction doit commencer par une variable, pas par " + p.get(0));
+                                            throw new ASErreur.ErreurSyntaxe("Une d\u00E9claration de fonction doit commencer par une variable, pas par " + p.get(0));
                                         }
 
-                                        Token deuxPointsToken = (Token) p.stream()
-                                                .filter(t -> t instanceof Token token && token.getNom().equals("DEUX_POINTS"))
-                                                .findFirst()
-                                                .orElse(null);
-                                        if (deuxPointsToken != null) {
-                                            Expression<?> typeObj = (Expression<?>) p.get(p.indexOf(deuxPointsToken) + 1);
-                                            if (!(typeObj instanceof ASTypeExpr)) {
-                                                String nom;
-                                                if (p.get(0) instanceof Var) {
-                                                    nom = ((Var) typeObj).getNom();
-                                                } else {
-                                                    nom = typeObj.eval().toString();
-                                                }
-                                                throw new ErreurType("Le symbole ':' doit \u00EAtre suivi d'un type valide ('" + nom + "' n'est pas un type valide)");
+                                        setType:
+                                        if (idxVariante != 1) {
+                                            if (p.get(2) instanceof ASTypeExpr _type) {
+                                                type = _type;
+                                                break setType;
                                             }
-                                            type = (ASTypeExpr) typeObj;
+
+                                            if (p.get(2) instanceof Var varType) {
+                                                var variable = ASScope.getCurrentScope().getVariable(varType.getNom());
+                                                if (variable != null && variable.getValeurApresGetter() instanceof ASStructure structure) {
+                                                    type = new ASTypeExpr(structure.getNom());
+                                                    break setType;
+                                                }
+                                            }
+                                            throw new ASErreur.ErreurType("Le symbole ':' doit \u00EAtre suivi d'un type valide.");
                                         }
-                                        Token assignementToken = (Token) p.stream()
-                                                .filter(t -> t instanceof Token token && token.getNom().equals("ASSIGNEMENT"))
-                                                .findFirst()
-                                                .orElse(null);
-                                        if (assignementToken != null) {
-                                            valParDefaut = (Expression<?>) p.get(p.indexOf(assignementToken) + 1);
+
+                                        if (idxVariante < 2) {
+                                            valParDefaut = (Expression<?>) p.get(idxVariante == 1 ? 2 : 4);
                                         }
 
                                         return new Argument(var, valParDefaut, type);
@@ -357,12 +360,12 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
 
                         ASTypeExpr typeRetour = p.get(p.size() - 1) instanceof ASTypeExpr type ? type : new ASTypeExpr("tout");
 
-                        if (p.get(p.size() - 1) == null && p.get(3) instanceof ASTypeExpr type) {
-                            typeRetour = type;
-                            return new CreerFonction((Var) p.get(1), params, typeRetour, executeurInstance);
-                        }
+                        // if (p.get(p.size() - 1) == null && p.get(3) instanceof ASTypeExpr type) {
+                        //     typeRetour = type;
+                        //     return new CreerFonction((Var) p.get(1), params, typeRetour, executeurInstance);
+                        // }
 
-                        if (p.get(3) != null && !(p.get(3) instanceof Token)) {
+                        if (idxVariante < 2) {
                             if (p.get(3) instanceof CreerListe.Enumeration enumeration) {
                                 params = enumeration.getExprs()
                                         .stream()
@@ -384,7 +387,7 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                 });
 
         ajouterProgramme("RETOURNER~" +
-                        "RETOURNER expression",
+                         "RETOURNER expression",
                 (p, variante) -> {
                     if (variante == 1 && p.get(1) instanceof CreerListe.Enumeration enumeration)
                         p.set(1, enumeration.buildCreerListe());
@@ -398,13 +401,13 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
         //<-----------------------------------Les blocs de code------------------------------------->
         ajouterProgramme(
                 "SI expression~" +
-                        "SI expression ALORS",
+                "SI expression ALORS",
                 p -> new Si((Expression<?>) p.get(1), executeurInstance)
         );
 
         ajouterProgramme(
                 "SINON SI expression~" +
-                        "SINON SI expression ALORS",
+                "SINON SI expression ALORS",
                 p -> new SinonSi((Expression<?>) p.get(2), executeurInstance)
         );
 
@@ -422,8 +425,8 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                 p -> new BoucleRepeter((Expression<?>) p.get(1), executeurInstance));
 
         ajouterProgramme("POUR expression DANS expression~"
-                        + "POUR VAR expression DANS expression~"
-                        + "POUR CONSTANTE expression DANS expression",
+                         + "POUR VAR expression DANS expression~"
+                         + "POUR CONSTANTE expression DANS expression",
                 (p, variante) -> {
                     // boucle pour sans déclaration
                     if (variante == 0) {
@@ -443,8 +446,8 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
         ajouterProgramme("CONTINUER", p -> new Boucle.Continuer(executeurInstance));
 
         ajouterProgramme("FIN POUR~"
-                        + "FIN TANT_QUE~"
-                        + "FIN REPETER",
+                         + "FIN TANT_QUE~"
+                         + "FIN REPETER",
                 p -> new FinBoucle(((Token) p.get(1)).getValeur(), executeurInstance)
         );
 
@@ -496,9 +499,61 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                     });
                 });
 
+        ajouterExpression("expression POINT expression", p -> new GetAttr((Expression<?>) p.get(0), (Var) p.get(2)));
+
+        ajouterExpression("expression BRACES_OUV #expression VIRGULE BRACES_FERM~" +
+                          "expression BRACES_OUV #expression BRACES_FERM~" +
+                          "expression BRACES_OUV BRACES_FERM",
+                (p, variante) -> {
+                    var varStructure = (Expression<?>) p.get(0);
+
+                    Hashtable<String, Ast<? extends Expression<?>>> astParams = new Hashtable<>();
+
+                    astParams.put("expression DEUX_POINTS expression", new Ast<ArgumentStructure>(-2) {
+                        @Override
+                        public ArgumentStructure apply(List<Object> p, Integer variante) {
+                            if (p.get(0) instanceof Var) {
+                                return new ArgumentStructure((Var) p.get(0), (Expression<?>) p.get(2));
+                            } else {
+                                throw new ASErreur.ErreurSyntaxe("Une d\u00E9finition de propri\u00E9t\u00E9 d'une structure " +
+                                                                 "doit commencer par une variable.");
+                            }
+                        }
+                    });
+
+                    ArgumentStructure[] argsStructure = new ArgumentStructure[]{};
+                    if (variante == 2) {
+                        return new CreerStructureInstance(varStructure, argsStructure);
+                    }
+                    int lastIndex = variante == 1 ? p.size() - 1 : p.size() - 2;
+                    Expression<?> contenu = evalOneExpr(new ArrayList<>(p.subList(2, lastIndex)), astParams);
+
+                    if (contenu instanceof ArgumentStructure argumentStructure) {
+                        argsStructure = new ArgumentStructure[]{argumentStructure};
+                    } else if (contenu instanceof Var var) {
+                        argsStructure = new ArgumentStructure[]{new ArgumentStructure(var, null)};
+                    } else if (contenu instanceof CreerListe.Enumeration enumeration) {
+
+                        argsStructure = enumeration.getExprs()
+                                .stream()
+                                .map(expr -> {
+                                    if (expr instanceof ArgumentStructure arg) {
+                                        return arg;
+                                    } else if (expr instanceof Var var) {
+                                        return new ArgumentStructure(var, null);
+                                    } else {
+                                        throw new ASErreur.ErreurType("Une structure doit contenir des variables ou des arguments");
+                                    }
+                                })
+                                .toArray(ArgumentStructure[]::new);
+                    }
+
+                    return new CreerStructureInstance(varStructure, argsStructure);
+                });
+
         //call fonction
         ajouterExpression("expression PARENT_OUV #expression PARENT_FERM~"
-                        + "expression PARENT_OUV PARENT_FERM",
+                          + "expression PARENT_OUV PARENT_FERM",
                 new Ast<AppelFonc>() {
                     @Override
                     public AppelFonc apply(List<Object> p, Integer idxVariante) {
@@ -537,23 +592,27 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                 });
 
         ajouterExpression("PARENT_OUV #expression PARENT_FERM~"
-                        + "PARENT_OUV expression PARENT_FERM~"
-                        + "PARENT_OUV PARENT_FERM",
-                (p, variante) -> {
+                          + "PARENT_OUV expression PARENT_FERM~"
+                          + "PARENT_OUV PARENT_FERM",
+                (p, variante) ->
+
+                {
                     if (variante == 2) return new Expression.ExpressionVide();
                     return evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
                 });
 
         ajouterExpression("BRACES_OUV #expression TROIS_POINTS #expression BRACES_FERM~"
-                        + "BRACES_OUV #expression TROIS_POINTS #expression BOND #expression BRACES_FERM~"
-                        + "CROCHET_OUV #expression TROIS_POINTS #expression BOND #expression CROCHET_FERM~"
-                        + "CROCHET_OUV #expression TROIS_POINTS #exrpession CROCHET_FERM",
+                          + "BRACES_OUV #expression TROIS_POINTS #expression BOND #expression BRACES_FERM~"
+                          + "CROCHET_OUV #expression TROIS_POINTS #expression BOND #expression CROCHET_FERM~"
+                          + "CROCHET_OUV #expression TROIS_POINTS #exrpession CROCHET_FERM",
                 /*
                  * [1...10] -> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
                  * ["a"..."g"] -> {"a", "b", "c", "d", "e", "f", "g"}
                  * ["A"..."G"] -> {"A", "B", "C", "D", "E", "F", "G"}
                  */
-                p -> {
+                p ->
+
+                {
                     int idxTroisPoints = p.indexOf(p.stream()
                             .filter(exp -> exp instanceof Token token && token.getNom().equals("TROIS_POINTS"))
                             .findFirst()
@@ -583,11 +642,13 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
 
 
         ajouterExpression("expression CROCHET_OUV DEUX_POINTS CROCHET_FERM~"
-                        + "expression CROCHET_OUV #expression DEUX_POINTS #expression CROCHET_FERM~"
-                        + "expression CROCHET_OUV #expression DEUX_POINTS CROCHET_FERM~"
-                        + "expression CROCHET_OUV DEUX_POINTS #expression CROCHET_FERM~"
-                        + "expression CROCHET_OUV #expression CROCHET_FERM",
-                (p, variante) -> {
+                          + "expression CROCHET_OUV #expression DEUX_POINTS #expression CROCHET_FERM~"
+                          + "expression CROCHET_OUV #expression DEUX_POINTS CROCHET_FERM~"
+                          + "expression CROCHET_OUV DEUX_POINTS #expression CROCHET_FERM~"
+                          + "expression CROCHET_OUV #expression CROCHET_FERM",
+                (p, variante) ->
+
+                {
                     boolean hasDeuxPoints = variante < 4;
 
                     // pas de deux points, forme val[idxOrKey]
@@ -616,11 +677,13 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                 });
 
         ajouterExpression("BRACES_OUV BRACES_FERM~"
-                        + "BRACES_OUV #expression BRACES_FERM~"
-                        + "CROCHET_OUV CROCHET_FERM~"
-                        + "!expression CROCHET_OUV CROCHET_FERM~"
-                        + "!expression CROCHET_OUV #expression CROCHET_FERM",
-                (p, variante) -> {
+                          + "BRACES_OUV #expression BRACES_FERM~"
+                          + "CROCHET_OUV CROCHET_FERM~"
+                          + "!expression CROCHET_OUV CROCHET_FERM~"
+                          + "!expression CROCHET_OUV #expression CROCHET_FERM",
+                (p, variante) ->
+
+                {
                     if (variante == 0) {
                         return new CreerDict();
                     } else if (variante == 2 || variante == 3) {
@@ -633,48 +696,88 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                 });
 
         ajouterExpression("expression PLUS PLUS~"
-                        + "expression MOINS MOINS",
-                (p, variante) -> {
+                          + "expression MOINS MOINS",
+                (p, variante) ->
+
+                {
                     final byte signe = (byte) (variante == 1 ? -1 : 1);
                     return new Incrementer((Expression<?>) p.get(0), signe);
                 });
 
 
         ajouterExpression("!expression MOINS expression",
-                p -> new UnaryOp((Expression<?>) p.get(1), UnaryOp.Operation.NEGATION));
+                p -> new
+
+                        UnaryOp((Expression<?>) p.
+
+                        get(1), UnaryOp.Operation.NEGATION));
 
         ajouterExpression("!expression PLUS expression",
-                p -> new UnaryOp((Expression<?>) p.get(1), UnaryOp.Operation.PLUS));
+                p -> new
+
+                        UnaryOp((Expression<?>) p.
+
+                        get(1), UnaryOp.Operation.PLUS));
 
 
         ajouterExpression("expression MOD expression",
-                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.MOD, (Expression<?>) p.get(2)));
+                p -> new
+
+                        BinOp((Expression<?>) p.
+
+                        get(0), BinOp.Operation.MOD, (Expression<?>) p.get(2)));
 
 
         ajouterExpression("expression POW expression",
-                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.POW, (Expression<?>) p.get(2)));
+                p -> new
+
+                        BinOp((Expression<?>) p.
+
+                        get(0), BinOp.Operation.POW, (Expression<?>) p.get(2)));
 
 
         ajouterExpression("expression MUL expression",
-                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.MUL, (Expression<?>) p.get(2)));
+                p -> new
+
+                        BinOp((Expression<?>) p.
+
+                        get(0), BinOp.Operation.MUL, (Expression<?>) p.get(2)));
 
 
         ajouterExpression("expression DIV expression",
-                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.DIV, (Expression<?>) p.get(2)));
+                p -> new
+
+                        BinOp((Expression<?>) p.
+
+                        get(0), BinOp.Operation.DIV, (Expression<?>) p.get(2)));
 
 
         ajouterExpression("expression DIV_ENTIERE expression",
-                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.DIV_ENTIERE, (Expression<?>) p.get(2)));
+                p -> new
+
+                        BinOp((Expression<?>) p.
+
+                        get(0), BinOp.Operation.DIV_ENTIERE, (Expression<?>) p.get(2)));
 
 
         ajouterExpression("expression PLUS expression",
-                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.PLUS, (Expression<?>) p.get(2)));
+                p -> new
+
+                        BinOp((Expression<?>) p.
+
+                        get(0), BinOp.Operation.PLUS, (Expression<?>) p.get(2)));
 
         ajouterExpression("expression MOINS expression",
-                p -> new BinOp((Expression<?>) p.get(0), BinOp.Operation.MOINS, (Expression<?>) p.get(2)));
+                p -> new
+
+                        BinOp((Expression<?>) p.
+
+                        get(0), BinOp.Operation.MOINS, (Expression<?>) p.get(2)));
 
         ajouterExpression("expression PIPE expression",
-                p -> {
+                p ->
+
+                {
                     if (!(p.get(0) instanceof ASTypeExpr typeG && p.get(2) instanceof ASTypeExpr typeD)) {
                         return new BinOp((Expression<?>) p.get(0), BinOp.Operation.PIPE, (Expression<?>) p.get(2));
                     }
@@ -683,38 +786,72 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                 });
 
         ajouterExpression("expression DANS expression~" +
-                        "expression PAS DANS expression",
+                          "expression PAS DANS expression",
                 (p, variante) -> variante == 0 ?
-                        new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.DANS, (Expression<?>) p.get(2))
+                        new
+
+                                BinComp((Expression<?>) p.
+
+                                get(0), BinComp.Comparateur.DANS, (Expression<?>) p.get(2))
                         :
-                        new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.PAS_DANS, (Expression<?>) p.get(3)));
+                        new
+
+                                BinComp((Expression<?>) p.
+
+                                get(0), BinComp.Comparateur.PAS_DANS, (Expression<?>) p.get(3)));
 
 
         ajouterExpression("expression {comparaison} expression",
-                p -> new BinComp(
-                        (Expression<?>) p.get(0),
-                        BinComp.Comparateur.valueOf(((Token) p.get(1)).getNom()),
+                p -> new
+
+                        BinComp(
+                        (Expression<?>) p.
+
+                                get(0),
+                        BinComp.Comparateur.valueOf(((Token) p.get(1)).
+
+                                getNom()),
                         (Expression<?>) p.get(2))
         );
 
 
         ajouterExpression("expression {porte_logique} expression",
-                p -> new BoolOp(
-                        (Expression<?>) p.get(0),
-                        BoolOp.Operateur.valueOf(((Token) p.get(1)).getNom()),
+                p -> new
+
+                        BoolOp(
+                        (Expression<?>) p.
+
+                                get(0),
+                        BoolOp.Operateur.valueOf(((Token) p.get(1)).
+
+                                getNom()),
                         (Expression<?>) p.get(2)));
 
         ajouterExpression("PAS expression",
-                p -> new BoolOp((Expression<?>) p.get(1), BoolOp.Operateur.PAS, null));
+                p -> new
+
+                        BoolOp((Expression<?>) p.
+
+                        get(1), BoolOp.Operateur.PAS, null));
 
         ajouterExpression("expression SI expression SINON expression",
-                p -> new Ternary((Expression<?>) p.get(2), (Expression<?>) p.get(0), (Expression<?>) p.get(4)));
+                p -> new
+
+                        Ternary((Expression<?>) p.
+
+                        get(2), (Expression<?>) p.get(0), (Expression<?>) p.get(4)));
 
         ajouterExpression("expression DEUX_POINTS expression",
-                p -> new Paire((Expression<?>) p.get(0), (Expression<?>) p.get(2)));
+                p -> new
+
+                        Paire((Expression<?>) p.
+
+                        get(0), (Expression<?>) p.get(2)));
 
         ajouterExpression("expression VIRGULE expression~",
-                p -> {
+                p ->
+
+                {
                     if (p.size() == 2) {
                         if (p.get(0) instanceof CreerListe.Enumeration enumeration)
                             return enumeration;
@@ -735,7 +872,9 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                 });
 
         ajouterExpression("expression expression",
-                p -> {
+                p ->
+
+                {
                     Expression<?> contenu;
                     CreerListe args;
                     if (p.size() == 2 && !(p.get(1) instanceof Expression.ExpressionVide)) {
@@ -751,6 +890,172 @@ public class ASAst extends AstGenerator<ASAstFrameKind> {
                     return new AppelFonc((Expression<?>) p.get(0), args);
                 });
     }
+
+
+    //#region structure ast frame
+
+    private void ajouterProgrammesStructure() {
+        ajouterProgramme("CONSTANTE expression~"
+                         + "CONSTANTE expression DEUX_POINTS expression~"
+                         + "CONSTANTE expression {assignements} expression~"
+                         + "CONSTANTE expression DEUX_POINTS expression {assignements} expression~"
+                         + "VAR expression~"
+                         + "VAR expression {assignements} expression~"
+                         + "VAR expression DEUX_POINTS expression {assignements} expression~"
+                         + "VAR expression DEUX_POINTS expression~"
+                         + "expression {assignements} expression",
+                (p, variante) -> {
+
+                    /*TODO erreur si c 'est pas une Var qui est passé comme expression à gauche de l' assignement */
+
+
+                    int idxValeur;
+                    int idxAssignement;
+
+
+                    // si le premier mot n'est ni "const" ni "var"
+                    if (variante == 8) {
+                        throw new ASErreur.ErreurSyntaxe("Seul les d\u00E9clarations de constantes ou de variables " +
+                                                         "sont autoris\u00E9es dans une structure.");
+                    }
+
+                    // déclaration sous la forme "const x"
+                    if (variante == 0) {
+                        return new Declarer((Expression<?>) p.get(1), null, null, true);
+                    }
+
+                    // déclaration sous la forme "var x"
+                    if (variante == 4) {
+                        return new Declarer((Expression<?>) p.get(1), new ValeurConstante(new ASNul()), null, false);
+                    }
+
+                    // si le premier mot est "const"
+                    boolean estConst = variante < 4;
+
+                    // le type de la variable déclarer (null signifie qu'il n'est pas mentionné dans la déclaration)
+                    ASTypeExpr type = null;
+
+                    /* Déclaration sous une des formes:
+                     * 1. const x: type = valeur
+                     * 4. var x:type = valeur
+                     * 5. var x:type
+                     */
+
+                    setType:
+                    if (variante == 1 || variante == 3 || variante == 6 || variante == 7) {
+                        // si le type précisé n'est pas un type
+                        if (p.get(3) instanceof ASTypeExpr _type) {
+                            type = _type;
+                            break setType;
+                        }
+
+                        if (p.get(3) instanceof Var var) {
+                            var current = ASScope.popCurrentScope();
+                            var variable = ASScope.getCurrentScope().getVariable(var.getNom());
+                            ASScope.pushCurrentScope(current);
+                            if (variable != null) {
+                                // manière complexe de checker si le nom du type est le même nom que la structure dans laquelle il est déclaré
+                                if (variable.getNom().equals(ASScopeManager.getScopeName(executeurInstance.obtenirCoordRunTime().getScope()))) {
+                                    type = new ASTypeExpr(variable.getNom());
+                                    break setType;
+                                }
+                                if (variable.getValeurApresGetter() instanceof ASStructure structure) {
+                                    type = new ASTypeExpr(structure.getNom());
+                                    break setType;
+                                }
+                            }
+                        }
+
+                        throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
+                                                      (estConst ? "constante" : "variable") +
+                                                      ", les deux points doivent \u00EAtre suivi d'un type valide");
+                    }
+
+                    if (variante == 7 || variante == 1) {
+                        return new Declarer((Expression<?>) p.get(1), null, type, variante == 1);
+                    }
+
+                    // si la précision du type est présente
+                    if (variante == 3 || variante == 6) {
+                        idxValeur = 5;
+                        idxAssignement = 4;
+                    }
+                    // si la précision du type n'est pas présente
+                    else {
+                        idxValeur = 3;
+                        idxAssignement = 2;
+                    }
+
+                    // si on tente de déclarer une constante avec autre chose que = (ex: +=, *=, -=, etc.)
+                    String nomAssignement = ((Token) p.get(idxAssignement)).getNom();
+                    if (!nomAssignement.equals("ASSIGNEMENT") && !(nomAssignement.equals("ASSIGNEMENT_FLECHE"))) {
+                        if (estConst)
+                            throw new ASErreur.ErreurAssignement("Impossible de modifier la valeur d'une constante");
+                        else
+                            throw new ASErreur.ErreurAssignement("Impossible de modifier la valeur d'une variable durant sa d\u00E9claration");
+                    }
+
+                    // si la valeur de l'expression est une énumération d'éléments ex: 3, "salut", 4
+                    // on forme une liste avec la suite d'éléments
+                    if (p.get(idxValeur) instanceof CreerListe.Enumeration enumeration)
+                        p.set(idxValeur, enumeration.buildCreerListe());
+
+                    // on retourne l'objet Declarer
+                    return new Declarer((Expression<?>) p.get(1), (Expression<?>) p.get(idxValeur), type, estConst, true);
+                });
+/*
+
+        ajouterProgramme("CONSTANTE expression~"
+                        + "CONSTANTE expression DEUX_POINTS expression~"
+                        + "VAR expression~"
+                        + "VAR expression DEUX_POINTS expression",
+                (p, variante) -> {
+                    */
+        /*
+         * TODO erreur si c'est pas une Var qui est passé comme expression à gauche du assignment
+         *//*
+
+                    // si le premier mot est "const"
+                    boolean estConst = variante < 2;
+
+                    // le type de la variable déclarer (null signifie qu'il n'est pas mentionné dans la déclaration)
+                    ASTypeExpr type = null;
+
+                    */
+        /*
+         * Déclaration sous une des formes:
+         * 1. const x: type = valeur
+         * 4. var x: type = valeur
+         * 5. var x: type
+         *//*
+
+                    if (variante == 1 || variante == 3) {
+                        // si le type précisé n'est pas un type
+                        if (!(p.get(3) instanceof ASTypeExpr _type))
+                            throw new ASErreur.ErreurType("Dans une d\u00E9claration de " +
+                                    (estConst ? "constante" : "variable") +
+                                    ", les deux points doivent \u00EAtre suivi d'un type valide");
+                        type = _type;
+                    }
+
+                    // on retourne l'objet Declarer
+                    return new Declarer((Expression<?>) p.get(1), null, type, estConst);
+                });
+*/
+
+
+        ajouterProgramme("FIN STRUCTURE", p -> {
+            popAstFrame();
+            return new FinStructure(executeurInstance);
+        });
+    }
+
+    private void ajouterExpressionsStructure() {
+        ajouterExpressions();
+    }
+
+
+    //#endregion
 }
 
 
