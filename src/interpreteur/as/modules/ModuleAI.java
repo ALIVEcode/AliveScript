@@ -347,7 +347,7 @@ public class ModuleAI {
                         try {
                             x = lst1.getValue().stream().map(e -> ((Number) e.getValue()).doubleValue()).toArray(Double[]::new);
                             y = lst2.getValue().stream().map(e -> ((Number) e.getValue()).doubleValue()).toArray(Double[]::new);
-                        } catch (ClassCastException err) {
+                        } catch (Exception err) {
                             throw new ASErreur.ErreurType("La fonction coefficientDetermination prend une liste de nombre, mais la liste pass\u00E9e en param\u00E8tre n'est pas compos\u00E9e que de nombres.");
                         }
                         //Tell the linter to shut up
@@ -571,7 +571,16 @@ public class ModuleAI {
                     public ASObjet<?> executer() {
                         //Converting the parameter into an AS object
                         String col = this.getValeurParam("colonne").getValue().toString();
-                        executeurInstance.addData(new Data(Data.Id.NORMALISER_COLONNE).addParam(col));
+
+                        //Ask for a response if it is empty
+                        if (executeurInstance.getDataResponse().isEmpty()) {
+                            throw new ASErreur.AskForDataResponse(new Data(Data.Id.NORMALISER_COLONNE).addParam(col));
+                        }
+
+                        //Check if there is an error
+                        String str = executeurInstance.getDataResponse().pop().toString();
+                        if(!str.equals("null"))
+                            throw new ASErreur.ErreurAppelFonction(str);
                         return new ASNul();
                     }
                 },
@@ -595,10 +604,12 @@ public class ModuleAI {
                             throw new ASErreur.AskForDataResponse(new Data(Data.Id.NORMALISER).addParam(col).addParam(data));
                         }
                         ASNombre element;
+                        String str = "";
                         try {
-                            element = new ASDecimal(Double.parseDouble(executeurInstance.getDataResponse().pop().toString()));
+                            str = executeurInstance.getDataResponse().pop().toString();
+                            element = new ASDecimal(Double.parseDouble(str));
                         }catch (Exception e){
-                            throw new ASErreur.ErreurAppelFonction("Impossible de normaliser la valeur.");
+                            throw new ASErreur.ErreurAppelFonction(str);
                         }
                         return element;
                     }
