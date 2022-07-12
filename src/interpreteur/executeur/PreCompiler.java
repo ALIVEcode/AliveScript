@@ -88,8 +88,10 @@ public class PreCompiler {
     }
 
     public static boolean isExperimental(String[] lines) {
-        return lines[0].trim().matches("^[\"']experimental[\"']$");
+        return lines.length > 0 && lines[0].trim().matches("^[\"']experimental[\"']$");
     }
+
+
 }
 
 

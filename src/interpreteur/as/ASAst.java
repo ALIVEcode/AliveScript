@@ -1,18 +1,17 @@
 package interpreteur.as;
 
 import interpreteur.as.erreurs.ASErreur;
-import interpreteur.as.lang.ASType;
-import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur.ErreurAssignement;
 import interpreteur.as.erreurs.ASErreur.ErreurInputOutput;
 import interpreteur.as.erreurs.ASErreur.ErreurSyntaxe;
 import interpreteur.as.erreurs.ASErreur.ErreurType;
+import interpreteur.as.lang.ASType;
+import interpreteur.as.lang.datatype.*;
 import interpreteur.ast.Ast;
 import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
 import interpreteur.ast.buildingBlocs.expressions.*;
 import interpreteur.ast.buildingBlocs.programmes.*;
-import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
 import interpreteur.generateurs.ast.AstGenerator;
 import interpreteur.tokens.Token;
@@ -45,10 +44,10 @@ public class ASAst extends AstGenerator {
         ajouterProgramme("", (p) -> null);
 
         ajouterProgramme("UTILISER expression~"
-                         + "UTILISER expression BRACES_OUV MUL BRACES_FERM~"
-                         + "UTILISER expression BRACES_OUV expression BRACES_FERM~"
-                         + "UTILISER expression NOM_VARIABLE BRACES_OUV MUL BRACES_FERM~"
-                         + "UTILISER expression NOM_VARIABLE BRACES_OUV expression BRACES_FERM",
+                        + "UTILISER expression BRACES_OUV MUL BRACES_FERM~"
+                        + "UTILISER expression BRACES_OUV expression BRACES_FERM~"
+                        + "UTILISER expression NOM_VARIABLE BRACES_OUV MUL BRACES_FERM~"
+                        + "UTILISER expression NOM_VARIABLE BRACES_OUV expression BRACES_FERM",
                 (p, variante) -> {
                     if (p.get(1) instanceof ValeurConstante valeurConstante && valeurConstante.eval() instanceof ASTexte texte) {
                         String msg = texte.getValue();
@@ -86,6 +85,7 @@ public class ASAst extends AstGenerator {
                     return new Utiliser((Var) p.get(1), executeurInstance);
                 });
         /*
+        commentaire
         ajouterProgramme("AFFICHER expression", new Ast<Afficher>() {
             @Override
             public Afficher apply(List<Object> p) {
@@ -95,9 +95,9 @@ public class ASAst extends AstGenerator {
          */
 
         ajouterProgramme("LIRE expression~"
-                         + "LIRE expression DANS expression~"
-                         + "LIRE expression VIRGULE expression~"
-                         + "LIRE expression DANS expression VIRGULE expression",
+                        + "LIRE expression DANS expression~"
+                        + "LIRE expression VIRGULE expression~"
+                        + "LIRE expression DANS expression VIRGULE expression",
                 (p, variante) -> {
                     Expression<?> message = null, fonction = null;
 
@@ -112,7 +112,7 @@ public class ASAst extends AstGenerator {
 
                     if (!(p.get(idxVar) instanceof Var var)) {
                         throw new ErreurInputOutput("Une variable est attendue apr\u00E8s la commande 'lire', mais '" +
-                                                    p.get(idxVar).getClass().getSimpleName() + "' a \u00E9t\u00E9 trouv\u00E9.");
+                                p.get(idxVar).getClass().getSimpleName() + "' a \u00E9t\u00E9 trouv\u00E9.");
                     }
 
                     return new Lire(var, message, fonction, executeurInstance);
@@ -127,12 +127,12 @@ public class ASAst extends AstGenerator {
          */
 
         ajouterProgramme("CONSTANTE expression {assignements} expression~"
-                         + "CONSTANTE expression DEUX_POINTS expression {assignements} expression~"
-                         + "VAR expression~"
-                         + "VAR expression {assignements} expression~"
-                         + "VAR expression DEUX_POINTS expression {assignements} expression~"
-                         + "VAR expression DEUX_POINTS expression~"
-                         + "expression {assignements} expression",
+                        + "CONSTANTE expression DEUX_POINTS expression {assignements} expression~"
+                        + "VAR expression~"
+                        + "VAR expression {assignements} expression~"
+                        + "VAR expression DEUX_POINTS expression {assignements} expression~"
+                        + "VAR expression DEUX_POINTS expression~"
+                        + "expression {assignements} expression",
                 (p, variante) -> {
                     /*
                      * TODO erreur si c'est pas une Var qui est passé comme expression à gauche de l'assignement
@@ -146,7 +146,7 @@ public class ASAst extends AstGenerator {
                     // si le premier mot n'est ni "const" ni "var" et qu'un type est précisé
                     if (variante == 7) {
                         throw new ErreurType("Il est impossible de pr\u00E9ciser le type d'une variable " +
-                                             "ailleurs que dans sa d\u00E9claration");
+                                "ailleurs que dans sa d\u00E9claration");
                     }
                     // si le premier mot n'est ni "const" ni "var"
                     if (variante == 6) {
@@ -187,8 +187,8 @@ public class ASAst extends AstGenerator {
                         // si le type précisé n'est pas un type
                         if (!(p.get(3) instanceof ASType _type))
                             throw new ErreurType("Dans une d\u00E9claration de " +
-                                                 (estConst ? "constante" : "variable") +
-                                                 ", les deux points doivent \u00EAtre suivi d'un type valide");
+                                    (estConst ? "constante" : "variable") +
+                                    ", les deux points doivent \u00EAtre suivi d'un type valide");
                         type = _type;
                     }
 
@@ -242,7 +242,7 @@ public class ASAst extends AstGenerator {
 
         //<-----------------------------------Les getters----------------------------------------->//
         ajouterProgramme("GET NOM_VARIABLE~" +
-                         "GET NOM_VARIABLE FLECHE expression",
+                        "GET NOM_VARIABLE FLECHE expression",
                 (p, variante) -> {
                     ASType type = new ASType("tout");
                     if (variante == 1) {
@@ -258,7 +258,7 @@ public class ASAst extends AstGenerator {
 
         //<-----------------------------------Les setters----------------------------------------->//
         ajouterProgramme("SET NOM_VARIABLE PARENT_OUV NOM_VARIABLE PARENT_FERM~" +
-                         "SET NOM_VARIABLE PARENT_OUV NOM_VARIABLE DEUX_POINTS expression PARENT_FERM",
+                        "SET NOM_VARIABLE PARENT_OUV NOM_VARIABLE DEUX_POINTS expression PARENT_FERM",
                 (p, variante) -> {
                     ASType type = new ASType("tout");
                     if (variante == 1) {
@@ -280,14 +280,14 @@ public class ASAst extends AstGenerator {
         //<-----------------------------------Les fonctions----------------------------------------->//
 
         ajouterProgramme("FONCTION expression PARENT_OUV expression PARENT_FERM FLECHE expression~" +
-                         "FONCTION expression PARENT_OUV expression PARENT_FERM~" +
-                         "FONCTION expression PARENT_OUV PARENT_FERM FLECHE expression~" +
-                         "FONCTION expression PARENT_OUV PARENT_FERM",
+                        "FONCTION expression PARENT_OUV expression PARENT_FERM~" +
+                        "FONCTION expression PARENT_OUV PARENT_FERM FLECHE expression~" +
+                        "FONCTION expression PARENT_OUV PARENT_FERM",
                 new Ast<CreerFonction>(
                         Map.entry(
                                 "expression DEUX_POINTS expression ASSIGNEMENT expression~"
-                                + "expression ASSIGNEMENT expression~"
-                                + "expression DEUX_POINTS expression",
+                                        + "expression ASSIGNEMENT expression~"
+                                        + "expression DEUX_POINTS expression",
                                 new Ast<Argument>(19) {
                                     @Override
                                     public Argument apply(List<Object> p, Integer idxVariante) {
@@ -360,7 +360,7 @@ public class ASAst extends AstGenerator {
                 });
 
         ajouterProgramme("RETOURNER~" +
-                         "RETOURNER expression",
+                        "RETOURNER expression",
                 (p, variante) -> {
                     if (variante == 1 && p.get(1) instanceof CreerListe.Enumeration enumeration)
                         p.set(1, enumeration.buildCreerListe());
@@ -374,13 +374,13 @@ public class ASAst extends AstGenerator {
         //<-----------------------------------Les blocs de code------------------------------------->
         ajouterProgramme(
                 "SI expression~" +
-                "SI expression ALORS",
+                        "SI expression ALORS",
                 p -> new Si((Expression<?>) p.get(1), executeurInstance)
         );
 
         ajouterProgramme(
                 "SINON SI expression~" +
-                "SINON SI expression ALORS",
+                        "SINON SI expression ALORS",
                 p -> new SinonSi((Expression<?>) p.get(2), executeurInstance)
         );
 
@@ -398,8 +398,8 @@ public class ASAst extends AstGenerator {
                 p -> new BoucleRepeter((Expression<?>) p.get(1), executeurInstance));
 
         ajouterProgramme("POUR expression DANS expression~"
-                         + "POUR VAR expression DANS expression~"
-                         + "POUR CONSTANTE expression DANS expression",
+                        + "POUR VAR expression DANS expression~"
+                        + "POUR CONSTANTE expression DANS expression",
                 (p, variante) -> {
                     // boucle pour sans déclaration
                     if (variante == 0) {
@@ -419,8 +419,8 @@ public class ASAst extends AstGenerator {
         ajouterProgramme("CONTINUER", p -> new Boucle.Continuer(executeurInstance));
 
         ajouterProgramme("FIN POUR~"
-                         + "FIN TANT_QUE~"
-                         + "FIN REPETER",
+                        + "FIN TANT_QUE~"
+                        + "FIN REPETER",
                 p -> new FinBoucle(((Token) p.get(1)).obtenirValeur(), executeurInstance)
         );
 
@@ -439,6 +439,11 @@ public class ASAst extends AstGenerator {
                             var.eval();
                         }
                         return null;
+                    }
+
+                    @Override
+                    public String toString() {
+                        return p.get(0).toString();
                     }
                 }
         );
@@ -469,7 +474,7 @@ public class ASAst extends AstGenerator {
 
         //call fonction
         ajouterExpression("expression PARENT_OUV #expression PARENT_FERM~"
-                          + "expression PARENT_OUV PARENT_FERM",
+                        + "expression PARENT_OUV PARENT_FERM",
                 new Ast<AppelFonc>() {
                     @Override
                     public AppelFonc apply(List<Object> p, Integer idxVariante) {
@@ -508,17 +513,17 @@ public class ASAst extends AstGenerator {
                 });
 
         ajouterExpression("PARENT_OUV #expression PARENT_FERM~"
-                          + "PARENT_OUV expression PARENT_FERM~"
-                          + "PARENT_OUV PARENT_FERM",
+                        + "PARENT_OUV expression PARENT_FERM~"
+                        + "PARENT_OUV PARENT_FERM",
                 (p, variante) -> {
                     if (variante == 2) return new Expression.ExpressionVide();
                     return evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
                 });
 
         ajouterExpression("BRACES_OUV #expression TROIS_POINTS #expression BRACES_FERM~"
-                          + "BRACES_OUV #expression TROIS_POINTS #expression BOND #expression BRACES_FERM~"
-                          + "CROCHET_OUV #expression TROIS_POINTS #expression BOND #expression CROCHET_FERM~"
-                          + "CROCHET_OUV #expression TROIS_POINTS #exrpession CROCHET_FERM",
+                        + "BRACES_OUV #expression TROIS_POINTS #expression BOND #expression BRACES_FERM~"
+                        + "CROCHET_OUV #expression TROIS_POINTS #expression BOND #expression CROCHET_FERM~"
+                        + "CROCHET_OUV #expression TROIS_POINTS #exrpession CROCHET_FERM",
                 /*
                  * [1...10] -> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
                  * ["a"..."g"] -> {"a", "b", "c", "d", "e", "f", "g"}
@@ -554,10 +559,10 @@ public class ASAst extends AstGenerator {
 
 
         ajouterExpression("expression CROCHET_OUV DEUX_POINTS CROCHET_FERM~"
-                          + "expression CROCHET_OUV #expression DEUX_POINTS #expression CROCHET_FERM~"
-                          + "expression CROCHET_OUV #expression DEUX_POINTS CROCHET_FERM~"
-                          + "expression CROCHET_OUV DEUX_POINTS #expression CROCHET_FERM~"
-                          + "expression CROCHET_OUV #expression CROCHET_FERM",
+                        + "expression CROCHET_OUV #expression DEUX_POINTS #expression CROCHET_FERM~"
+                        + "expression CROCHET_OUV #expression DEUX_POINTS CROCHET_FERM~"
+                        + "expression CROCHET_OUV DEUX_POINTS #expression CROCHET_FERM~"
+                        + "expression CROCHET_OUV #expression CROCHET_FERM",
                 (p, variante) -> {
                     boolean hasDeuxPoints = variante < 4;
 
@@ -587,10 +592,10 @@ public class ASAst extends AstGenerator {
                 });
 
         ajouterExpression("BRACES_OUV BRACES_FERM~"
-                          + "BRACES_OUV #expression BRACES_FERM~"
-                          + "CROCHET_OUV CROCHET_FERM~"
-                          + "!expression CROCHET_OUV CROCHET_FERM~"
-                          + "!expression CROCHET_OUV #expression CROCHET_FERM",
+                        + "BRACES_OUV #expression BRACES_FERM~"
+                        + "CROCHET_OUV CROCHET_FERM~"
+                        + "!expression CROCHET_OUV CROCHET_FERM~"
+                        + "!expression CROCHET_OUV #expression CROCHET_FERM",
                 (p, variante) -> {
                     if (variante == 0) {
                         return new CreerDict();
@@ -604,7 +609,7 @@ public class ASAst extends AstGenerator {
                 });
 
         ajouterExpression("expression PLUS PLUS~"
-                          + "expression MOINS MOINS",
+                        + "expression MOINS MOINS",
                 (p, variante) -> {
                     final byte signe = (byte) (variante == 1 ? -1 : 1);
                     return new Incrementer((Expression<?>) p.get(0), signe);
@@ -654,7 +659,7 @@ public class ASAst extends AstGenerator {
                 });
 
         ajouterExpression("expression DANS expression~" +
-                          "expression PAS DANS expression",
+                        "expression PAS DANS expression",
                 (p, variante) -> variante == 0 ?
                         new BinComp((Expression<?>) p.get(0), BinComp.Comparateur.DANS, (Expression<?>) p.get(2))
                         :

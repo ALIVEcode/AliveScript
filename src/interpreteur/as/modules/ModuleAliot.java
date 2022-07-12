@@ -104,7 +104,7 @@ public class ModuleAliot {
                 // envoyerAction
                 // TODO retourner un ASEntier
                 new ASFonctionModule("envoyerAction", new ASParametre[]{
-                        ASParametre.obligatoire("actionId", ASTypeBuiltin.entier.asType()),
+                        ASParametre.obligatoire("actionId", ASTypeBuiltin.texte.asType()),
                         new ASParametre("data", ASTypeBuiltin.dict.asType(), new ASDict()),
                         new ASParametre("targetId", ASTypeBuiltin.texte.asType(), new ASNul())
                 }, ASTypeBuiltin.nulType.asType()) {
