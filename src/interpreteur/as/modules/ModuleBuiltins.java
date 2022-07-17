@@ -3,14 +3,15 @@ package interpreteur.as.modules;
 import interpreteur.as.lang.*;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur;
+import interpreteur.as.lang.datatype.fonction.ASParametre;
+import interpreteur.as.lang.datatype.fonction.ASFonctionModule;
 import interpreteur.as.modules.builtins.BuiltinsListeUtils;
 import interpreteur.as.modules.builtins.BuiltinsNombreUtils;
 import interpreteur.as.modules.builtins.BuiltinsTexteUtils;
 import interpreteur.as.modules.core.ASModule;
-import interpreteur.as.lang.ASType;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
-import language.Translator;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -18,16 +19,16 @@ import java.util.function.Supplier;
 public class ModuleBuiltins {
     private static final Supplier<ASObjet<?>> getVarsLocales = () -> {
         List<ASVariable> variableList = new ArrayList<>(ASScope.getCurrentScopeInstance().getVariableStack());
-        return new ASListe(variableList.stream().map(var -> new ASTexte(var.obtenirNom())).toArray(ASTexte[]::new));
+        return new ASListe(variableList.stream().map(var -> new ASTexte(var.getNom())).toArray(ASTexte[]::new));
     };
     private static final Supplier<ASObjet<?>> getVarsGlobales = () -> {
         List<ASVariable> variableList = new ArrayList<>(ASScope.getScopeInstanceStack().firstElement().getVariableStack());
-        return new ASListe(variableList.stream().map(var -> new ASTexte(var.obtenirNom())).toArray(ASTexte[]::new));
+        return new ASListe(variableList.stream().map(var -> new ASTexte(var.getNom())).toArray(ASTexte[]::new));
     };
     private static final Supplier<ASObjet<?>> getVarListe = () -> {
         HashSet<ASVariable> variables = new HashSet<>();
         ASScope.getScopeInstanceStack().forEach(scopeInstance -> variables.addAll(scopeInstance.getVariableStack()));
-        return new ASListe(variables.stream().map(var -> new ASTexte(var.obtenirNom())).toArray(ASTexte[]::new));
+        return new ASListe(variables.stream().map(var -> new ASTexte(var.getNom())).toArray(ASTexte[]::new));
     };
 
     /*
@@ -50,7 +51,7 @@ public class ModuleBuiltins {
         ASFonctionModule[] fonctions = new ASFonctionModule[]{
                 // afficher
                 new ASFonctionModule("modules.builtins.functions.print", new ASParametre[]{
-                        new ASParametre("element", new ASType("tout"), new ASTexte(""))
+                        new ASParametre("element", new ASTypeExpr("tout"), new ASTexte(""))
                 }, ASTypeBuiltin.rien.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -62,7 +63,7 @@ public class ModuleBuiltins {
                 },
                 // attendre
                 new ASFonctionModule("modules.builtins.functions.wait", new ASParametre[]{
-                        new ASParametre("duree", new ASType("nombre"), new ASEntier(0))
+                        new ASParametre("duree", new ASTypeExpr("nombre"), new ASEntier(0))
                 }, ASTypeBuiltin.rien.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -85,8 +86,8 @@ public class ModuleBuiltins {
                  */
                 // aleatoire
                 new ASFonctionModule("modules.builtins.functions.random", new ASParametre[]{
-                        new ASParametre("choix", new ASType("iterable"), null)
-                }, new ASType("tout")) {
+                        new ASParametre("choix", new ASTypeExpr("iterable"), null)
+                }, new ASTypeExpr("tout")) {
                     @Override
                     public ASObjet<?> executer() {
                         if (this.getParamsValeursDict().get("choix") instanceof ASListe liste) {
@@ -110,11 +111,11 @@ public class ModuleBuiltins {
                  */
                 // typeDe
                 new ASFonctionModule("modules.builtins.functions.typeOf", new ASParametre[]{
-                        new ASParametre("element", new ASType("tout"), null)
-                }, new ASType("texte")) {
+                        new ASParametre("element", new ASTypeExpr("tout"), null)
+                }, new ASTypeExpr("texte")) {
                     @Override
                     public ASObjet<?> executer() {
-                        return new ASTexte(this.getParamsValeursDict().get("element").obtenirNomType());
+                        return new ASTexte(this.getParamsValeursDict().get("element").getNomType());
                     }
                 },
                 //booleen
@@ -172,7 +173,7 @@ public class ModuleBuiltins {
                 // info
                 new ASFonctionModule("modules.builtins.functions.info", new ASParametre[]{
                         new ASParametre("element", ASTypeBuiltin.tout.asType(), null)
-                }, new ASType("tout")) {
+                }, new ASTypeExpr("tout")) {
                     @Override
                     public ASObjet<?> executer() {
                         ASObjet<?> element = this.getParamsValeursDict().get("element");
@@ -182,7 +183,7 @@ public class ModuleBuiltins {
                 // getVar
                 new ASFonctionModule("modules.builtins.functions.getVar", new ASParametre[]{
                         new ASParametre("nomVariable", ASTypeBuiltin.texte.asType(), null)
-                }, new ASType("tout")) {
+                }, new ASTypeExpr("tout")) {
                     @Override
                     public ASObjet<?> executer() {
                         String nomVar = (String) this.getValeurParam("nomVariable").getValue();

@@ -8,30 +8,30 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class ASType implements Expression<ASObjet<?>> {
+public class ASTypeExpr implements Expression<ASObjet<?>> {
 
     private String nom;
 
-    public ASType(String nom) {
+    public ASTypeExpr(String nom) {
         this.nom = nom;
     }
 
-    public String nom() {
+    public String getNom() {
         return this.nom;
     }
 
-    public String getNom() {
+    public String getNomFormatted() {
         return nom.equals("tout") ? null : nom
                 .replace("nombre", "entier|decimal")
                 .replace("iterable", "texte|liste");
     }
 
     public List<String> getNomAsList() {
-        return this.getNom() == null ? null : Arrays.asList(this.getNom().split("\\|"));
+        return this.getNomFormatted() == null ? null : Arrays.asList(this.getNomFormatted().split("\\|"));
     }
 
-    public void union(ASType type) {
-        if (type.getNom() == null)
+    public void union(ASTypeExpr type) {
+        if (type.getNomFormatted() == null)
             this.nom = "tout";
         else if (this.noMatch(type)) {
             this.nom += "|" + type.nom;
@@ -52,10 +52,10 @@ public class ASType implements Expression<ASObjet<?>> {
 
         if (o instanceof String s) {
             List<String> type = Arrays.asList(s.split("\\|"));
-            return this.getNom() != null && !type.contains("tout") && !type.contains("nulType") && this.getNomAsList().stream().noneMatch(type::contains);
-        } else if (o instanceof ASType t) {
+            return this.getNomFormatted() != null && !type.contains("tout") && !type.contains("nulType") && this.getNomAsList().stream().noneMatch(type::contains);
+        } else if (o instanceof ASTypeExpr t) {
             List<String> type = t.getNomAsList();
-            return this.getNom() != null && type != null && this.getNomAsList().stream().noneMatch(type::contains);
+            return this.getNomFormatted() != null && type != null && this.getNomAsList().stream().noneMatch(type::contains);
 
         } else return true;
     }

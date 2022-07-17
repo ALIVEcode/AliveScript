@@ -51,7 +51,7 @@ public interface ASNombre extends ASObjet<Number> {
     }
 
     @Override
-    default String obtenirNomType() {
+    default String getNomType() {
         return "nombre";
     }
 }

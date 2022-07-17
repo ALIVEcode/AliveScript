@@ -25,7 +25,7 @@ public interface ASIterable<T> extends ASObjet<T> {
     }
 
     @Override
-    default String obtenirNomType() {
+    default String getNomType() {
         return "iterable";
     }
 }

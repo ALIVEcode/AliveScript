@@ -1,14 +1,20 @@
 package interpreteur.as.modules;
 
 import interpreteur.as.erreurs.ASErreur;
-import interpreteur.as.lang.*;
+import interpreteur.as.lang.ASTypeBuiltin;
+import interpreteur.as.lang.ASTypeExpr;
+import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.*;
+import interpreteur.as.lang.datatype.fonction.ASFonctionInterface;
+import interpreteur.as.lang.datatype.fonction.ASFonctionModule;
+import interpreteur.as.lang.datatype.fonction.ASParametre;
+import interpreteur.as.lang.datatype.structure.ASPropriete;
+import interpreteur.as.lang.datatype.structure.ASStructure;
 import interpreteur.as.modules.core.ASModule;
 import interpreteur.converter.ASObjetConverter;
 import interpreteur.data_manager.Data;
 import interpreteur.executeur.Executeur;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class ModuleAliot {
     /*
@@ -28,6 +34,12 @@ public class ModuleAliot {
      */
 
     public static ASModule charger(Executeur executeurInstance) {
+        var Ecouteur = new ASStructure("Ecouteur", new ASPropriete[]{
+                ASPropriete.obligatoire("fonc", ASTypeBuiltin.fonctionType.asType(), true),
+                new ASPropriete("champs", new ASListe(), ASTypeBuiltin.iterable.asType(), true),
+        });
+
+
         ASFonctionModule[] fonctionModules = {
                 //----------------- écouteurs -----------------//
 
@@ -55,7 +67,7 @@ public class ModuleAliot {
 
                 // ecouterDocChange
                 // TODO
-                new ASFonctionModule("ecouterDoc", new ASParametre[]{
+                /*new ASFonctionModule("ecouterDoc", new ASParametre[]{
                         ASParametre.obligatoire("champs", ASTypeBuiltin.iterable.asType()),
                         ASParametre.obligatoire("ecouteur", ASTypeBuiltin.fonctionType.asType())
                 }, ASTypeBuiltin.entier.asType()) {
@@ -81,12 +93,45 @@ public class ModuleAliot {
                         executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER).addParam(new JSONArray().put(champs.getValue())).addParam(funcName));
                         return new ASNul();
                     }
+                },*/
+
+                new ASFonctionModule("ecouterDoc", new ASParametre[]{
+                        ASParametre.obligatoire("champs", ASTypeBuiltin.iterable.asType()),
+                        ASParametre.obligatoire("ecouteur", ASTypeBuiltin.fonctionType.asType())
+                }, Ecouteur.getTypeInstance()) {
+                    @Override
+                    public ASStructure.ASStructureInstance executer() {
+                        ASObjet<?> champs = getValeurParam("champs");
+                        ASObjet<?> callback = getValeurParam("ecouteur");
+                        String funcName = callback instanceof ASFonctionInterface fonction
+                                ? fonction.getNom()
+                                : null;
+
+                        var ecouteur = Ecouteur.makeInstance(new ASPropriete[]{
+                                ASPropriete.fromASObj("champs", champs),
+                                ASPropriete.fromASObj("fonc", callback)
+                        });
+
+                        if (champs instanceof ASListe liste) {
+                            if (liste.getValue().stream().anyMatch(el -> !(el instanceof ASTexte))) {
+                                throw new ASErreur.ErreurAppelFonction("La liste doit \u00EAtre une liste d'\u00E9l\u00E9ments de type texte");
+                            }
+                            var champsStringList = liste.getValue().stream().map(el -> (String) el.getValue()).toList();
+                            executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER)
+                                    .addParam(new JSONArray(champsStringList))
+                                    .addParam(funcName));
+                            return ecouteur;
+                        }
+
+                        executeurInstance.addData(new Data(Data.Id.SUBSCRIBE_LISTENER).addParam(new JSONArray().put(champs.getValue())).addParam(funcName));
+                        return ecouteur;
+                    }
                 },
 
                 // arreterEcoute
                 // TODO
                 new ASFonctionModule("enleverEcouteur", new ASParametre[]{
-                        ASParametre.obligatoire("ecouteur", new ASType("texte|fonctionType"))
+                        ASParametre.obligatoire("ecouteur", new ASTypeExpr("texte|fonctionType"))
                 }, ASTypeBuiltin.booleen.asType()) {
                     @Override
                     public ASObjet<?> executer() {
@@ -166,9 +211,9 @@ public class ModuleAliot {
         };
 
         ASVariable[] variables = {
-
+                // new ASVariable("Ecouteur", new ASStructureModule(), new ASTypeExpr("Ecouteur")),
         };
 
-        return new ASModule(fonctionModules, variables);
+        return new ASModule(fonctionModules, variables, new ASStructure[]{Ecouteur});
     }
 }

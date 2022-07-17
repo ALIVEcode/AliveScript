@@ -1,14 +1,14 @@
 package interpreteur.ast.buildingBlocs.programmes;
 
+import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.lang.ASConstante;
-import interpreteur.as.lang.ASType;
+import interpreteur.as.lang.ASScope;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASObjet;
-import interpreteur.as.lang.ASScope;
-import interpreteur.as.erreurs.ASErreur;
 import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
-import interpreteur.ast.buildingBlocs.expressions.*;
+import interpreteur.ast.buildingBlocs.expressions.Var;
 
 import java.util.HashSet;
 
@@ -18,10 +18,11 @@ public class Declarer extends Programme {
 
     private final Expression<?> valeur;
     private final boolean constante;
-    private final ASType type;
+    private final ASTypeExpr type;
     private final Var var;
+    private final boolean computeCompileTime;
 
-    public Declarer(Expression<?> expr, Expression<?> valeur, ASType type, boolean constante) {
+    public Declarer(Expression<?> expr, Expression<?> valeur, ASTypeExpr type, boolean constante, boolean computeCompileTime) {
         // get la variable
         if (expr instanceof Var) {
             var = (Var) expr;
@@ -31,9 +32,15 @@ public class Declarer extends Programme {
 
         this.valeur = valeur;
         this.constante = constante;
-        this.type = type == null ? new ASType("tout") : type;
+        this.type = type == null ? new ASTypeExpr("tout") : type;
+        this.computeCompileTime = computeCompileTime;
         addVariable();
     }
+
+    public Declarer(Expression<?> expr, Expression<?> valeur, ASTypeExpr type, boolean constante) {
+        this(expr, valeur, type, constante, false);
+    }
+
 
     public static void addWaitingGetter(CreerGetter getter) {
         waitingGetters.add(getter);
@@ -60,11 +67,23 @@ public class Declarer extends Programme {
 
         // si le mot "const" est présent dans l'assignement de la variable, on crée la constante
         // sinon si la variable a été déclarée avec "var", on crée la variable
-        varObj = constante ? new ASConstante(var.getNom(), null) : new ASVariable(var.getNom(), null, type);
+        ASObjet<?> valeur = null;
+        if (computeCompileTime) {
+            try {
+                valeur = this.valeur.eval();
+            } catch (ASErreur.ErreurAliveScript err) {
+                throw err;
+            } catch (Exception exception) {
+                throw new ASErreur.ErreurDeclaration(
+                        "La valeur de la variable '" + var.getNom() + "' n'a pas pu \u00EAtre calcul\u00E9e durant la compilation."
+                );
+            }
+        }
+        varObj = constante ? new ASConstante(var.getNom(), valeur) : new ASVariable(var.getNom(), valeur, type);
 
         ASScope.getCurrentScope().declarerVariable(varObj);
 
-        var.setNom(varObj.obtenirNom());
+        var.setNom(varObj.getNom());
 
         // si des setters et des getters attendaient la déclaration de la variable pour pouvoir être attachée à celle-ci, on les attache
         CreerGetter getter = waitingGetters.stream().filter(waitingGetter -> waitingGetter.getVar().equals(var)).findFirst().orElse(null);
@@ -93,10 +112,10 @@ public class Declarer extends Programme {
     @Override
     public String toString() {
         return "Declarer{" +
-               "valeur=" + valeur +
-               ", constante=" + constante +
-               ", type=" + type +
-               ", var=" + var +
-               '}';
+                "valeur=" + valeur +
+                ", constante=" + constante +
+                ", type=" + type +
+                ", var=" + var +
+                '}';
     }
 }

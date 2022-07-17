@@ -1,11 +1,12 @@
 package interpreteur.ast.buildingBlocs.programmes;
 
-import interpreteur.as.lang.ASVariable;
-import interpreteur.as.lang.datatype.ASFonction;
 import interpreteur.as.lang.ASScope;
+import interpreteur.as.lang.ASTypeExpr;
+import interpreteur.as.lang.ASVariable;
+import interpreteur.as.lang.datatype.fonction.ASFonction;
 import interpreteur.as.lang.managers.ASFonctionManager;
+import interpreteur.as.lang.managers.ASScopeManager;
 import interpreteur.ast.buildingBlocs.Programme;
-import interpreteur.as.lang.ASType;
 import interpreteur.ast.buildingBlocs.expressions.Var;
 import interpreteur.executeur.Coordonnee;
 import interpreteur.executeur.Executeur;
@@ -16,10 +17,10 @@ import java.util.List;
 
 public class CreerGetter extends Programme {
     private final Var var;
-    private final ASType type;
+    private final ASTypeExpr type;
     private final ASScope scope;
 
-    public CreerGetter(Var var, ASType type, Executeur executeurInstance) {
+    public CreerGetter(Var var, ASTypeExpr type, Executeur executeurInstance) {
         super(executeurInstance);
         this.var = var;
         this.type = type;
@@ -43,10 +44,9 @@ public class CreerGetter extends Programme {
             ASScope scope = new ASScope(this.scope);
             scope.setParent(ASScope.getCurrentScopeInstance());
             String scopeName = executeurInstance.obtenirCoordRunTime().getScope();
-            String signature = ASFonctionManager.makeFunctionNameSignature(scopeName, this.var.getNom());
-            ASFonction get = new ASFonction(this.var.getNom(), signature, this.type, executeurInstance);
+            String callingCoord = ASScopeManager.formatNewScope(ASScopeManager.ScopeKind.GETTER, scopeName, this.var.getNom());
+            ASFonction get = new ASFonction(this.var.getNom(), callingCoord, this.type, executeurInstance);
             get.setScope(scope);
-            get.setCoordBlocName(ASFonctionManager.GETTER_SCOPE_START);
             return get.makeInstance().executer(new ArrayList<>());
         });
     }
@@ -58,17 +58,19 @@ public class CreerGetter extends Programme {
 
     @Override
     public Coordonnee prochaineCoord(Coordonnee coord, List<Token> ligne) {
-        String currentScope = coord.getScope();
-        String newScope = ASFonctionManager.GETTER_SCOPE_START
-                          + ASFonctionManager.makeFunctionNameSignature(currentScope, ASFonctionManager.ajouterDansStructure(this.var.getNom()));
+        String newScope = ASScopeManager.formatNewScope(
+                ASScopeManager.ScopeKind.GETTER,
+                coord.getScope(),
+                ASFonctionManager.ajouterDansNamespace(this.var.getNom())
+        );
         return new Coordonnee(executeurInstance.nouveauScope(newScope));
     }
 
     @Override
     public String toString() {
         return "CreerGetter{" +
-               "var=" + var +
-               "type?=" + type +
-               '}';
+                "var=" + var +
+                "type?=" + type +
+                '}';
     }
 }

@@ -1,21 +1,20 @@
 package interpreteur.generateurs.ast;
 
-import java.util.*;
+import interpreteur.as.erreurs.ASErreur;
+import interpreteur.ast.Ast;
+import interpreteur.ast.buildingBlocs.Expression;
+import interpreteur.ast.buildingBlocs.Programme;
+import interpreteur.generateurs.lexer.LexerGenerator;
+import interpreteur.tokens.Token;
+import utils.ArraysUtils;
+import utils.Range;
 
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import interpreteur.as.erreurs.ASErreur;
-import interpreteur.ast.Ast;
-import interpreteur.ast.buildingBlocs.Expression;
-import interpreteur.ast.buildingBlocs.Programme;
-import interpreteur.generateurs.lexer.Regle;
-import interpreteur.tokens.Token;
-import utils.ArraysUtils;
-import utils.Range;
 
 /**
  * @author Mathis Laroche
@@ -24,16 +23,11 @@ import utils.Range;
 /**
  * Les explications vont être rajouté quand j'aurai la motivation de les écrire XD
  */
+public class AstGenerator<AstFrameKind extends Enum<?>> {
+    private final Stack<AstFrameKind> astFrameStack = new Stack<>();  // for compile time selection of ast frames
+    private final Hashtable<AstFrameKind, AstFrame> astFrameTable = new Hashtable<>();  // to store the different ast frames
+    private AstFrame currentAstFrame;
 
-
-public class AstGenerator {
-    protected Hashtable<String, Ast<?>> programmesDict = new Hashtable<>();
-    protected ArrayList<String> ordreProgrammes = new ArrayList<>();
-
-    protected Hashtable<String, Ast<?>> expressionsDict = new Hashtable<>();
-    protected ArrayList<String> ordreExpressions = new ArrayList<>();
-    private int cptrExpr = 0;
-    private int cptrProg = 0;
 
     public static void hasSafeSyntax(Token[] expressionArray) {
         int parentheses = 0;
@@ -41,7 +35,7 @@ public class AstGenerator {
         int crochets = 0;
 
         for (Token token : expressionArray) {
-            switch (token.obtenirNom()) {
+            switch (token.getNom()) {
                 case "PARENT_OUV" -> parentheses++;
                 case "PARENT_FERM" -> parentheses--;
 
@@ -58,20 +52,26 @@ public class AstGenerator {
         //System.out.println(Arrays.toString(expressionArray));
 
         switch (Integer.compare(parentheses, 0)) {
-            case -1 -> throw new ASErreur.ErreurSyntaxe(-parentheses + " parenth\u00E8se" + pluriel + " ouvrante" + pluriel + " '(' manquante" + pluriel);
-            case 1 -> throw new ASErreur.ErreurSyntaxe(parentheses + " parenth\u00E8se" + pluriel + " fermante" + pluriel + " ')' manquante" + pluriel);
+            case -1 ->
+                    throw new ASErreur.ErreurSyntaxe(-parentheses + " parenth\u00E8se" + pluriel + " ouvrante" + pluriel + " '(' manquante" + pluriel);
+            case 1 ->
+                    throw new ASErreur.ErreurSyntaxe(parentheses + " parenth\u00E8se" + pluriel + " fermante" + pluriel + " ')' manquante" + pluriel);
         }
 
         pluriel = Math.abs(braces) > 1 ? "s" : "";
         switch (Integer.compare(braces, 0)) {
-            case -1 -> throw new ASErreur.ErreurSyntaxe(-braces + " accolade" + pluriel + " ouvrante" + pluriel + " '{' manquante" + pluriel);
-            case 1 -> throw new ASErreur.ErreurSyntaxe(braces + " accolade" + pluriel + " fermante" + pluriel + " '}' manquante" + pluriel);
+            case -1 ->
+                    throw new ASErreur.ErreurSyntaxe(-braces + " accolade" + pluriel + " ouvrante" + pluriel + " '{' manquante" + pluriel);
+            case 1 ->
+                    throw new ASErreur.ErreurSyntaxe(braces + " accolade" + pluriel + " fermante" + pluriel + " '}' manquante" + pluriel);
         }
 
         pluriel = Math.abs(crochets) > 1 ? "s" : "";
         switch (Integer.compare(crochets, 0)) {
-            case -1 -> throw new ASErreur.ErreurSyntaxe(-crochets + " crochet" + pluriel + " ouvrant" + pluriel + " '[' manquant" + pluriel);
-            case 1 -> throw new ASErreur.ErreurSyntaxe(crochets + " crochet" + pluriel + " fermant" + pluriel + " ']' manquant" + pluriel);
+            case -1 ->
+                    throw new ASErreur.ErreurSyntaxe(-crochets + " crochet" + pluriel + " ouvrant" + pluriel + " '[' manquant" + pluriel);
+            case 1 ->
+                    throw new ASErreur.ErreurSyntaxe(crochets + " crochet" + pluriel + " fermant" + pluriel + " ']' manquant" + pluriel);
         }
 
     }
@@ -95,15 +95,59 @@ public class AstGenerator {
         return structurePattern.matcher(line);
     }
 
-    private ArrayList<String> ajouterSousAstOrdre(Hashtable<String, Ast<?>> sous_ast) {
-        ArrayList<String> nouvelOrdre = new ArrayList<>(ordreExpressions);
+    protected AstFrame currentAstFrame() {
+        return currentAstFrame;
+    }
+
+    protected ArrayList<String> currentOrdreExpressions() {
+        return currentAstFrame.ordreExpressions();
+    }
+
+    protected Hashtable<String, Ast<? extends Expression<?>>> currentExpressionsDict() {
+        return currentAstFrame.expressionsDict();
+    }
+
+    protected ArrayList<String> currentOrdreProgrammes() {
+        return currentAstFrame.ordreProgrammes();
+    }
+
+    protected Hashtable<String, Ast<? extends Programme>> currentProgrammesDict() {
+        return currentAstFrame.programmesDict();
+    }
+
+    protected void pushAstFrame(AstFrameKind astFrameKind) {
+        astFrameStack.push(astFrameKind);
+        setCurrentAstFrame(astFrameKind);
+    }
+
+    protected void popAstFrame() {
+        astFrameStack.pop();
+        if (astFrameStack.isEmpty()) {
+            currentAstFrame = null;
+        } else {
+            setCurrentAstFrame(astFrameStack.peek());
+        }
+    }
+
+    protected void defineAstFrame(AstFrameKind kind) {
+        setCurrentAstFrame(kind);
+    }
+
+    private void setCurrentAstFrame(AstFrameKind kind) {
+        astFrameTable.putIfAbsent(kind, new AstFrame());
+        currentAstFrame = astFrameTable.get(kind);
+    }
+
+    private ArrayList<String> ajouterSousAstOrdre(Hashtable<String, Ast<? extends Expression<?>>> sous_ast) {
+        ArrayList<String> nouvelOrdre = new ArrayList<>(currentOrdreExpressions());
 
         if (sous_ast.size() > 0) {
             for (String pattern : sous_ast.keySet()) {
-                if (ordreExpressions.contains(pattern)) {
-                    nouvelOrdre.remove(pattern);
-                }
+                pattern = LexerGenerator.remplacerCategoriesParMembre(pattern);
                 int importance = sous_ast.get(pattern).getImportance();
+                if (importance == -2) continue; // -2 = take the same place as the replaced expression
+
+                nouvelOrdre.remove(pattern);
                 if (importance == -1) {
                     nouvelOrdre.add(pattern);
                 } else {
@@ -115,13 +159,13 @@ public class AstGenerator {
                     }
                 }
             }
-            ordreExpressions.removeIf(Objects::isNull);
+            nouvelOrdre.removeIf(Objects::isNull);
             //System.out.println(this.ordreExpressions);
         }
         return nouvelOrdre;
     }
 
-    public Expression<?> evalOneExpr(ArrayList<Object> expressions, Hashtable<String, Ast<?>> sous_ast) {
+    public Expression<?> evalOneExpr(ArrayList<Object> expressions, Hashtable<String, Ast<? extends Expression<?>>> sous_ast) {
         var result = eval(expressions, sous_ast);
         if (result.size() != 1) {
             throw new ASErreur.ErreurSyntaxe("Erreur ligne 106 dans AstGenerator");
@@ -130,10 +174,10 @@ public class AstGenerator {
         }
     }
 
-    public ArrayList<Expression<?>> eval(ArrayList<Object> expressions, Hashtable<String, Ast<?>> sous_ast) {
+    public ArrayList<Expression<?>> eval(ArrayList<Object> expressions, Hashtable<String, Ast<? extends Expression<?>>> sous_ast) {
 
-        var regleSyntaxeDispo = new Hashtable<>(expressionsDict);
-        var ordreRegleSyntaxe = new ArrayList<>(ordreExpressions);
+        var regleSyntaxeDispo = new Hashtable<>(currentExpressionsDict());
+        var ordreRegleSyntaxe = new ArrayList<>(currentOrdreExpressions());
 
         if (sous_ast != null) {
             regleSyntaxeDispo.putAll(sous_ast);
@@ -173,7 +217,7 @@ public class AstGenerator {
                     List<String> expressionNom = new ArrayList<>();
 
                     for (Object expr : expressionArray) {
-                        expressionNom.add(expr instanceof Token token ? token.obtenirNom() : "expression");
+                        expressionNom.add(expr instanceof Token token ? token.getNom() : "expression");
                     }
                     //System.out.println("Nom " + expressionNom);
                     Matcher match = memeStructureExpression(String.join(" ", expressionNom.subList(i, expressionNom.size())), regleSyntaxe);
@@ -245,7 +289,7 @@ public class AstGenerator {
                         //expr.stream().map(Object::toString).forEach(Executeur::printCompiledCode);
 
 
-                        Expression<?> capsule = (Expression<?>) expressionsDict
+                        Expression<?> capsule = regleSyntaxeDispo
                                 .get(regleSyntaxeEtVariante)
                                 .apply(new ArrayList<>(expr), idxVariante);
                         //System.out.println(capsule);
@@ -276,9 +320,9 @@ public class AstGenerator {
                             //System.out.println(memeStructure(String.join(" ", expressionNom.subList(debut, fin)), expression).toString());
                             //System.out.println(expressionArray);
                             if ((regleSyntaxe.startsWith("expression") &&
-                                 (!(expressionArray.get(debut) instanceof Expression<?>))
-                                 ||
-                                 expressionArray.get(debut) == null)
+                                    (!(expressionArray.get(debut) instanceof Expression<?>))
+                                    ||
+                                    expressionArray.get(debut) == null)
                             ) {
                                 i++;
                                 continue;
@@ -288,7 +332,7 @@ public class AstGenerator {
                              */
                             //System.out.println("expr ->" + expression + " : " + expressionArray.subList(debut, fin));
 
-                            Expression<?> capsule = (Expression<?>) regleSyntaxeDispo
+                            Expression<?> capsule = regleSyntaxeDispo
                                     .get(regleSyntaxeEtVariante)
                                     .apply(expressionArray.subList(debut, exprLength), idxVariante);
                             //System.out.println(capsule);
@@ -312,123 +356,66 @@ public class AstGenerator {
         Token[] token = expressionArray.stream().filter(e -> e instanceof Token).toArray(Token[]::new);
 
         if (token.length > 0) {
-            throw new ASErreur.ErreurSyntaxe("Expression ill\u00E9gale: " + String.join(" ", Arrays.stream(token).map(Token::obtenirValeur).toArray(String[]::new)));
+            throw new ASErreur.ErreurSyntaxe("Expression ill\u00E9gale: " + String.join(" ", Arrays.stream(token).map(Token::getValeur).toArray(String[]::new)));
         }
 
         //System.out.println(expressionArray);
         return ((ArrayList<?>) expressionArray).stream().map(e -> (Expression<?>) e).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    /**
+     * Clears the astFrameTable and the astFrameStack
+     */
     protected void reset() {
-        expressionsDict.clear();
-        programmesDict.clear();
-        ordreExpressions.clear();
-        ordreProgrammes.clear();
+        astFrameTable.clear();
+        astFrameStack.clear();
     }
 
-    public ArrayList<String> getOrdreExpressions() {
-        return ordreExpressions;
-    }
-
-    public ArrayList<String> getOrdreProgrammes() {
-        return ordreProgrammes;
-    }
-
-    protected String remplacerCategoriesParMembre(String pattern) {
-        String nouveauPattern = pattern;
-        for (String option : pattern.split("~")) {
-            for (String motClef : option.split(" ")) {  // on divise le pattern en mot clef afin d'evaluer ceux qui sont des categories (une categorie est entouree par des {})
-                if (motClef.startsWith("{") && motClef.endsWith("}")) {  // on test si le mot clef est une categorie
-                    ArrayList<String> membresCategorie = Regle.getMembreCategorie(motClef.substring(1, motClef.length() - 1)); // on va chercher les membres de la categorie (toutes les regles)
-                    if (membresCategorie == null) {
-                        throw new Error("La categorie: '" + pattern + "' n'existe pas");    // si la categorie n'existe pas, on lance une erreur
-                    } else {
-                        nouveauPattern = nouveauPattern.replace(motClef, "(" + String.join("|", membresCategorie) + ")");
-                        // on remplace la categorie par les membres de la categorie
-                        // pour ce faire, on entoure les membres dans des parentheses et on
-                        // separe les membres par des |
-                        // de cette facon, lorsque nous allons tester par regex si une ligne correspond
-                        // a un programme ou une expression, la categorie va "matcher" avec
-                        // tous les membres de celle-ci
-                    }
-                }
-            }
+    protected void ajouterProgramme(String pattern, AstFrameKind frameKind) throws NoSuchElementException {
+        pattern = LexerGenerator.remplacerCategoriesParMembre(pattern);
+        var fonction = astFrameTable.get(frameKind).programmesDict().get(pattern);
+        if (fonction == null) {
+            throw new NoSuchElementException("Programme non trouv\u00E9 dans la frame " + frameKind + ": " + pattern);
         }
-        return nouveauPattern;  // on retourne le pattern avec les categories changees
+        currentAstFrame().ajouterProgramme(pattern, fonction);
     }
 
     protected void ajouterProgramme(String pattern, Ast<? extends Programme> fonction) {
-        //for (String programme : pattern.split("~")) {
-        var sousAstCopy = new Hashtable<>(fonction.getSousAst());
-        for (String p : sousAstCopy.keySet()) {
-            fonction.getSousAst().remove(p);
-            fonction.getSousAst().put(remplacerCategoriesParMembre(p), sousAstCopy.get(p));
-        }
-        if (fonction.getImportance() == -1)
-            fonction.setImportance(cptrProg++);
-        String nouveauPattern = remplacerCategoriesParMembre(pattern);
-        var previous = programmesDict.put(nouveauPattern, fonction); // remplace les categories par ses membres, s'il n'y a pas de categorie, ne modifie pas le pattern
-        if (previous == null) {
-            ordreProgrammes.add(fonction.getImportance(), nouveauPattern);
-        }
-        //}
+        currentAstFrame().ajouterProgramme(pattern, fonction);
     }
 
     protected void ajouterProgramme(String pattern, Function<List<Object>, ? extends Programme> fonction) {
-        var ast = Ast.from(fonction);
-        //for (String programme : pattern.split("~")) {
-        ast.setImportance(cptrProg++);
-        String nouveauPattern = remplacerCategoriesParMembre(pattern);
-        var previous = programmesDict.put(nouveauPattern, ast); // remplace les categories par ses membres, s'il n'y a pas de categorie, ne modifie pas le pattern
-        if (previous == null) {
-            ordreProgrammes.add(nouveauPattern);
-        }
-        //}
+        currentAstFrame().ajouterProgramme(pattern, fonction);
     }
 
     protected void ajouterProgramme(String pattern, BiFunction<List<Object>, Integer, ? extends Programme> fonction) {
-        var ast = Ast.from(fonction);
-        //for (String programme : pattern.split("~")) {
-        ast.setImportance(cptrProg++);
-        String nouveauPattern = remplacerCategoriesParMembre(pattern);
-        var previous = programmesDict.put(nouveauPattern, ast); // remplace les categories par ses membres, s'il n'y a pas de categorie, ne modifie pas le pattern
-        if (previous == null) {
-            ordreProgrammes.add(nouveauPattern);
+        currentAstFrame().ajouterProgramme(pattern, fonction);
+    }
+
+    protected void ajouterExpression(String pattern, AstFrameKind frameKind) throws NoSuchElementException {
+        pattern = LexerGenerator.remplacerCategoriesParMembre(pattern);
+        var fonction = astFrameTable.get(frameKind).expressionsDict().get(pattern);
+        if (fonction == null) {
+            throw new NoSuchElementException("Expression non trouv\u00E9e dans la frame " + frameKind + ": " + pattern);
         }
-        //}
+        currentAstFrame().ajouterExpression(pattern, fonction);
     }
 
     protected void ajouterExpression(String pattern, Ast<? extends Expression<?>> fonction) {
-        String nouveauPattern = remplacerCategoriesParMembre(pattern);
-        if (fonction.getImportance() == -1)
-            fonction.setImportance(cptrExpr++);
-        var previous = expressionsDict.put(nouveauPattern, fonction);
-        if (previous == null) {
-            ordreExpressions.add(fonction.getImportance(), nouveauPattern);
-        }
+        currentAstFrame().ajouterExpression(pattern, fonction);
     }
 
     protected void ajouterExpression(String pattern, Function<List<Object>, ? extends Expression<?>> fonction) {
-        var ast = Ast.from(fonction);
-        String nouveauPattern = remplacerCategoriesParMembre(pattern);
-        ast.setImportance(cptrExpr++);
-        var previous = expressionsDict.put(nouveauPattern, ast);
-        if (previous == null) {
-            ordreExpressions.add(nouveauPattern);
-        }
+        currentAstFrame().ajouterExpression(pattern, fonction);
     }
 
     protected void ajouterExpression(String pattern, BiFunction<List<Object>, Integer, ? extends Expression<?>> fonction) {
-        var ast = Ast.from(fonction);
-        String nouveauPattern = remplacerCategoriesParMembre(pattern);
-        ast.setImportance(cptrExpr++);
-        var previous = expressionsDict.put(nouveauPattern, ast);
-        if (previous == null) {
-            ordreExpressions.add(nouveauPattern);
-        }
+        currentAstFrame().ajouterExpression(pattern, fonction);
     }
 
     protected void setOrdreProgramme() {
+        var programmesDict = currentProgrammesDict();
+        var ordreProgrammes = currentOrdreProgrammes();
         for (int i = 0; i < programmesDict.size(); ++i) {
             ordreProgrammes.add(null);
         }
@@ -450,6 +437,8 @@ public class AstGenerator {
     }
 
     protected void setOrdreExpression() {
+        var expressionsDict = currentExpressionsDict();
+        var ordreExpressions = currentOrdreExpressions();
         for (int i = 0; i < expressionsDict.size(); ++i) {
             ordreExpressions.add(null);
         }
@@ -470,6 +459,7 @@ public class AstGenerator {
     }
 
     public Programme parse(List<Token> listToken) {
+        var programmesDict = currentProgrammesDict();
 
         var programmeEtIdxVariante = obtenirProgrammeOrThrow(listToken);
         int idxVariante = programmeEtIdxVariante.getKey();
@@ -511,9 +501,11 @@ public class AstGenerator {
      * @throws ASErreur.ErreurSyntaxe if there are no programme that match the tokens in listToken
      */
     public Map.Entry<Integer, String> obtenirProgrammeOrThrow(List<Token> listToken) {
+        var ordreProgrammes = currentOrdreProgrammes();
+
         String programmeTrouve = null;
         List<String> structureLine = new ArrayList<>();
-        listToken.forEach(e -> structureLine.add(e.obtenirNom()));
+        listToken.forEach(e -> structureLine.add(e.getNom()));
         int idxVariante = 0;
 
         int nbTokenProgrammeTrouvee = 0;
@@ -535,7 +527,7 @@ public class AstGenerator {
         if (programmeTrouve == null) {
             throw new ASErreur.ErreurSyntaxe("Syntaxe invalide: " + listToken
                     .stream()
-                    .map(Token::obtenirValeur)
+                    .map(Token::getValeur)
                     .toList()
             );
         }
@@ -551,7 +543,7 @@ public class AstGenerator {
     private Map.Entry<ArrayList<Token>, ArrayList<ArrayList<Token>>> obtenirDivisionExpressionsProgramme(List<Token> listToken, String programme, Integer idxVariante) {
         programme = programme.split("~")[idxVariante];
         ArrayList<String> structureLine = new ArrayList<>();
-        listToken.forEach(e -> structureLine.add(e.obtenirNom()));
+        listToken.forEach(e -> structureLine.add(e.getNom()));
 
         ArrayList<String> structureProgramme = new ArrayList<>(Arrays.asList(programme.split(" ")));
         // structureProgramme.removeIf(e -> e.equals("expression") || e.equals("#expression"));

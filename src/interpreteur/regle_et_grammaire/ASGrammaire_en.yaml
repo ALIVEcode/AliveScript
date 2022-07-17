@@ -83,6 +83,7 @@ Ajouter:
     NOM_RIEN: '\brien\b'
     NOM_DICT: '\bdict\b'
     NOM_PAIRE: '\bpaire\b'
+    NOM_STRUCTURE: '\bstructureType\b'
 
   comparaison:
     EGAL: "(={2})|(==)"
@@ -117,7 +118,7 @@ Ajouter:
   DEUX_POINTS: "[:]"
   POINT_VIRGULE: "[;]"
 
-  NOM_VARIABLE: '((\p{L}|_)+(\d+)*(\p{L})*_*\.?)+'
+  NOM_VARIABLE: '((\p{L}|_)+(\d+)*(\p{L})*_*)+'
 
 Ignorer:
   - '\s+'

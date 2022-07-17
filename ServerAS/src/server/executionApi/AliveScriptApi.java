@@ -60,6 +60,7 @@ public class AliveScriptApi extends BaseApi {
 
     private String handlePostRequest(HttpExchange httpExchange) throws IOException {
         JSONObject data = byteArrayToJson(httpExchange.getRequestBody().readAllBytes());
+        logger.info("Query: " + httpExchange.getRequestURI());
         String lang = getValueOfQuery(httpExchange.getRequestURI().getQuery(), "lang", "FR").toUpperCase();
         logger.info("Lang is " + lang);
 

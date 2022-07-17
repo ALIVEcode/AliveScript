@@ -1,12 +1,12 @@
 package interpreteur.as.modules;
 
-import interpreteur.as.lang.ASFonctionModule;
-import interpreteur.as.lang.ASTypeBuiltin;
+import interpreteur.as.lang.datatype.fonction.ASParametre;
+import interpreteur.as.lang.datatype.fonction.ASFonctionModule;
 import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.as.modules.core.ASModule;
-import interpreteur.as.lang.ASType;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.data_manager.Data;
 import interpreteur.data_manager.DataVoiture;
 import interpreteur.executeur.Executeur;
@@ -29,33 +29,33 @@ public class ModuleVoiture {
     static ASModule charger(Executeur executeurInstance) {
         var fonctions = new ASFonctionModule[]{
 
-                new ASFonctionModule("x", new ASType("decimal")) {
+                new ASFonctionModule("x", new ASTypeExpr("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         return new ASDecimal(((Number) getDataVoiture("x")).doubleValue());
                     }
                 },
 
-                new ASFonctionModule("y", new ASType("decimal")) {
+                new ASFonctionModule("y", new ASTypeExpr("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         return new ASDecimal(((Number) getDataVoiture("y")).doubleValue());
                     }
                 },
 
-                new ASFonctionModule("getDistAvant", new ASType("decimal")) {
+                new ASFonctionModule("getDistAvant", new ASTypeExpr("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         return new ASDecimal(((Number) getDataVoiture("dA")).doubleValue());
                     }
                 },
-                new ASFonctionModule("getDistGauche", new ASType("decimal")) {
+                new ASFonctionModule("getDistGauche", new ASTypeExpr("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         return new ASDecimal(((Number) getDataVoiture("dG")).doubleValue());
                     }
                 },
-                new ASFonctionModule("getDistDroite", new ASType("decimal")) {
+                new ASFonctionModule("getDistDroite", new ASTypeExpr("decimal")) {
                     @Override
                     public ASObjet<?> executer() {
                         return new ASDecimal(((Number) getDataVoiture("dD")).doubleValue());
@@ -63,9 +63,9 @@ public class ModuleVoiture {
                 },
 
                 new ASFonctionModule("rouler", new ASParametre[]{
-                        new ASParametre("vitesseGauche", new ASType("entier"), null),
-                        new ASParametre("vitesseDroite", new ASType("entier"), null)
-                }, new ASType("nulType")) {
+                        new ASParametre("vitesseGauche", new ASTypeExpr("entier"), null),
+                        new ASParametre("vitesseDroite", new ASTypeExpr("entier"), null)
+                }, new ASTypeExpr("nulType")) {
                     @Override
                     public ASObjet<?> executer() {
                         throw new ASErreur.StopSetInfo(new Data(Data.Id.ROULER)
@@ -75,20 +75,20 @@ public class ModuleVoiture {
                 }
         };
         var variables = new ASVariable[]{
-                new ASVariable("vitesse", new ASEntier(10), new ASType("tout"))
+                new ASVariable("vitesse", new ASEntier(10), new ASTypeExpr("tout"))
                         .setGetter(() -> new ASDecimal(((Number) getDataVoiture("speed")).doubleValue()))
                         .setSetter((valeur) -> {
                             throw new ASErreur.StopSetInfo(new Data(Data.Id.SET_CAR_SPEED).addParam(valeur));
                         }
                 ),
-                new ASVariable("distAvant", new ASEntier(10), new ASType("tout"))
+                new ASVariable("distAvant", new ASEntier(10), new ASTypeExpr("tout"))
                         .setGetter(() -> new ASDecimal(((Number) getDataVoiture("dA")).doubleValue()))
                         .setReadOnly()
         };
 
         var translator = executeurInstance.getTranslator();
         List.of(fonctions).forEach(f -> f.setNom(translator.translate(f.getNom())));
-        List.of(variables).forEach(v -> v.setNom(translator.translate(v.obtenirNom())));
+        List.of(variables).forEach(v -> v.setNom(translator.translate(v.getNom())));
 
         return new ASModule(fonctions, variables);
     }

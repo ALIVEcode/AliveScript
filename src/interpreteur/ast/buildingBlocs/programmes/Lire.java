@@ -1,6 +1,7 @@
 package interpreteur.ast.buildingBlocs.programmes;
 
-import interpreteur.as.lang.ASFonctionModule;
+import interpreteur.as.lang.datatype.fonction.ASFonction;
+import interpreteur.as.lang.datatype.fonction.ASFonctionModule;
 import interpreteur.as.lang.datatype.*;
 import interpreteur.as.erreurs.ASErreur;
 import interpreteur.ast.buildingBlocs.Expression;
@@ -50,7 +51,7 @@ public class Lire extends Programme {
         } else {
             throw new ASErreur.ErreurInputOutput("Un \u00E9l\u00E9ment de type 'fonctionType' est attendue " +
                     "apr\u00E8s le deux points ':' dans la commande 'lire', mais '" +
-                    exprEval.obtenirNomType() + "' a \u00E9t\u00E9 trouv\u00E9.");
+                    exprEval.getNomType() + "' a \u00E9t\u00E9 trouv\u00E9.");
         }
         new Assigner(var, new ValeurConstante(valeur), null).execute();
 

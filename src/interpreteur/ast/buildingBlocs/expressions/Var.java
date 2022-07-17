@@ -1,7 +1,8 @@
 package interpreteur.ast.buildingBlocs.expressions;
 
-import interpreteur.as.lang.ASScope;
 import interpreteur.as.erreurs.ASErreur;
+import interpreteur.as.lang.ASScope;
+import interpreteur.as.lang.ASVariable;
 import interpreteur.as.lang.datatype.ASObjet;
 import interpreteur.ast.buildingBlocs.Expression;
 
@@ -42,16 +43,19 @@ public class Var implements Expression<ASObjet<?>> {
         return Objects.hash(nom);
     }
 
+    public ASVariable getVariableOrThrow() {
+        var variable = ASScope.getCurrentScopeInstance().getVariable(nom);
+        if (variable == null) {
+            throw new ASErreur.ErreurVariableInconnue("La variable '" + this.nom + "' n'est pas d\u00E9clar\u00E9e dans ce scope.");
+        }
+        return variable;
+    }
+
     /**
      * @return la valeur dans le Nom
      */
     @Override
     public ASObjet<?> eval() {
-        try {
-            // return ASObjet.VariableManager.obtenirVariable(this.nom).getValeurApresGetter();
-            return ASScope.getCurrentScopeInstance().getVariable(nom).getValeurApresGetter();
-        } catch (NullPointerException e) {
-            throw new ASErreur.ErreurVariableInconnue("La variable '" + this.nom + "' n'est pas d\u00E9clar\u00E9e dans ce scope.");
-        }
+        return getVariableOrThrow().getValeurApresGetter();
     }
 }

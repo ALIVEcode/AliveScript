@@ -1,12 +1,13 @@
-package interpreteur.as.lang.datatype;
+package interpreteur.as.lang.datatype.fonction;
 
-import interpreteur.as.lang.ASType;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.ASTypeBuiltin;
+import interpreteur.as.lang.datatype.ASObjet;
 
 /**
  * Classe responsable de definir les proprietes des parametres des fonctions
  */
-public record ASParametre(String nom, ASType type,
+public record ASParametre(String nom, ASTypeExpr type,
                           ASObjet<?> valeurParDefaut) implements ASObjet<Object> {
     /**
      * @param nom             <li>
@@ -29,13 +30,13 @@ public record ASParametre(String nom, ASType type,
      *                        <li>
      *                        Mettre <b>null</b> pour rendre ce parametre obligatoire lors de l'appel de la fonction
      */
-    public ASParametre(String nom, ASType type, ASObjet<?> valeurParDefaut) {
+    public ASParametre(String nom, ASTypeExpr type, ASObjet<?> valeurParDefaut) {
         this.nom = nom;
         this.type = type == null ? ASTypeBuiltin.tout.asType() : type;
         this.valeurParDefaut = valeurParDefaut;
     }
 
-    public static ASParametre obligatoire(String nom, ASType type) {
+    public static ASParametre obligatoire(String nom, ASTypeExpr type) {
         return new ASParametre(nom, type, null);
     }
 
@@ -43,7 +44,7 @@ public record ASParametre(String nom, ASType type,
         return nom;
     }
 
-    public ASType getType() {
+    public ASTypeExpr getType() {
         return type;
     }
 
@@ -62,8 +63,8 @@ public record ASParametre(String nom, ASType type,
     }
 
     @Override
-    public String obtenirNomType() {
-        return this.type.nom();
+    public String getNomType() {
+        return this.type.getNom();
     }
 
     @Override

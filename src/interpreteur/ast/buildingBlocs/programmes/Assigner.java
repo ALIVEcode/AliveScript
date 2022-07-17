@@ -1,17 +1,15 @@
 package interpreteur.ast.buildingBlocs.programmes;
 
+import interpreteur.as.erreurs.ASErreur;
+import interpreteur.as.lang.ASScope;
 import interpreteur.as.lang.ASVariable;
+import interpreteur.as.lang.datatype.ASHasAttr;
 import interpreteur.as.lang.datatype.ASIterable;
 import interpreteur.as.lang.datatype.ASListe;
 import interpreteur.as.lang.datatype.ASObjet;
-import interpreteur.as.lang.ASScope;
-import interpreteur.as.erreurs.ASErreur;
 import interpreteur.ast.buildingBlocs.Expression;
 import interpreteur.ast.buildingBlocs.Programme;
-import interpreteur.ast.buildingBlocs.expressions.BinOp;
-import interpreteur.ast.buildingBlocs.expressions.CreerListe;
-import interpreteur.ast.buildingBlocs.expressions.ValeurConstante;
-import interpreteur.ast.buildingBlocs.expressions.Var;
+import interpreteur.ast.buildingBlocs.expressions.*;
 
 public class Assigner extends Programme {
     //private static final HashSet<CreerSetter> waitingSetters = new HashSet<>();
@@ -25,7 +23,10 @@ public class Assigner extends Programme {
     public Assigner(Expression<?> expr, Expression<?> valeur, BinOp.Operation op) {
         // get la variable
         if (expr instanceof Var var) this.var = var;
+        else if (expr instanceof GetAttr getAttr && getAttr.obj() instanceof Var var) this.var = var;
         else if (expr instanceof CreerListe.SousSection sousSection && sousSection.getExpr() instanceof Var var) {
+            this.var = var;
+        } else if (expr instanceof CreerListe.SousSection sousSection && sousSection.getExpr() instanceof GetAttr getAttr && getAttr.obj() instanceof Var var) {
             this.var = var;
         } else {
             throw new ASErreur.ErreurSyntaxe("Il est impossible d'assigner \u00E0 autre chose qu'une variable");
@@ -41,17 +42,18 @@ public class Assigner extends Programme {
         //ASObjet.Variable variable = ASObjet.VariableManager.obtenirVariable(var.getNom());
         ASVariable variable = ASScope.getCurrentScopeInstance().getVariable(var.getNom());
 
+
         ASObjet<?> valeur = this.valeur.eval();
         if (variable == null) {
             throw new ASErreur.ErreurVariableInconnue("La variable " + var.getNom() + " n'a pas \u00E9t\u00E9 initialis\u00E9e." +
-                                                      "\nAvez-vous oubli\u00E9 de mettre 'var' devant la d\u00E9claration de la variable?");
+                    "\nAvez-vous oubli\u00E9 de mettre 'var' devant la d\u00E9claration de la variable?");
         }
 
         if (expr instanceof CreerListe.SousSection) {
-            ASObjet<?> valeurVariable = variable.getValeurApresGetter();
+            ASObjet<?> valeurVariable = getValeur(variable);
             if (!(valeurVariable instanceof ASListe listeInitial)) {
                 throw new ASErreur.ErreurType("L'assignement d'index ou de sous-section n'est pas d\u00E9finie pour " +
-                                              "un \u00E9l\u00E9ment de type '" + valeurVariable.obtenirNomType() + "'.");
+                        "un \u00E9l\u00E9ment de type '" + valeurVariable.getNomType() + "'.");
             }
 
             // si l'assignement est de forme
@@ -73,7 +75,7 @@ public class Assigner extends Programme {
                     valeur = op.apply(expr, new ValeurConstante(valeur));
                 }
                 valeur = listeInitial.remplacer(idx, valeur);
-                variable.changerValeur(valeur);
+                changerValeur(variable, valeur);
                 return null;
             }
         }
@@ -83,20 +85,42 @@ public class Assigner extends Programme {
         }
 
         if (op != null) {
-            valeur = op.apply(var, new ValeurConstante(valeur));
+            valeur = op.apply(new ValeurConstante(getValeur(variable)), new ValeurConstante(valeur));
         }
 
-        variable.changerValeur(valeur);
+        changerValeur(variable, valeur);
 
         return null;
+    }
+
+    private void changerValeur(ASVariable variable, ASObjet<?> nouvelleValeur) {
+        var expr = this.expr instanceof CreerListe.SousSection sousSection ? sousSection.getExpr() : this.expr;
+        if (expr instanceof GetAttr getAttr && variable.getValeurApresGetter() instanceof ASHasAttr hasAttr) {
+            hasAttr.setAttr(getAttr.attr().getNom(), nouvelleValeur);
+        } else if (expr instanceof Var) {
+            variable.changerValeur(nouvelleValeur);
+        } else {
+            throw new ASErreur.ErreurSyntaxe("Il est impossible d'assigner \u00E0 autre chose qu'une variable");
+        }
+    }
+
+    private ASObjet<?> getValeur(ASVariable variable) {
+        var expr = this.expr instanceof CreerListe.SousSection sousSection ? sousSection.getExpr() : this.expr;
+        if (expr instanceof GetAttr getAttr && variable.getValeurApresGetter() instanceof ASHasAttr hasAttr) {
+            return hasAttr.getAttr(getAttr.attr().getNom());
+        } else if (expr instanceof Var) {
+            return variable.getValeurApresGetter();
+        } else {
+            throw new ASErreur.ErreurSyntaxe("Il est impossible d'assigner \u00E0 autre chose qu'une variable");
+        }
     }
 
     @Override
     public String toString() {
         return "Assigner{" +
-               "expr=" + expr +
-               ", valeur=" + valeur +
-               '}';
+                "expr=" + expr +
+                ", valeur=" + valeur +
+                '}';
     }
 
     /*

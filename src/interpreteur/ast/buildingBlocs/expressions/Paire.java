@@ -18,7 +18,7 @@ public record Paire(Expression<?> clef, Expression<?> valeur) implements Express
 
     @Override
     public String toString() {
-        return "Pair{" +
+        return "Paire{" +
                 "clef=" + clef +
                 ", valeur=" + valeur +
                 '}';

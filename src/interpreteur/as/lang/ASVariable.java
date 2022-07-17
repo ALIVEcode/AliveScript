@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 public class ASVariable implements ASObjet<Object> {
     private String nom;
-    private final ASType type;
+    private final ASTypeExpr type;
     private ASObjet<?> valeur;
     private boolean readOnly = false;
 
@@ -17,20 +17,20 @@ public class ASVariable implements ASObjet<Object> {
     private Function<ASObjet<?>, ASObjet<?>> setter = null;
 
 
-    public ASVariable(String nom, ASObjet<?> valeur, ASType type) {
-        this.type = type == null ? new ASType("tout") : type;
-        this.nom = ASFonctionManager.ajouterDansStructure(nom);
+    public ASVariable(String nom, ASObjet<?> valeur, ASTypeExpr type) {
+        this.type = type == null ? new ASTypeExpr("tout") : type;
+        this.nom = ASFonctionManager.ajouterDansNamespace(nom);
         this.valeur = valeur instanceof ASVariable var ? var.getValeurApresGetter() : valeur;
     }
 
     private boolean nouvelleValeurValide(ASObjet<?> nouvelleValeur) {
-        if (getType().noMatch(nouvelleValeur.obtenirNomType())) {
+        if (getType().noMatch(nouvelleValeur.getNomType())) {
             throw new ASErreur.ErreurAssignement("La variable '" +
                                                  nom +
                                                  "' est de type *" +
-                                                 obtenirNomType() +
+                                                 getNomType() +
                                                  "*. Elle ne peut pas prendre une valeur de type *" +
-                                                 nouvelleValeur.obtenirNomType() +
+                                                 nouvelleValeur.getNomType() +
                                                  "*.");
         }
         return true;
@@ -56,7 +56,7 @@ public class ASVariable implements ASObjet<Object> {
         return new ASVariable(nom, this.valeur, this.type).setGetter(this.getter).setSetter(this.setter);
     }
 
-    public String obtenirNom() {
+    public String getNom() {
         return this.nom;
     }
 
@@ -64,7 +64,7 @@ public class ASVariable implements ASObjet<Object> {
         this.nom = nom;
     }
 
-    public ASType getType() {
+    public ASTypeExpr getType() {
         return type;
     }
 
@@ -94,24 +94,13 @@ public class ASVariable implements ASObjet<Object> {
         return readOnly;
     }
 
-    @Override
-    public String toString() {
-        return "Variable{" +
-               "nom='" + nom + '\'' +
-               ", type='" + type + '\'' +
-               ", valeur=" + valeur +
-               ", getter=" + getter +
-               ", setter=" + setter +
-               '}';
-    }
-
     /* différentes manières de get la valeur stockée dans la variable */
     public ASObjet<?> getValeur() {
         return this.valeur;
     }
 
     /**
-     * by pass the setter
+     * bypass the setter
      *
      * @param valeur
      */
@@ -123,6 +112,16 @@ public class ASVariable implements ASObjet<Object> {
     public ASObjet<?> getValeurApresGetter() {
         if (this.valeur == null) {
             throw new ASErreur.ErreurAssignement("La variable '" + nom + "' est utilis\u00E9e avant d'\u00EAtre d\u00E9clar\u00E9e");
+        }
+        if (this.getter != null) {
+            return this.getter.get();
+        }
+        return this.valeur;
+    }
+
+    public ASObjet<?> getValeurApresGetterOuNull() {
+        if (this.valeur == null) {
+            return null;
         }
         if (this.getter != null) {
             return this.getter.get();
@@ -147,7 +146,18 @@ public class ASVariable implements ASObjet<Object> {
     }
 
     @Override
-    public String obtenirNomType() {
+    public String getNomType() {
         return this.type.getNom();
+    }
+
+    @Override
+    public String toString() {
+        return "Variable{" +
+               "nom='" + nom + '\'' +
+               ", type='" + type + '\'' +
+               ", valeur=" + valeur +
+               ", getter=" + getter +
+               ", setter=" + setter +
+               '}';
     }
 }

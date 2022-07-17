@@ -1,17 +1,17 @@
 package interpreteur.ast.buildingBlocs.expressions;
 
 import interpreteur.as.erreurs.ASErreur;
-import interpreteur.as.lang.ASType;
+import interpreteur.as.lang.ASTypeExpr;
 import interpreteur.as.lang.datatype.ASObjet;
-import interpreteur.as.lang.datatype.ASParametre;
+import interpreteur.as.lang.datatype.fonction.ASParametre;
 import interpreteur.ast.buildingBlocs.Expression;
 
 public class Argument implements Expression<ASParametre> {
     private final Var var;
     private final ASObjet<?> valeurParDefaut;
-    private final ASType type;
+    private final ASTypeExpr type;
 
-    public Argument(Var var, Expression<?> valeurParDefaut, ASType type) {
+    public Argument(Var var, Expression<?> valeurParDefaut, ASTypeExpr type) {
         this.var = var;
         this.type = type;
         try {
@@ -19,9 +19,9 @@ public class Argument implements Expression<ASParametre> {
         } catch (ASErreur.ErreurVariableInconnue e) {
             throw new ASErreur.ErreurVariableInconnue("Impossible d'utiliser une variable comme valeur par défaut d'une fonction");
         }
-        if (this.type != null && this.valeurParDefaut != null && this.type.noMatch(this.valeurParDefaut.obtenirNomType())) {
-            throw new ASErreur.ErreurType("Le parametre '" + var.getNom() + "' est de type '" + type.nom() +
-                    "', mais la valeur par d\u00E9faut est de type '" + this.valeurParDefaut.obtenirNomType() + "'.");
+        if (this.type != null && this.valeurParDefaut != null && this.type.noMatch(this.valeurParDefaut.getNomType())) {
+            throw new ASErreur.ErreurType("Le parametre '" + var.getNom() + "' est de type '" + type.getNom() +
+                    "', mais la valeur par d\u00E9faut est de type '" + this.valeurParDefaut.getNomType() + "'.");
         }
     }
 

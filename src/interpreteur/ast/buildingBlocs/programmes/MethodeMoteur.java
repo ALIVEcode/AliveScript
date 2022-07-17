@@ -21,7 +21,7 @@ public class MethodeMoteur extends Programme {
     public Data execute() {
         if (this.valeur != null && !(this.valeur.eval() instanceof ASNombre)) {
             throw new ASErreur.ErreurType("Le param\u00E8tres 'temps' est de type 'nombre'," +
-                                          " mais l'argument pass\u00E9 est de type '" + this.valeur.eval().obtenirNomType() + "'.");
+                                          " mais l'argument pass\u00E9 est de type '" + this.valeur.eval().getNomType() + "'.");
         }
 
         Double valeur = this.valeur != null ? ((Number) this.valeur.eval().getValue()).doubleValue() : null;

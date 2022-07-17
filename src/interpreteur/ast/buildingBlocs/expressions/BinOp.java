@@ -171,8 +171,8 @@ public record BinOp(Expression<?> gauche,
                 throw erreurAliveScript;
             } catch (Exception e) {
                 throw new ASErreur.ErreurType("L'op\u00E9ration '" + nom + "' n'est pas d\u00E9finie pour " +
-                        "un \u00E9l\u00E9ment de type '" + g.obtenirNomType() + "' " +
-                        "et un \u00E9l\u00E9ment de type '" + d.obtenirNomType() + "'.");
+                        "un \u00E9l\u00E9ment de type '" + g.getNomType() + "' " +
+                        "et un \u00E9l\u00E9ment de type '" + d.getNomType() + "'.");
             }
         }
     }

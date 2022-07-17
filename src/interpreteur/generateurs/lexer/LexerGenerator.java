@@ -30,6 +30,29 @@ public class LexerGenerator {
         reglesIgnorees.clear();
         Regle.reset();
     }
+
+    public static String remplacerCategoriesParMembre(String pattern) {
+        String nouveauPattern = pattern;
+        for (String option : pattern.split("~")) {
+            for (String motClef : option.split(" ")) {  // on divise le pattern en mot clef afin d'evaluer ceux qui sont des categories (une categorie est entouree par des {})
+                if (motClef.startsWith("{") && motClef.endsWith("}")) {  // on test si le mot clef est une categorie
+                    ArrayList<String> membresCategorie = Regle.getMembreCategorie(motClef.substring(1, motClef.length() - 1)); // on va chercher les membres de la categorie (toutes les regles)
+                    if (membresCategorie == null) {
+                        throw new Error("La categorie: '" + pattern + "' n'existe pas");    // si la categorie n'existe pas, on lance une erreur
+                    } else {
+                        nouveauPattern = nouveauPattern.replace(motClef, "(" + String.join("|", membresCategorie) + ")");
+                        // on remplace la categorie par les membres de la categorie
+                        // pour ce faire, on entoure les membres dans des parentheses et on
+                        // separe les membres par des |
+                        // de cette facon, lorsque nous allons tester par regex si une ligne correspond
+                        // a un programme ou une expression, la categorie va "matcher" avec
+                        // tous les membres de celle-ci
+                    }
+                }
+            }
+        }
+        return nouveauPattern;  // on retourne le pattern avec les categories changees
+    }
     /*
     protected void chargerRegles(File configGrammaire){
         try {

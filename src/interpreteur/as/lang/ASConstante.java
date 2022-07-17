@@ -9,12 +9,16 @@ import java.util.function.Supplier;
 public class ASConstante extends ASVariable {
 
     public ASConstante(String nom, ASObjet<?> valeur) {
-        super(nom, valeur, new ASType("tout"));
+        super(nom, valeur, new ASTypeExpr("tout"));
+    }
+
+    public ASConstante(String nom, ASObjet<?> valeur, ASTypeExpr type) {
+        super(nom, valeur, type);
     }
 
     @Override
     public ASVariable clone() {
-        return new interpreteur.as.lang.ASConstante(obtenirNom(), this.getValeur());
+        return new ASConstante(getNom(), this.getValeur(), getType());
     }
 
     @Override

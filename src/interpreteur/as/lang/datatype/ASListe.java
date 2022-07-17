@@ -149,7 +149,7 @@ public class ASListe implements ASIterable<Object> {
     }
 
     @Override
-    public String obtenirNomType() {
+    public String getNomType() {
         return estDict() ? "dict" : "liste";
     }
 

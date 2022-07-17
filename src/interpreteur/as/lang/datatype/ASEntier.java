@@ -10,7 +10,7 @@ public class ASEntier implements ASNombre {
 
     public ASEntier(Token valeur) {
         try {
-            this.valeur = Integer.parseInt(valeur.obtenirValeur());
+            this.valeur = Integer.parseInt(valeur.getValeur());
         } catch (NumberFormatException e) {
             throw new ASErreur.ErreurEntierInvalide("Les nombres entiers doivent avoir une valeur entre "
                                                     + Integer.MIN_VALUE + " et " + Integer.MAX_VALUE);
@@ -51,7 +51,7 @@ public class ASEntier implements ASNombre {
     }
 
     @Override
-    public String obtenirNomType() {
+    public String getNomType() {
         return "entier";
     }
 
