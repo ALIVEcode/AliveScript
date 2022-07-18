@@ -284,7 +284,7 @@ public class ModuleAI {
 
                   If both lists are not the same length, an error will be generated.
                 */
-                new ASFonctionModule("coefficientCorrelation", new ASParametre[]{
+                new ASFonctionModule("correlation", new ASParametre[]{
                         new ASParametre(
                                 "lst1", ASTypeBuiltin.liste.asType(),
                                 null
@@ -329,7 +329,7 @@ public class ModuleAI {
 
                   If both lists are not the same length, an error will be generated.
                 */
-                new ASFonctionModule("coefficientDetermination", new ASParametre[]{
+                new ASFonctionModule("determination", new ASParametre[]{
                         new ASParametre(
                                 "lst1", ASTypeBuiltin.liste.asType(),
                                 null
@@ -474,7 +474,7 @@ public class ModuleAI {
                 /*
                 Creats a list containing all the elements of the selected column
                  */
-                new ASFonctionModule("valeursColonne", new ASParametre[]{
+                new ASFonctionModule("valeursParam", new ASParametre[]{
                         new ASParametre(
                                 "colonne", ASTypeBuiltin.texte.asType(), null )
                 }, ASTypeBuiltin.liste.asType()) {
